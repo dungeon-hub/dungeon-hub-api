@@ -3,7 +3,8 @@ import net.thebugmc.gradle.sonatypepublisher.PublishingType
 plugins {
     id("java-library")
     id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.3")
-    kotlin("jvm") version "2.0.20"
+    kotlin("jvm") version "2.0.21"
+    id("com.google.devtools.ksp").version("2.0.21-1.0.26")
 }
 
 group = "net.dungeon-hub.api"
@@ -16,6 +17,10 @@ repositories {
 }
 
 dependencies {
+    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
+
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
+
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation(kotlin("test"))
