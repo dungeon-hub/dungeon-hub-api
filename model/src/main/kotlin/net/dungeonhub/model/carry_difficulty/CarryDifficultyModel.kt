@@ -28,15 +28,13 @@ class CarryDifficultyModel(
         get() = max(field, 0)
 
     val thumbnailUrl: String? = thumbnailUrl
-        //TODO
-        get() = field //field ?: carryTier.thumbnailUrl
+        get() = field ?: carryTier.thumbnailUrl
 
     val priceName = priceName
         get() = (if(!field.isNullOrBlank()) field else null) ?: displayName
 
     val carryType: CarryTypeModel
-        //TODO
-        get() = CarryTypeModel() //carryTier.carryType
+        get() = carryTier.carryType
 
     fun toJson(): String {
         return MoshiService.moshi.adapter(CarryDifficultyModel::class.java).toJson(this)

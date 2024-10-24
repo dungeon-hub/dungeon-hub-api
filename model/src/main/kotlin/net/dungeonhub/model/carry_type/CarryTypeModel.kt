@@ -1,53 +1,47 @@
-package net.dungeonhub.model.carry_type;
+package net.dungeonhub.model.carry_type
 
-import lombok.*;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.Model;
-import me.taubsie.dungeonhub.common.model.server.DiscordServerModel;
+import net.dungeonhub.entity.model.Model
+import net.dungeonhub.model.discord_server.DiscordServerModel
+import net.dungeonhub.service.MoshiService
 
-import java.util.Optional;
+class CarryTypeModel(
+    val id: Long,
+    val identifier: String,
+    var displayName: String,
+    var server: DiscordServerModel,
+    logChannel: Long?,
+    leaderboardChannel: Long?,
+    isEventActive: Boolean?
+) : Model {
+    var isEventActive = isEventActive
+        get() = java.lang.Boolean.TRUE == field
 
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@AllArgsConstructor
-@Getter
-@Setter
-public class CarryTypeModel implements Model {
-    @EqualsAndHashCode.Include
-    @Setter(AccessLevel.NONE)
-    private long id;
-    @Setter(AccessLevel.NONE)
-    private String identifier;
-    private String displayName;
-    private DiscordServerModel server;
-    private Long logChannel;
-    private Long leaderboardChannel;
-    private Boolean eventActive;
+    var logChannel = logChannel
+        get() = (if (field != null && field!! > 0L) field else null)
 
-    public static CarryTypeModel fromJson(String json) {
-        return DungeonHubService.getInstance().getGson().fromJson(json, CarryTypeModel.class);
+    var leaderboardChannel = leaderboardChannel
+        get() = (if (field != null && field!! > 0L) field else null)
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as CarryTypeModel
+
+        return id == other.id
     }
 
-    public Long getActualLogChannel() {
-        return logChannel;
+    override fun hashCode(): Int {
+        return id.hashCode()
     }
 
-    public Long getActualLeaderboardChannel() {
-        return leaderboardChannel;
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(CarryTypeModel::class.java).toJson(this)
     }
 
-    public Optional<Long> getLogChannel() {
-        return Optional.ofNullable(logChannel != null && logChannel > 0 ? logChannel : null);
-    }
-
-    public Optional<Long> getLeaderboardChannel() {
-        return Optional.ofNullable(leaderboardChannel != null && leaderboardChannel > 0 ? leaderboardChannel : null);
-    }
-
-    public boolean isEventActive() {
-        return Boolean.TRUE.equals(eventActive);
-    }
-
-    public String toJson() {
-        return DungeonHubService.getInstance().getGson().toJson(this);
+    companion object {
+        fun fromJson(json: String): CarryTypeModel {
+            return MoshiService.moshi.adapter(CarryTypeModel::class.java).fromJson(json)!!
+        }
     }
 }

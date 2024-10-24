@@ -1,84 +1,62 @@
-package net.dungeonhub.model.carry_tier;
+package net.dungeonhub.model.carry_tier
 
-import lombok.*;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.Model;
-import me.taubsie.dungeonhub.common.model.carry_type.CarryTypeModel;
+import net.dungeonhub.entity.model.Model
+import net.dungeonhub.model.carry_type.CarryTypeModel
+import net.dungeonhub.service.MoshiService
+import org.jetbrains.annotations.NotNull
 
-import java.util.Optional;
+class CarryTierModel(
+    val id: Long,
+    val identifier: String,
+    var displayName: String,
+    val carryType: CarryTypeModel,
+    category: Long?,
+    priceChannel: Long?,
+    descriptiveName: String?,
+    thumbnailUrl: String?,
+    priceTitle: String?,
+    priceDescription: String?
+) : Model {
+    var descriptiveName = descriptiveName
+        @NotNull
+        get() = (if(!field.isNullOrBlank()) field else null) ?: displayName
 
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@AllArgsConstructor
-@Getter
-@Setter
-public class CarryTierModel implements Model {
-    private Long category;
-    private Long priceChannel;
-    private String descriptiveName;
-    private String thumbnailUrl;
-    private String priceTitle;
-    private String priceDescription;
-    @EqualsAndHashCode.Include
-    @Setter(AccessLevel.NONE)
-    private long id;
-    @Setter(AccessLevel.NONE)
-    private String identifier;
-    private String displayName;
-    private CarryTypeModel carryType;
+    var category = category
+        get() = (if(field != null && field!! > 0L) field else null)
 
-    public static CarryTierModel fromJson(String json) {
-        return DungeonHubService.getInstance().getGson().fromJson(json, CarryTierModel.class);
+    val thumbnailUrl = thumbnailUrl
+        get() = if(!field.isNullOrBlank()) field else null
+
+    var priceTitle = priceTitle
+        @NotNull
+        get() = (if(!field.isNullOrBlank()) field else null) ?: descriptiveName
+
+    var priceDescription = priceDescription
+        get() = if(!field.isNullOrBlank()) field else null
+
+    var priceChannel = priceChannel
+        get() = if(field != null && field!! > 0L) field else null
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as CarryTierModel
+
+        return id == other.id
     }
 
-    public String getDescriptiveName() {
-        return getActualDescriptiveName().orElse(getDisplayName());
+    override fun hashCode(): Int {
+        return id.hashCode()
     }
 
-    public Optional<String> getActualDescriptiveName() {
-        return Optional.ofNullable(descriptiveName == null || descriptiveName.isBlank() ? null : descriptiveName);
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(CarryTierModel::class.java).toJson(this)
     }
 
-    public Optional<Long> getCategory() {
-        return Optional.ofNullable(category > 0L ? category : null);
-    }
-
-    public long getActualCategory() {
-        return category;
-    }
-
-    public Optional<String> getThumbnailUrl() {
-        return Optional.ofNullable(thumbnailUrl == null || thumbnailUrl.isBlank() ? null : thumbnailUrl);
-    }
-
-    public String getActualThumbnailUrl() {
-        return thumbnailUrl;
-    }
-
-    public String getPriceTitle() {
-        return getActualPriceTitle().orElse(getDescriptiveName());
-    }
-
-    public Optional<String> getActualPriceTitle() {
-        return Optional.ofNullable(priceTitle == null || priceTitle.isBlank() ? null : priceTitle);
-    }
-
-    public Optional<String> getPriceDescription() {
-        return Optional.ofNullable(priceDescription == null || priceDescription.isBlank() ? null : priceDescription);
-    }
-
-    public String getActualPriceDescription() {
-        return priceDescription;
-    }
-
-    public Optional<Long> getPriceChannel() {
-        return Optional.ofNullable(priceChannel != null && priceChannel > 0L ? priceChannel : null);
-    }
-
-    public Long getActualPriceChannel() {
-        return priceChannel;
-    }
-
-    public String toJson() {
-        return DungeonHubService.getInstance().getGson().toJson(this);
+    companion object {
+        fun fromJson(json: String): CarryTierModel {
+            return MoshiService.moshi.adapter(CarryTierModel::class.java).fromJson(json)!!
+        }
     }
 }
