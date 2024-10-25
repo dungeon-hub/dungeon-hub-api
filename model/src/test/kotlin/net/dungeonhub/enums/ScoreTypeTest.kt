@@ -11,12 +11,12 @@ class ScoreTypeTest {
         for(scoreType in ScoreType.entries) {
             val suffix = if (scoreType.leaderboardSuffix.isNullOrBlank()) "" else " ${scoreType.leaderboardSuffix}"
 
+            val carryType = CarryTypeModel(0, "identifier", "DisplayName", DiscordServerModel(0), null, null, false)
+
             assertEquals(
                 "Leaderboard | Total score$suffix",
                 scoreType.getLeaderboardTitle(null)
             )
-
-            val carryType = CarryTypeModel(0, "identifier", "DisplayName", DiscordServerModel(0), null, null, false)
 
             assertEquals(
                 "Leaderboard | DisplayName-Carries$suffix",

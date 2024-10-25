@@ -1,6 +1,6 @@
 package net.dungeonhub.model.carry_difficulty
 
-import net.dungeonhub.entity.model.CreationModel
+import net.dungeonhub.structure.model.CreationModel
 
 class CarryDifficultyCreationModel(
     var identifier: String,

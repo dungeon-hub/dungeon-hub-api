@@ -1,28 +1,20 @@
-package net.dungeonhub.model.score;
+package net.dungeonhub.model.score
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.Model;
-import me.taubsie.dungeonhub.common.enums.ScoreType;
-import me.taubsie.dungeonhub.common.model.carry_type.CarryTypeModel;
-import me.taubsie.dungeonhub.common.model.discord_user.DiscordUserModel;
-import org.jetbrains.annotations.Nullable;
+import net.dungeonhub.enums.ScoreType
+import net.dungeonhub.model.carry_type.CarryTypeModel
+import net.dungeonhub.model.discord_user.DiscordUserModel
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.Model
 
-@AllArgsConstructor
-@Getter
-@Setter
-public class ScoreModel implements Model {
-    private DiscordUserModel carrier;
-    @Nullable
-    private CarryTypeModel carryType;
-    private ScoreType scoreType;
-    private Long scoreAmount;
-
-    public static ScoreModel fromJson(String json) {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .fromJson(json, ScoreModel.class);
+class ScoreModel(
+    val carrier: DiscordUserModel,
+    val carryType: CarryTypeModel,
+    val scoreType: ScoreType,
+    val scoreAmount: Long?
+) : Model {
+    companion object {
+        fun fromJson(json: String): ScoreModel {
+            return MoshiService.moshi.adapter(ScoreModel::class.java).fromJson(json)!!
+        }
     }
 }

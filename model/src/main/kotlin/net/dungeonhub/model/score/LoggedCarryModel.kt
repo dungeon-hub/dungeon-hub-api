@@ -1,15 +1,13 @@
-package net.dungeonhub.model.score;
+package net.dungeonhub.model.score
 
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.Model;
-import me.taubsie.dungeonhub.common.model.carry.CarryModel;
+import net.dungeonhub.model.carry.CarryModel
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.Model
 
-import java.util.List;
-
-public record LoggedCarryModel(CarryModel carryModel, List<ScoreModel> scoreModels) implements Model {
-    public static LoggedCarryModel fromJson(String json) {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .fromJson(json, LoggedCarryModel.class);
+class LoggedCarryModel(val carryModel: CarryModel, val scoreModels: List<ScoreModel>) : Model {
+    companion object {
+        fun fromJson(json: String): LoggedCarryModel {
+            return MoshiService.moshi.adapter(LoggedCarryModel::class.java).fromJson(json)!!
+        }
     }
 }

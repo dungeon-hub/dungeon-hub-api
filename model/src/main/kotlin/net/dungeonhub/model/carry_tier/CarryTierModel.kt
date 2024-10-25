@@ -1,6 +1,6 @@
 package net.dungeonhub.model.carry_tier
 
-import net.dungeonhub.entity.model.Model
+import net.dungeonhub.structure.model.Model
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.service.MoshiService
 import org.jetbrains.annotations.NotNull
@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull
 class CarryTierModel(
     val id: Long,
     val identifier: String,
-    var displayName: String,
+    val displayName: String,
     val carryType: CarryTypeModel,
     category: Long?,
     priceChannel: Long?,
@@ -17,25 +17,25 @@ class CarryTierModel(
     priceTitle: String?,
     priceDescription: String?
 ) : Model {
-    var descriptiveName = descriptiveName
+    val descriptiveName = descriptiveName
         @NotNull
         get() = (if(!field.isNullOrBlank()) field else null) ?: displayName
 
-    var category = category
-        get() = (if(field != null && field!! > 0L) field else null)
+    val category = category
+        get() = (if(field != null && field > 0L) field else null)
 
     val thumbnailUrl = thumbnailUrl
         get() = if(!field.isNullOrBlank()) field else null
 
-    var priceTitle = priceTitle
+    val priceTitle = priceTitle
         @NotNull
         get() = (if(!field.isNullOrBlank()) field else null) ?: descriptiveName
 
-    var priceDescription = priceDescription
+    val priceDescription = priceDescription
         get() = if(!field.isNullOrBlank()) field else null
 
-    var priceChannel = priceChannel
-        get() = if(field != null && field!! > 0L) field else null
+    val priceChannel = priceChannel
+        get() = if(field != null && field > 0L) field else null
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

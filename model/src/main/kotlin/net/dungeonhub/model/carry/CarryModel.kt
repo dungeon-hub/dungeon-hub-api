@@ -1,6 +1,6 @@
 package net.dungeonhub.model.carry
 
-import net.dungeonhub.entity.model.Model
+import net.dungeonhub.structure.model.Model
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
 import net.dungeonhub.model.discord_user.DiscordUserModel
 import net.dungeonhub.service.MoshiService

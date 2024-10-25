@@ -1,36 +1,25 @@
-package net.dungeonhub.model.warning;
+package net.dungeonhub.model.warning
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.Model;
-import me.taubsie.dungeonhub.common.enums.WarningType;
-import me.taubsie.dungeonhub.common.model.discord_user.DiscordUserModel;
-import me.taubsie.dungeonhub.common.model.server.DiscordServerModel;
+import net.dungeonhub.structure.model.Model
+import net.dungeonhub.enums.WarningType
+import net.dungeonhub.model.discord_server.DiscordServerModel
+import net.dungeonhub.model.discord_user.DiscordUserModel
+import net.dungeonhub.service.MoshiService
+import java.time.Instant
 
-import javax.annotation.Nullable;
-import java.time.Instant;
-
-@AllArgsConstructor
-@Getter
-public class WarningModel implements Model {
-    private long id;
-    private DiscordServerModel server;
-    private DiscordUserModel user;
-    private DiscordUserModel striker;
-    @Setter
-    private WarningType warningType;
-    @Nullable
-    @Setter
-    private String reason;
-    @Setter
-    private boolean active;
-    private Instant time;
-
-    public static WarningModel fromJson(String json) {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .fromJson(json, WarningModel.class);
+class WarningModel(
+    val id: Long,
+    val server: DiscordServerModel,
+    val user: DiscordUserModel,
+    val striker: DiscordUserModel,
+    val warningType: WarningType,
+    val reason: String?,
+    val active: Boolean,
+    val time: Instant
+) : Model {
+    companion object {
+        fun fromJson(json: String): WarningModel {
+            return MoshiService.moshi.adapter(WarningModel::class.java).fromJson(json)!!
+        }
     }
 }

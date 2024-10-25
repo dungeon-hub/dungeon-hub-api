@@ -1,20 +1,15 @@
-package net.dungeonhub.model.warning;
+package net.dungeonhub.model.warning
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.Model
 
-import java.util.List;
-
-@AllArgsConstructor
-@Getter
-public class AddedWarningModel {
-    private WarningModel warningModel;
-    private List<WarningActionModel> warningActionModel;
-
-    public static AddedWarningModel fromJson(String json) {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .fromJson(json, AddedWarningModel.class);
+class AddedWarningModel(
+    val warningModel: WarningModel,
+    val warningActionModel: List<WarningActionModel>
+) : Model {
+    companion object {
+        fun fromJson(json: String): AddedWarningModel {
+            return MoshiService.moshi.adapter(AddedWarningModel::class.java).fromJson(json)!!
+        }
     }
 }

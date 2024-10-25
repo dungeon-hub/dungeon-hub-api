@@ -1,17 +1,11 @@
-package net.dungeonhub.model.warning;
+package net.dungeonhub.model.warning
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import me.taubsie.dungeonhub.common.entity.model.Model;
-import me.taubsie.dungeonhub.common.model.discord_user.DiscordUserModel;
+import net.dungeonhub.model.discord_user.DiscordUserModel
+import net.dungeonhub.structure.model.Model
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-public class WarningEvidenceModel implements Model {
-    private long id;
-    private WarningModel warningModel;
-    private String evidence;
-    private DiscordUserModel submitter;
-}
+class WarningEvidenceModel(
+    val id: Long,
+    val warningModel: WarningModel,
+    val evidence: String,
+    val submitter: DiscordUserModel
+) : Model

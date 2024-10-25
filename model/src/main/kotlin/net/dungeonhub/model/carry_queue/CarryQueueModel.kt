@@ -1,51 +1,36 @@
-package net.dungeonhub.model.carry_queue;
+package net.dungeonhub.model.carry_queue
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.Model;
-import me.taubsie.dungeonhub.common.enums.QueueStep;
-import me.taubsie.dungeonhub.common.model.carry_difficulty.CarryDifficultyModel;
-import me.taubsie.dungeonhub.common.model.carry_tier.CarryTierModel;
-import me.taubsie.dungeonhub.common.model.carry_type.CarryTypeModel;
-import me.taubsie.dungeonhub.common.model.discord_user.DiscordUserModel;
+import net.dungeonhub.structure.model.Model
+import net.dungeonhub.enums.QueueStep
+import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
+import net.dungeonhub.model.discord_user.DiscordUserModel
+import net.dungeonhub.service.MoshiService
+import java.time.Instant
 
-import java.time.Instant;
+class CarryQueueModel(
+    val id: Long,
+    val queueStep: QueueStep,
+    val carrier: DiscordUserModel,
+    val player: DiscordUserModel,
+    val amount: Long,
+    val carryDifficulty: CarryDifficultyModel,
+    val relationId: Long?,
+    val attachmentLink: String?,
+    val time: Instant?
+) : Model {
+    val carryTier = carryDifficulty.carryTier
 
-@AllArgsConstructor
-@Getter
-@Setter
-public class CarryQueueModel implements Model {
-    private final long id;
-    private QueueStep queueStep;
-    private DiscordUserModel carrier;
-    private DiscordUserModel player;
-    private Long amount;
-    private CarryDifficultyModel carryDifficulty;
-    private Long relationId;
-    private String attachmentLink;
-    private Instant time;
+    val carryType = carryTier.carryType
 
-    public static CarryQueueModel fromJson(String json) {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .fromJson(json, CarryQueueModel.class);
+    fun calculateScore(): Long {
+        return scoreMultiplier * amount
     }
 
-    public CarryTypeModel getCarryType() {
-        return getCarryTier().getCarryType();
-    }
+    private val scoreMultiplier = carryDifficulty.score
 
-    public CarryTierModel getCarryTier() {
-        return getCarryDifficulty().getCarryTier();
-    }
-
-    public long calculateScore() {
-        return getScoreMultiplier() * getAmount();
-    }
-
-    private long getScoreMultiplier() {
-        return getCarryDifficulty().getScore();
+    companion object {
+        fun fromJson(json: String): CarryQueueModel {
+            return MoshiService.moshi.adapter(CarryQueueModel::class.java).fromJson(json)!!
+        }
     }
 }

@@ -1,48 +1,26 @@
-package net.dungeonhub.model.score;
+package net.dungeonhub.model.score
 
-import lombok.Getter;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.Model
 
-import java.util.List;
-import java.util.Optional;
-
-@Getter
-public class LeaderboardModel {
-    private final int page;
-    private final int totalPages;
-    private final List<ScoreModel> scores;
-
-    @Setter
-    private Integer playerPosition;
-    @Setter
-    private ScoreModel playerScore;
-
-    public LeaderboardModel(int page, int totalPages, List<ScoreModel> scores) {
-        this.page = page;
-        this.totalPages = totalPages;
-        this.scores = scores;
+class LeaderboardModel(
+    val page: Int,
+    val totalPages: Int,
+    val scores: List<ScoreModel>,
+    val playerPosition: Int? = null,
+    val playerScore: ScoreModel? = null
+) : Model {
+    fun hasNextPage(): Boolean {
+        return page < totalPages - 1
     }
 
-    public static LeaderboardModel fromJson(String json) {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .fromJson(json, LeaderboardModel.class);
+    fun hasPrevPage(): Boolean {
+        return page > 0
     }
 
-    public Optional<Integer> getPlayerPosition() {
-        return Optional.ofNullable(playerPosition);
-    }
-
-    public Optional<ScoreModel> getPlayerScore() {
-        return Optional.ofNullable(playerScore);
-    }
-
-    public boolean hasNextPage() {
-        return page < totalPages - 1;
-    }
-
-    public boolean hasPrevPage() {
-        return page > 0;
+    companion object {
+        fun fromJson(json: String): LeaderboardModel {
+            return MoshiService.moshi.adapter(LeaderboardModel::class.java).fromJson(json)!!
+        }
     }
 }

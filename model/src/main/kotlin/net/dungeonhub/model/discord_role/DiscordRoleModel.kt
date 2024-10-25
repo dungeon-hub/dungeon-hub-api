@@ -1,24 +1,18 @@
-package net.dungeonhub.model.discord_role;
+package net.dungeonhub.model.discord_role
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.Model;
-import me.taubsie.dungeonhub.common.model.server.DiscordServerModel;
+import net.dungeonhub.structure.model.Model
+import net.dungeonhub.model.discord_server.DiscordServerModel
+import net.dungeonhub.service.MoshiService
 
-@Getter
-@Setter
-@AllArgsConstructor
-public class DiscordRoleModel implements Model {
-    private long id;
-    private String nameSchema;
-    private boolean verifiedRole;
-    private DiscordServerModel discordServerModel;
-
-    public static DiscordRoleModel fromJson(String json) {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .fromJson(json, DiscordRoleModel.class);
+class DiscordRoleModel(
+    val id: Long,
+    val nameSchema: String?,
+    val verifiedRole: Boolean,
+    val discordServerModel: DiscordServerModel
+) : Model {
+    companion object {
+        fun fromJson(json: String): DiscordRoleModel {
+            return MoshiService.moshi.adapter(DiscordRoleModel::class.java).fromJson(json)!!
+        }
     }
 }

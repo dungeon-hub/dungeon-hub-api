@@ -1,6 +1,6 @@
 package net.dungeonhub.model.carry_difficulty
 
-import net.dungeonhub.entity.model.Model
+import net.dungeonhub.structure.model.Model
 import net.dungeonhub.model.carry_tier.CarryTierModel
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.service.MoshiService

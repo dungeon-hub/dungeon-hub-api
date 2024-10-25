@@ -1,32 +1,25 @@
-package net.dungeonhub.model.cnt_request;
+package net.dungeonhub.model.cnt_request
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.Model;
-import me.taubsie.dungeonhub.common.model.discord_user.DiscordUserModel;
-import me.taubsie.dungeonhub.common.model.server.DiscordServerModel;
+import net.dungeonhub.structure.model.Model
+import net.dungeonhub.model.discord_server.DiscordServerModel
+import net.dungeonhub.model.discord_user.DiscordUserModel
+import net.dungeonhub.service.MoshiService
+import java.time.Instant
 
-import java.time.Instant;
-
-@Getter
-@Setter
-@AllArgsConstructor
-public class CntRequestModel implements Model {
-    private long id;
-    private long messageId;
-    private DiscordServerModel discordServer;
-    private DiscordUserModel user;
-    private DiscordUserModel claimer;
-    private Instant time;
-    private String coinValue;
-    private String description;
-    private String requirement;
-
-    public static CntRequestModel fromJson(String json) {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .fromJson(json, CntRequestModel.class);
+class CntRequestModel(
+    val id: Long,
+    val messageId: Long,
+    val discordServer: DiscordServerModel,
+    val user: DiscordUserModel,
+    val claimer: DiscordUserModel?,
+    val time: Instant,
+    val coinValue: String,
+    val description: String,
+    val requirement: String
+) : Model {
+    companion object {
+        fun fromJson(json: String): CntRequestModel {
+            return MoshiService.moshi.adapter(CntRequestModel::class.java).fromJson(json)!!
+        }
     }
 }
