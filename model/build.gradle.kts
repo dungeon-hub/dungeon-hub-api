@@ -30,11 +30,13 @@ repositories {
 }
 
 dependencies {
+    //Moshi, the JSON library
     implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
-
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
 
+    //Used frameworks for compatible classes
     api("dev.kordex:kord-extensions:2.2.1-SNAPSHOT")
+    api("org.springframework:spring-web:6.1.12")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -87,6 +89,9 @@ tasks.test {
 
 kotlin {
     jvmToolchain(17)
+    compilerOptions {
+        freeCompilerArgs.add("-Xjvm-default=all")
+    }
 }
 
 java {
