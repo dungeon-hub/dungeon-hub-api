@@ -51,7 +51,7 @@ class MoshiServiceTest {
     }
 
     @Test
-    fun testbasicTypes() {
+    fun testBasicTypes() {
         val numberString = "-42"
         val booleanString = "true"
         val string = "Hello, World!"
@@ -80,8 +80,11 @@ class MoshiServiceTest {
             MoshiService.moshi.adapter(TestObject::class.java).fromJson(incorrectJson)
         }
 
+        assertEquals(AnotherTestObject("Taubsie"), MoshiService.moshi.adapter(AnotherTestObject::class.java).fromJson(firstJson))
     }
 
     @JsonClass(generateAdapter = true)
     data class TestObject(val name: String)
+
+    data class AnotherTestObject(val name: String)
 }

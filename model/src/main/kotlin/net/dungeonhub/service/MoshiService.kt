@@ -1,6 +1,7 @@
 package net.dungeonhub.service
 
 import com.squareup.moshi.*
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import java.awt.Color
 import java.time.Instant
 
@@ -9,6 +10,7 @@ object MoshiService {
     val moshi: Moshi = Moshi.Builder()
         .add(Instant::class.java, InstantAdapter())
         .add(Color::class.java, ColorAdapter())
+        .addLast(KotlinJsonAdapterFactory())
         .build()
 
     class InstantAdapter : JsonAdapter<Instant>() {
