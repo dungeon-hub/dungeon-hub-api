@@ -11,7 +11,7 @@ import java.util.*
 import java.util.function.Function
 import java.util.stream.Collectors
 
-interface EntityService<E : UpdateableEntity<M, U>, M : Model, C : CreationModel, I : InitializeModel<E, M, C>, U : UpdateModel<M>> {
+interface EntityService<E : Entity<M>, M : Model, C : CreationModel, I : InitializeModel<E, M, C>, U : UpdateModel<M>> {
     fun loadEntityById(id: Long): Optional<E>
 
     fun findAllEntities(): List<E>
@@ -45,11 +45,8 @@ interface EntityService<E : UpdateableEntity<M, U>, M : Model, C : CreationModel
     fun update(id: Long, updateModel: U): E {
         try {
             return loadEntityById(id)
-                .map { entity: E -> entity.update(updateModel) }
-                .map { entity: Entity<M> ->
-                    @Suppress("UNCHECKED_CAST")
-                    saveEntity(entity as E)
-                }
+                .map { entity -> updateEntity(entity, updateModel) }
+                .map { saveEntity(it) }
                 .orElseThrow { EntityUnknownException(id) }
         } catch (exception: NumberFormatException) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST)
@@ -60,12 +57,13 @@ interface EntityService<E : UpdateableEntity<M, U>, M : Model, C : CreationModel
 
     fun update(entity: E, updateModel: U): E {
         try {
-            @Suppress("UNCHECKED_CAST")
-            return saveEntity(entity.update(updateModel) as E)
+            return saveEntity(updateEntity(entity, updateModel))
         } catch (exception: NumberFormatException) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST)
         } catch (exception: UnsupportedOperationException) {
             throw ResponseStatusException(HttpStatus.BAD_REQUEST)
         }
     }
+
+    fun updateEntity(entity: E, updateModel: U): E
 }
