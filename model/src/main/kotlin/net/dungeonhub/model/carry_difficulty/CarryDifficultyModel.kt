@@ -1,9 +1,9 @@
 package net.dungeonhub.model.carry_difficulty
 
-import net.dungeonhub.structure.model.Model
 import net.dungeonhub.model.carry_tier.CarryTierModel
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.UpdateableModel
 import kotlin.math.max
 
 class CarryDifficultyModel(
@@ -17,7 +17,7 @@ class CarryDifficultyModel(
     score: Int,
     thumbnailUrl: String?,
     priceName: String?
-) : Model {
+) : UpdateableModel<CarryDifficultyUpdateModel, CarryDifficultyModel> {
     val bulkPrice = bulkPrice
         get() = if (field != null && field > 0) field else null
 
@@ -31,13 +31,25 @@ class CarryDifficultyModel(
         get() = field ?: carryTier.thumbnailUrl
 
     val priceName = priceName
-        get() = (if(!field.isNullOrBlank()) field else null) ?: displayName
+        get() = (if (!field.isNullOrBlank()) field else null) ?: displayName
 
     val carryType: CarryTypeModel
         get() = carryTier.carryType
 
     fun toJson(): String {
         return MoshiService.moshi.adapter(CarryDifficultyModel::class.java).toJson(this)
+    }
+
+    override fun getUpdateModel(): CarryDifficultyUpdateModel {
+        return CarryDifficultyUpdateModel(
+            displayName = displayName,
+            thumbnailUrl = thumbnailUrl,
+            bulkPrice = bulkPrice,
+            bulkAmount = bulkAmount,
+            priceName = priceName,
+            price = price,
+            score = score
+        )
     }
 
     override fun equals(other: Any?): Boolean {

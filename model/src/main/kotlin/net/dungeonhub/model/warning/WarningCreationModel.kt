@@ -1,21 +1,17 @@
-package net.dungeonhub.model.warning;
+package net.dungeonhub.model.warning
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.CreationModel;
-import me.taubsie.dungeonhub.common.enums.WarningType;
+import net.dungeonhub.enums.WarningType
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.CreationModel
 
-@AllArgsConstructor
-@Getter
-public class WarningCreationModel implements CreationModel {
-    private long user;
-    private long striker;
-    private WarningType warningType;
-    private String reason;
-    private boolean active;
-
-    public String toJson() {
-        return DungeonHubService.getInstance().getGson().toJson(this);
+class WarningCreationModel(
+    var user: Long,
+    var striker: Long,
+    var warningType: WarningType,
+    var reason: String? = null,
+    var active: Boolean = true
+) : CreationModel {
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(WarningCreationModel::class.java).toJson(this)
     }
 }

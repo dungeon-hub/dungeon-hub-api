@@ -1,17 +1,9 @@
-package net.dungeonhub.model.discord_role_group;
+package net.dungeonhub.model.discord_role_group
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.entity.model.CreationModel;
-import me.taubsie.dungeonhub.common.model.discord_role.DiscordRoleModel;
+import net.dungeonhub.model.discord_role.DiscordRoleModel
+import net.dungeonhub.structure.model.CreationModel
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class DiscordRoleGroupCreationModel implements CreationModel {
-    private DiscordRoleModel discordRole;
-    private DiscordRoleModel roleGroup;
-}
+class DiscordRoleGroupCreationModel(
+    var discordRole: DiscordRoleModel,
+    var roleGroup: DiscordRoleModel
+) : CreationModel

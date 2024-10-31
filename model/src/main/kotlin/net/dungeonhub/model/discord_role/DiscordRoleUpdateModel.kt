@@ -1,36 +1,34 @@
-package net.dungeonhub.model.discord_role;
+package net.dungeonhub.model.discord_role
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.UpdateModel;
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.UpdateModel
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class DiscordRoleUpdateModel implements UpdateModel<DiscordRoleModel> {
-    private String nameSchema;
-    private Boolean verifiedRole;
+class DiscordRoleUpdateModel(
+    nameSchema: String?,
+    var verifiedRole: Boolean?
+) : UpdateModel<DiscordRoleModel> {
+    var nameSchema = nameSchema
+        set(value) {
+            resetNameSchema = value == null
+            field = value
+        }
 
-    @Override
-    public DiscordRoleModel apply(DiscordRoleModel model) {
+    var resetNameSchema = false
+        private set
+
+    /*override fun apply(model: DiscordRoleModel): DiscordRoleModel {
         if (nameSchema != null) {
-            model.setNameSchema(nameSchema);
+            model.setNameSchema(nameSchema)
         }
 
         if (verifiedRole != null) {
-            model.setVerifiedRole(verifiedRole);
+            model.setVerifiedRole(verifiedRole)
         }
 
-        return model;
-    }
+        return model
+    }*/
 
-    public String toJson() {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .toJson(this);
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(DiscordRoleUpdateModel::class.java).toJson(this)
     }
 }

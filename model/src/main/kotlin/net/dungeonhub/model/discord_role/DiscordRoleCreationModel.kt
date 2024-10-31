@@ -1,24 +1,14 @@
-package net.dungeonhub.model.discord_role;
+package net.dungeonhub.model.discord_role
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.CreationModel;
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.CreationModel
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class DiscordRoleCreationModel implements CreationModel {
-    private long id;
-    private String nameSchema;
-    private boolean verifiedRole;
-
-    public String toJson() {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .toJson(this);
+class DiscordRoleCreationModel(
+    var id: Long,
+    var nameSchema: String? = null,
+    var verifiedRole: Boolean? = null
+) : CreationModel {
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(DiscordRoleCreationModel::class.java).toJson(this)
     }
 }

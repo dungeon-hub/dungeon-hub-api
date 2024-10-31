@@ -1,75 +1,105 @@
-package net.dungeonhub.model.carry_tier;
+package net.dungeonhub.model.carry_tier
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.UpdateModel;
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.UpdateModel
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class CarryTierUpdateModel implements UpdateModel<CarryTierModel> {
-    private Long category;
-    private Long priceChannel;
-    private String descriptiveName;
-    private String thumbnailUrl;
-    private String priceTitle;
-    private String priceDescription;
-    private String displayName;
+class CarryTierUpdateModel(
+    var displayName: String?,
+    category: Long?,
+    priceChannel: Long?,
+    descriptiveName: String?,
+    thumbnailUrl: String?,
+    priceTitle: String?,
+    priceDescription: String?
+) : UpdateModel<CarryTierModel> {
+    var category = category
+        set(value) {
+            field = value
+            resetCategory = value == null
+        }
 
-    public static CarryTierUpdateModel fromCarryTier(CarryTierModel carryTier) {
-        return new CarryTierUpdateModel(carryTier.getCategory().orElse(null),
-                carryTier.getPriceChannel().orElse(null),
-                carryTier.getActualDescriptiveName().orElse(null),
-                carryTier.getThumbnailUrl().orElse(null), carryTier.getActualPriceTitle().orElse(null),
-                carryTier.getPriceDescription().orElse(null), carryTier.getDisplayName());
-    }
+    var priceChannel = priceChannel
+        set(value) {
+            field = value
+            resetPriceChannel = value == null
+        }
 
-    public static CarryTierUpdateModel fromJson(String json) {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .fromJson(json, CarryTierUpdateModel.class);
-    }
+    var descriptiveName = descriptiveName
+        set(value) {
+            field = value
+            resetDescriptiveName = value == null
+        }
 
-    public String toJson() {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .toJson(this);
-    }
+    var thumbnailUrl = thumbnailUrl
+        set(value) {
+            field = value
+            resetThumbnailUrl = value == null
+        }
 
-    @Override
-    public CarryTierModel apply(CarryTierModel model) {
+    var priceTitle = priceTitle
+        set(value) {
+            field = value
+            resetPriceTitle = value == null
+        }
+
+    var priceDescription = priceDescription
+        set(value) {
+            field = value
+            resetPriceDescription = value == null
+        }
+
+    var resetCategory = false
+        private set
+    var resetPriceChannel = false
+        private set
+    var resetDescriptiveName = false
+        private set
+    var resetThumbnailUrl = false
+        private set
+    var resetPriceTitle = false
+        private set
+    var resetPriceDescription = false
+        private set
+
+    /*override fun apply(model: CarryTierModel): CarryTierModel {
         if (category != null) {
-            model.setCategory(category);
+            model.setCategory(category)
         }
 
         if (priceChannel != null) {
-            model.setPriceChannel(priceChannel);
+            model.setPriceChannel(priceChannel)
         }
 
         if (descriptiveName != null) {
-            model.setDescriptiveName(descriptiveName);
+            model.setDescriptiveName(descriptiveName)
         }
 
         if (thumbnailUrl != null) {
-            model.setThumbnailUrl(thumbnailUrl);
+            model.setThumbnailUrl(thumbnailUrl)
         }
 
         if (priceTitle != null) {
-            model.setPriceTitle(priceTitle);
+            model.setPriceTitle(priceTitle)
         }
 
         if (priceDescription != null) {
-            model.setPriceDescription(priceDescription);
+            model.setPriceDescription(priceDescription)
         }
 
         if (displayName != null) {
-            model.setDisplayName(displayName);
+            model.setDisplayName(displayName)
         }
 
-        return model;
+        return model
+    }*/
+
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(CarryTierUpdateModel::class.java).toJson(this)
+    }
+
+    companion object {
+        fun fromJson(json: String): CarryTierUpdateModel {
+            return MoshiService.moshi.adapter(CarryTierUpdateModel::class.java).fromJson(json)!!
+        }
     }
 }

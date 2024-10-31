@@ -1,18 +1,14 @@
-package net.dungeonhub.model.discord_user;
+package net.dungeonhub.model.discord_user
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.entity.model.CreationModel;
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.CreationModel
+import java.util.*
 
-import java.util.UUID;
-
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class DiscordUserCreationModel implements CreationModel {
-    private long id;
-    private UUID minecraftId;
+class DiscordUserCreationModel(
+    var id: Long,
+    var minecraftId: UUID? = null
+) : CreationModel {
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(DiscordUserCreationModel::class.java).toJson(this)
+    }
 }

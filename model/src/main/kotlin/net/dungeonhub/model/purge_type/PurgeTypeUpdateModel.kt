@@ -1,27 +1,20 @@
-package net.dungeonhub.model.purge_type;
+package net.dungeonhub.model.purge_type
 
-import lombok.Getter;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.UpdateModel;
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.UpdateModel
 
-@Getter
-@Setter
-public class PurgeTypeUpdateModel implements UpdateModel<PurgeTypeModel> {
-    private String displayName;
-
-    @Override
-    public PurgeTypeModel apply(PurgeTypeModel purgeTypeModel) {
+class PurgeTypeUpdateModel(
+    var displayName: String?
+) : UpdateModel<PurgeTypeModel> {
+    /*override fun apply(purgeTypeModel: PurgeTypeModel): PurgeTypeModel {
         if (displayName != null) {
-            purgeTypeModel.setDisplayName(displayName);
+            purgeTypeModel.setDisplayName(displayName)
         }
 
-        return purgeTypeModel;
-    }
+        return purgeTypeModel
+    }*/
 
-    public String toJson() {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .toJson(this);
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(PurgeTypeUpdateModel::class.java).toJson(this)
     }
 }

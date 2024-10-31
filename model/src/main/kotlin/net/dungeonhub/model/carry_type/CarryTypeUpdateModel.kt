@@ -1,42 +1,60 @@
-package net.dungeonhub.model.carry_type;
+package net.dungeonhub.model.carry_type
 
-import lombok.Getter;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.UpdateModel;
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.UpdateModel
 
-@Getter
-@Setter
-public class CarryTypeUpdateModel implements UpdateModel<CarryTypeModel> {
-    private String displayName;
-    private Long logChannel;
-    private Long leaderboardChannel;
-    private Boolean eventActive;
-
-    @Override
-    public CarryTypeModel apply(CarryTypeModel carryTypeModel) {
-        if(displayName != null) {
-            carryTypeModel.setDisplayName(displayName);
+class CarryTypeUpdateModel(
+    var displayName: String?,
+    logChannel: Long?,
+    leaderboardChannel: Long?,
+    eventActive: Boolean?
+) : UpdateModel<CarryTypeModel> {
+    var logChannel = logChannel
+        set(value) {
+            field = value
+            resetLogChannel = value == null
         }
 
-        if(logChannel != null) {
-            carryTypeModel.setLogChannel(logChannel);
+    var leaderboardChannel = leaderboardChannel
+        set(value) {
+            field = value
+            resetLeaderboardChannel = value == null
         }
 
-        if(leaderboardChannel != null) {
-            carryTypeModel.setLeaderboardChannel(leaderboardChannel);
+    var eventActive = eventActive
+        set(value) {
+            field = value
+            resetEventActive = value == null
         }
 
-        if(eventActive != null) {
-            carryTypeModel.setEventActive(eventActive);
+    var resetLogChannel = false
+        private set
+    var resetLeaderboardChannel = false
+        private set
+    var resetEventActive = false
+        private set
+
+    /*override fun apply(carryTypeModel: CarryTypeModel): CarryTypeModel {
+        if (displayName != null) {
+            carryTypeModel.setDisplayName(displayName)
         }
 
-        return carryTypeModel;
-    }
+        if (logChannel != null) {
+            carryTypeModel.setLogChannel(logChannel)
+        }
 
-    public String toJson() {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .toJson(this);
+        if (leaderboardChannel != null) {
+            carryTypeModel.setLeaderboardChannel(leaderboardChannel)
+        }
+
+        if (eventActive != null) {
+            carryTypeModel.setEventActive(eventActive)
+        }
+
+        return carryTypeModel
+    }*/
+
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(CarryTypeUpdateModel::class.java).toJson(this)
     }
 }

@@ -1,58 +1,48 @@
-package net.dungeonhub.model.cnt_request;
+package net.dungeonhub.model.cnt_request
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.UpdateModel;
-import me.taubsie.dungeonhub.common.model.discord_user.DiscordUserModel;
+import net.dungeonhub.model.discord_user.DiscordUserModel
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.UpdateModel
 
-import javax.annotation.Nullable;
-
-@Getter
-@Setter
-@AllArgsConstructor
-@Builder
-public class CntRequestUpdateModel implements UpdateModel<CntRequestModel> {
-    //TODO discuss -> needs to be changable?
-    //private long messageId;
-    @Nullable
-    private DiscordUserModel claimer;
-    private boolean removeClaimer;
-    @Nullable
-    private String coinValue;
-    @Nullable
-    private String description;
-    @Nullable
-    private String requirement;
-
-    @Override
-    public CntRequestModel apply(CntRequestModel model) {
-        if(removeClaimer) {
-            model.setClaimer(null);
+class CntRequestUpdateModel(
+    claimer: DiscordUserModel?,
+    var coinValue: String?,
+    var description: String?,
+    var requirement: String?
+) : UpdateModel<CntRequestModel> {
+    var claimer = claimer
+        set(value) {
+            resetClaimer = value == null
+            field = value
         }
 
-        if(claimer != null) {
-            model.setClaimer(claimer);
+    var resetClaimer = false
+        private set
+    /*override fun apply(model: CntRequestModel): CntRequestModel {
+        if (removeClaimer) {
+            model.setClaimer(null)
         }
 
-        if(coinValue != null) {
-            model.setCoinValue(coinValue);
+        if (claimer != null) {
+            model.setClaimer(claimer)
         }
 
-        if(description != null) {
-            model.setDescription(description);
+        if (coinValue != null) {
+            model.setCoinValue(coinValue)
         }
 
-        if(requirement != null) {
-            model.setRequirement(requirement);
+        if (description != null) {
+            model.setDescription(description)
         }
 
-        return model;
-    }
+        if (requirement != null) {
+            model.setRequirement(requirement)
+        }
 
-    public String toJson() {
-        return DungeonHubService.getInstance().getGson().toJson(this);
+        return model
+    }*/
+
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(CntRequestUpdateModel::class.java).toJson(this)
     }
 }

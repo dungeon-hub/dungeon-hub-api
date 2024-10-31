@@ -1,29 +1,19 @@
-package net.dungeonhub.model.carry_tier;
+package net.dungeonhub.model.carry_tier
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.CreationModel;
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.CreationModel
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class CarryTierCreationModel implements CreationModel {
-    private String identifier;
-    private String displayName;
-    private Long category;
-    private Long priceChannel;
-    private String descriptiveName;
-    private String thumbnailUrl;
-    private String priceTitle;
-    private String priceDescription;
-
-    public String toJson() {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .toJson(this);
+class CarryTierCreationModel(
+    var identifier: String,
+    var displayName: String,
+    var category: Long? = null,
+    var priceChannel: Long? = null,
+    var descriptiveName: String? = null,
+    var thumbnailUrl: String? = null,
+    var priceTitle: String? = null,
+    var priceDescription: String? = null,
+) : CreationModel {
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(CarryTierCreationModel::class.java).toJson(this)
     }
 }

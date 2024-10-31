@@ -8,7 +8,7 @@ import net.dungeonhub.structure.model.Model
 
 class ScoreModel(
     val carrier: DiscordUserModel,
-    val carryType: CarryTypeModel,
+    val carryType: CarryTypeModel?,
     val scoreType: ScoreType,
     val scoreAmount: Long?
 ) : Model {

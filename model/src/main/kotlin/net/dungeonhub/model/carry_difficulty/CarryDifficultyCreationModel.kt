@@ -5,10 +5,10 @@ import net.dungeonhub.structure.model.CreationModel
 class CarryDifficultyCreationModel(
     var identifier: String,
     var displayName: String,
-    var thumbnailUrl: String?,
-    var bulkPrice: Int?,
-    var bulkAmount: Int?,
-    var priceName: String?,
-    var price: Int?,
-    var score: Int?
+    var thumbnailUrl: String? = null,
+    var bulkPrice: Int? = null,
+    var bulkAmount: Int? = null,
+    var priceName: String? = null,
+    var price: Int,
+    var score: Int
 ) : CreationModel

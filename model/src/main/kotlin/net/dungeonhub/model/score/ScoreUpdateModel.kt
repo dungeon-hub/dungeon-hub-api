@@ -1,22 +1,13 @@
-package net.dungeonhub.model.score;
+package net.dungeonhub.model.score
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.UpdateModel
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Getter
-@Setter
-public class ScoreUpdateModel {
-    private long id;
-    private long amount;
-
-    public String toJson() {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .toJson(this);
+class ScoreUpdateModel(
+    val id: Long,
+    var amount: Long
+) : UpdateModel<ScoreModel> {
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(ScoreUpdateModel::class.java).toJson(this)
     }
 }

@@ -1,44 +1,34 @@
-package net.dungeonhub.model.discord_user;
+package net.dungeonhub.model.discord_user
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.UpdateModel;
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.UpdateModel
+import java.util.*
 
-import java.util.UUID;
+class DiscordUserUpdateModel(
+    minecraftId: UUID?
+) : UpdateModel<DiscordUserModel> {
+    var minecraftId = minecraftId
+        set(value) {
+            field = value
+            removeMinecraftId = value == null
+        }
 
-@Getter
-@Setter
-@NoArgsConstructor
-public class DiscordUserUpdateModel implements UpdateModel<DiscordUserModel> {
-    private UUID minecraftId;
-    private boolean removeMinecraftId = false;
+    var removeMinecraftId = false
+        private set
 
-    public DiscordUserUpdateModel(UUID minecraftId) {
-        this.minecraftId = minecraftId;
-    }
-
-    public DiscordUserUpdateModel(boolean removeMinecraftId) {
-        this.removeMinecraftId = removeMinecraftId;
-    }
-
-    @Override
-    public DiscordUserModel apply(DiscordUserModel model) {
+    /*override fun apply(model: DiscordUserModel): DiscordUserModel {
         if (removeMinecraftId) {
-            model.setMinecraftId(null);
+            model.setMinecraftId(null)
         }
 
         if (minecraftId != null) {
-            model.setMinecraftId(minecraftId);
+            model.setMinecraftId(minecraftId)
         }
 
-        return model;
-    }
+        return model
+    }*/
 
-    public String toJson() {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .toJson(this);
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(DiscordUserUpdateModel::class.java).toJson(this)
     }
 }

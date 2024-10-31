@@ -1,30 +1,19 @@
-package net.dungeonhub.model.cnt_request;
+package net.dungeonhub.model.cnt_request
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import me.taubsie.dungeonhub.common.DungeonHubService;
-import me.taubsie.dungeonhub.common.entity.model.CreationModel;
+import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.CreationModel
+import java.time.Instant
 
-import javax.annotation.Nullable;
-import java.time.Instant;
-
-@Getter
-@Setter
-@AllArgsConstructor
-public class CntRequestCreationModel implements CreationModel {
-    private long messageId;
-    private Long user;
-    @Nullable
-    private Long claimer;
-    private Instant time;
-    private String coinValue;
-    private String description;
-    private String requirement;
-
-    public String toJson() {
-        return DungeonHubService.getInstance()
-                .getGson()
-                .toJson(this);
+class CntRequestCreationModel(
+    var messageId: Long,
+    var user: Long,
+    var claimer: Long? = null,
+    var time: Instant,
+    var coinValue: String,
+    var description: String,
+    var requirement: String
+) : CreationModel {
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(CntRequestCreationModel::class.java).toJson(this)
     }
 }
