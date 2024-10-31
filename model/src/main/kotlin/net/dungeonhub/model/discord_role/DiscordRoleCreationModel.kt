@@ -6,7 +6,7 @@ import net.dungeonhub.structure.model.CreationModel
 class DiscordRoleCreationModel(
     var id: Long,
     var nameSchema: String? = null,
-    var verifiedRole: Boolean? = null
+    var verifiedRole: Boolean = false
 ) : CreationModel {
     fun toJson(): String {
         return MoshiService.moshi.adapter(DiscordRoleCreationModel::class.java).toJson(this)
