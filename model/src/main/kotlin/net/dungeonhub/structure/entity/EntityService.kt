@@ -1,10 +1,10 @@
 package net.dungeonhub.structure.entity
 
+import net.dungeonhub.expections.EntityUnknownException
 import net.dungeonhub.structure.model.CreationModel
+import net.dungeonhub.structure.model.InitializeModel
 import net.dungeonhub.structure.model.Model
 import net.dungeonhub.structure.model.UpdateModel
-import net.dungeonhub.expections.EntityUnknownException
-import net.dungeonhub.structure.model.InitializeModel
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
 import java.util.*
@@ -42,19 +42,6 @@ interface EntityService<E : Entity<M>, M : Model, C : CreationModel, I : Initial
         return toModel().apply(saveEntity(entity))
     }
 
-    fun update(id: Long, updateModel: U): E {
-        try {
-            return loadEntityById(id)
-                .map { entity -> updateEntity(entity, updateModel) }
-                .map { saveEntity(it) }
-                .orElseThrow { EntityUnknownException(id) }
-        } catch (exception: NumberFormatException) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST)
-        } catch (exception: UnsupportedOperationException) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST)
-        }
-    }
-
     fun update(entity: E, updateModel: U): E {
         try {
             return saveEntity(updateEntity(entity, updateModel))
@@ -65,5 +52,18 @@ interface EntityService<E : Entity<M>, M : Model, C : CreationModel, I : Initial
         }
     }
 
+    fun update(id: Long, updateModel: U): E {
+        return loadEntityById(id)
+            .map { entity -> update(entity, updateModel) }
+            .orElseThrow { EntityUnknownException(id) }
+    }
+
+    /**
+     * This function should be implemented by the respective service to update the entity with the values given in the update model.
+     * If you want to update the entity, please use [update] instead, as that function filters some common exceptions already.
+     *
+     * @param entity The entity to be updated
+     * @param updateModel The model containing the values to be updated
+     */
     fun updateEntity(entity: E, updateModel: U): E
 }
