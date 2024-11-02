@@ -14,12 +14,29 @@ description = "The model classes that are used in the Dungeon Hub API."
 
 repositories {
     mavenCentral()
+
+    maven {
+        url = uri("https://repo.kordex.dev/releases")
+        name = "KordEx (Releases)"
+    }
+    maven {
+        url = uri("https://repo.kordex.dev/snapshots")
+        name = "KordEx (Snapshots)"
+    }
+    maven {
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+        name = "Sonatype Snapshots (Legacy)"
+    }
 }
 
 dependencies {
-    implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
-
+    //Moshi, the JSON library
+    api("com.squareup.moshi:moshi-kotlin:1.15.1")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
+
+    //Used frameworks for compatible classes
+    implementation("dev.kordex:kord-extensions:2.2.1-SNAPSHOT")
+    implementation("org.springframework:spring-web:6.1.12")
 
     testImplementation(platform("org.junit:junit-bom:5.10.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
@@ -72,6 +89,9 @@ tasks.test {
 
 kotlin {
     jvmToolchain(17)
+    compilerOptions {
+        freeCompilerArgs.add("-Xjvm-default=all")
+    }
 }
 
 java {
