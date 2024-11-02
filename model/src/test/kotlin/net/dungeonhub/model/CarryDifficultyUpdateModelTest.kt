@@ -21,23 +21,20 @@ class CarryDifficultyUpdateModelTest {
             1
         )
 
-        val resetThumbnailUrl = carryDifficultyUpdateModel.javaClass.getDeclaredField("resetThumbnailUrl")
-        resetThumbnailUrl.trySetAccessible()
-
         assertEquals("thumbnailUrl", carryDifficultyUpdateModel.thumbnailUrl)
-        assertEquals(false, resetThumbnailUrl.getBoolean(carryDifficultyUpdateModel))
+        assertEquals(false, carryDifficultyUpdateModel.resetThumbnailUrl)
 
         carryDifficultyUpdateModel.thumbnailUrl = null
 
         assertEquals(null, carryDifficultyUpdateModel.thumbnailUrl)
-        assertEquals(true, resetThumbnailUrl.getBoolean(carryDifficultyUpdateModel))
+        assertEquals(true, carryDifficultyUpdateModel.resetThumbnailUrl)
 
         val json = carryDifficultyUpdateModel.toJson()
 
         val newObject = CarryDifficultyUpdateModel.fromJson(json)
 
         assertEquals(null, newObject.thumbnailUrl)
-        assertEquals(true, resetThumbnailUrl.getBoolean(newObject))
+        assertEquals(true, newObject.resetThumbnailUrl)
     }
 
     @Test
@@ -76,12 +73,14 @@ class CarryDifficultyUpdateModelTest {
 
         val updateModel = carryDifficultyModel.getUpdateModel()
 
-        assertEquals(carryDifficultyModel.displayName, updateModel.displayName)
-        assertEquals(carryDifficultyModel.thumbnailUrl, updateModel.thumbnailUrl)
-        assertEquals(carryDifficultyModel.bulkPrice, updateModel.bulkPrice)
-        assertEquals(carryDifficultyModel.bulkAmount, updateModel.bulkAmount)
-        assertEquals(carryDifficultyModel.priceName, updateModel.priceName)
-        assertEquals(carryDifficultyModel.price, updateModel.price)
-        assertEquals(carryDifficultyModel.score, updateModel.score)
+        assertEquals(null, updateModel.displayName)
+        assertEquals(null, updateModel.thumbnailUrl)
+        assertEquals(null, updateModel.bulkPrice)
+        assertEquals(null, updateModel.bulkAmount)
+        assertEquals(null, updateModel.priceName)
+        assertEquals(null, updateModel.price)
+        assertEquals(null, updateModel.score)
+
+        updateModel.thumbnailUrl = null
     }
 }
