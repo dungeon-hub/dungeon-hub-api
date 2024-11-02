@@ -8,15 +8,15 @@ import net.dungeonhub.structure.model.Model
 import java.time.Instant
 
 class DetailedWarningModel(
-    private val id: Long,
-    private val server: DiscordServerModel,
-    private val user: DiscordUserModel,
-    private val striker: DiscordUserModel,
-    private val warningType: WarningType,
-    private val reason: String?,
-    private val active: Boolean,
-    private val time: Instant,
-    private val evidences: List<WarningEvidenceModel>
+    val id: Long,
+    val server: DiscordServerModel,
+    val user: DiscordUserModel,
+    val striker: DiscordUserModel,
+    val warningType: WarningType,
+    val reason: String?,
+    val active: Boolean,
+    val time: Instant,
+    val evidences: List<WarningEvidenceModel>
 ) : Model {
     companion object {
         fun fromJson(json: String): DetailedWarningModel {

@@ -2,7 +2,7 @@ package net.dungeonhub.model.carry_type
 
 import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.service.MoshiService
-import net.dungeonhub.structure.model.Model
+import net.dungeonhub.structure.model.UpdateableModel
 
 class CarryTypeModel(
     val id: Long,
@@ -12,7 +12,7 @@ class CarryTypeModel(
     logChannel: Long?,
     leaderboardChannel: Long?,
     isEventActive: Boolean?
-) : Model {
+) : UpdateableModel<CarryTypeUpdateModel, CarryTypeModel> {
     val isEventActive = isEventActive
         get() = java.lang.Boolean.TRUE == field
 
@@ -21,6 +21,10 @@ class CarryTypeModel(
 
     val leaderboardChannel = leaderboardChannel
         get() = (if (field != null && field > 0L) field else null)
+
+    override fun getUpdateModel(): CarryTypeUpdateModel {
+        return CarryTypeUpdateModel(null, null, null, null)
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

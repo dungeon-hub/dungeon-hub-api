@@ -41,15 +41,7 @@ class CarryDifficultyModel(
     }
 
     override fun getUpdateModel(): CarryDifficultyUpdateModel {
-        return CarryDifficultyUpdateModel(
-            displayName = displayName,
-            thumbnailUrl = thumbnailUrl,
-            bulkPrice = bulkPrice,
-            bulkAmount = bulkAmount,
-            priceName = priceName,
-            price = price,
-            score = score
-        )
+        return CarryDifficultyUpdateModel(null, null, null, null, null, null, null)
     }
 
     override fun equals(other: Any?): Boolean {

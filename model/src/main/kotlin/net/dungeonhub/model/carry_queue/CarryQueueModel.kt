@@ -1,10 +1,10 @@
 package net.dungeonhub.model.carry_queue
 
-import net.dungeonhub.structure.model.Model
 import net.dungeonhub.enums.QueueStep
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
 import net.dungeonhub.model.discord_user.DiscordUserModel
 import net.dungeonhub.service.MoshiService
+import net.dungeonhub.structure.model.UpdateableModel
 import java.time.Instant
 
 class CarryQueueModel(
@@ -17,7 +17,7 @@ class CarryQueueModel(
     val relationId: Long?,
     val attachmentLink: String?,
     val time: Instant?
-) : Model {
+) : UpdateableModel<CarryQueueUpdateModel, CarryQueueModel> {
     val carryTier = carryDifficulty.carryTier
 
     val carryType = carryTier.carryType
@@ -32,5 +32,9 @@ class CarryQueueModel(
         fun fromJson(json: String): CarryQueueModel {
             return MoshiService.moshi.adapter(CarryQueueModel::class.java).fromJson(json)!!
         }
+    }
+
+    override fun getUpdateModel(): CarryQueueUpdateModel {
+        return CarryQueueUpdateModel(null, null, null, null, null, null, null, null, null)
     }
 }
