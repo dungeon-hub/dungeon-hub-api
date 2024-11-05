@@ -4,5 +4,4 @@ plugins {
 rootProject.name = "dungeon-hub-api"
 
 include(":model")
-//TODO uncomment
-//include(":client")
+include(":client")
