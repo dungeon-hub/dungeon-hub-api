@@ -9,7 +9,7 @@ plugins {
 
 group = "net.dungeon-hub.api"
 val artifactId = "model"
-version = "0.1"
+version = "0.1.1"
 description = "The model classes that are used in the Dungeon Hub API."
 
 repositories {
@@ -33,6 +33,9 @@ dependencies {
     //Moshi, the JSON library
     api("com.squareup.moshi:moshi-kotlin:1.15.1")
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
+
+    //Gson, used for compatibility purposes
+    api("com.google.code.gson:gson:2.11.0")
 
     //Used frameworks for compatible classes
     implementation("dev.kordex:kord-extensions:2.2.1-SNAPSHOT")
