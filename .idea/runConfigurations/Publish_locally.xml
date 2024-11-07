@@ -10,7 +10,8 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="publishToMavenLocal" />
+          <option value="model:publishToMavenLocal" />
+          <option value="client:publishToMavenLocal" />
         </list>
       </option>
       <option name="vmOptions" />
