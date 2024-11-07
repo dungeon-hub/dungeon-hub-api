@@ -16,13 +16,13 @@ import java.time.Instant
  * For new services, prefer using Moshi.
  */
 object GsonService {
-    @Deprecated("Use MoshiService.moshi instead", replaceWith = ReplaceWith("MoshiService.moshi"))
+    @Deprecated("Use MoshiService.moshi instead", replaceWith = ReplaceWith("net.dungeonhub.service.MoshiService.moshi"))
     val gson: Gson = GsonBuilder()
         .registerTypeAdapter(Instant::class.java, InstantTypeAdapter())
         .registerTypeAdapter(Color::class.java, ColorTypeAdapter())
         .create()
 
-    class InstantTypeAdapter : TypeAdapter<Instant>() {
+    private class InstantTypeAdapter : TypeAdapter<Instant>() {
         @Throws(IOException::class)
         override fun write(jsonWriter: JsonWriter, instant: Instant?) {
             if (instant == null) {
@@ -44,7 +44,7 @@ object GsonService {
         }
     }
 
-    class ColorTypeAdapter : TypeAdapter<Color>() {
+    private class ColorTypeAdapter : TypeAdapter<Color>() {
         @Throws(IOException::class)
         override fun write(jsonWriter: JsonWriter, color: Color?) {
             if (color == null) {
