@@ -14,9 +14,35 @@ description = "A client library written in Kotlin to simplify the integration of
 
 repositories {
     mavenCentral()
+
+    maven {
+        url = uri("https://repo.kordex.dev/releases")
+        name = "KordEx (Releases)"
+    }
+    maven {
+        url = uri("https://repo.kordex.dev/snapshots")
+        name = "KordEx (Snapshots)"
+    }
+    maven {
+        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
+        name = "Sonatype Snapshots (Legacy)"
+    }
 }
 
 dependencies {
+    //Model classes
+    api(project(":model"))
+
+    //Logging
+    api("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
+
+    //HTTP Client
+    api("com.squareup.okhttp3:okhttp:4.10.0")
+
+    //Used frameworks for compatible classes
+    implementation("dev.kordex:kord-extensions:2.2.1-SNAPSHOT")
+
+    //Tests
     testImplementation(kotlin("test"))
 }
 
@@ -66,6 +92,9 @@ tasks.test {
 
 kotlin {
     jvmToolchain(17)
+    compilerOptions {
+        freeCompilerArgs.add("-Xjvm-default=all")
+    }
 }
 
 java {

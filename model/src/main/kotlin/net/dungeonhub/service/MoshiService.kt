@@ -1,23 +1,14 @@
 package net.dungeonhub.service
 
-import com.squareup.moshi.*
+import com.squareup.moshi.JsonAdapter
+import com.squareup.moshi.JsonReader
+import com.squareup.moshi.JsonWriter
+import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
-import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
-import net.dungeonhub.model.carry_queue.CarryQueueModel
-import net.dungeonhub.model.carry_tier.CarryTierModel
-import net.dungeonhub.model.carry_type.CarryTypeModel
-import net.dungeonhub.model.discord_role.DiscordRoleModel
-import net.dungeonhub.model.discord_role_group.DiscordRoleGroupModel
-import net.dungeonhub.model.discord_server.DiscordServerModel
-import net.dungeonhub.model.discord_user.DiscordUserModel
-import net.dungeonhub.model.purge_type.PurgeTypeModel
-import net.dungeonhub.model.score.ScoreModel
-import net.dungeonhub.model.warning.DetailedWarningModel
 import java.awt.Color
 import java.time.Instant
 import java.util.*
 
-@OptIn(ExperimentalStdlibApi::class)
 object MoshiService {
     //TODO add type adapter for kord embeds ?
     val moshi: Moshi = Moshi.Builder()
@@ -26,18 +17,6 @@ object MoshiService {
         .add(UUID::class.java, UUIDAdapter())
         .addLast(KotlinJsonAdapterFactory())
         .build()
-
-    val carryTypeListMoshi = moshi.adapter<List<CarryTypeModel>>()
-    val carryTierListMoshi = moshi.adapter<List<CarryTierModel>>()
-    val carryDifficultyListMoshi = moshi.adapter<List<CarryDifficultyModel>>()
-    val carryQueueSetMoshi = moshi.adapter<Set<CarryQueueModel>>()
-    val detailedWarningListMoshi = moshi.adapter<List<DetailedWarningModel>>()
-    val discordRoleListMoshi = moshi.adapter<List<DiscordRoleModel>>()
-    val discordRoleGroupListMoshi = moshi.adapter<List<DiscordRoleGroupModel>>()
-    val discordServerListMoshi = moshi.adapter<List<DiscordServerModel>>()
-    val discordUserListMoshi = moshi.adapter<List<DiscordUserModel>>()
-    val purgeTypeListMoshi = moshi.adapter<List<PurgeTypeModel>>()
-    val scoreListMoshi = moshi.adapter<List<ScoreModel>>()
 
     class InstantAdapter : JsonAdapter<Instant>() {
         override fun toJson(writer: JsonWriter, instant: Instant?) {
