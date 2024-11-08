@@ -16,18 +16,6 @@ class DiscordUserUpdateModel(
     var removeMinecraftId = false
         private set
 
-    /*override fun apply(model: DiscordUserModel): DiscordUserModel {
-        if (removeMinecraftId) {
-            model.setMinecraftId(null)
-        }
-
-        if (minecraftId != null) {
-            model.setMinecraftId(minecraftId)
-        }
-
-        return model
-    }*/
-
     fun toJson(): String {
         return MoshiService.moshi.adapter(DiscordUserUpdateModel::class.java).toJson(this)
     }

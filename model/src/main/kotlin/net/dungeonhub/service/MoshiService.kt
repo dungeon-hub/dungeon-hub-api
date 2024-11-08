@@ -41,7 +41,7 @@ object MoshiService {
 
     class InstantAdapter : JsonAdapter<Instant>() {
         override fun toJson(writer: JsonWriter, instant: Instant?) {
-            if(instant == null) {
+            if (instant == null) {
                 writer.nullValue()
                 return
             }
@@ -50,7 +50,7 @@ object MoshiService {
         }
 
         override fun fromJson(reader: JsonReader): Instant? {
-            if(reader.peek() == JsonReader.Token.NULL) {
+            if (reader.peek() == JsonReader.Token.NULL) {
                 reader.nextNull<Instant>()
                 return null
             }
@@ -61,18 +61,22 @@ object MoshiService {
 
     class ColorAdapter : JsonAdapter<Color>() {
         override fun toJson(writer: JsonWriter, color: Color?) {
-            if(color == null) {
+            if (color == null) {
                 writer.nullValue()
                 return
             }
 
-            writer.value("#${Integer.toHexString(
-                color.red * 256 * 256 + color.green * 256 + color.blue
-            ).uppercase()}")
+            writer.value(
+                "#${
+                    Integer.toHexString(
+                        color.red * 256 * 256 + color.green * 256 + color.blue
+                    ).uppercase()
+                }"
+            )
         }
 
         override fun fromJson(reader: JsonReader): Color? {
-            if(reader.peek() == JsonReader.Token.NULL) {
+            if (reader.peek() == JsonReader.Token.NULL) {
                 reader.nextNull<Color>()
                 return null
             }
@@ -81,7 +85,7 @@ object MoshiService {
 
             //If the String doesn't start with a # this wasn't encoded with this adapter
             // --> This might have come from the old library and is just not hex encoded
-            if(!hexString.startsWith("#")) {
+            if (!hexString.startsWith("#")) {
                 return Color.decode(hexString)
             }
 
@@ -93,7 +97,7 @@ object MoshiService {
 
     class UUIDAdapter : JsonAdapter<UUID>() {
         override fun toJson(writer: JsonWriter, uuid: UUID?) {
-            if(uuid == null) {
+            if (uuid == null) {
                 writer.nullValue()
                 return
             }
@@ -102,7 +106,7 @@ object MoshiService {
         }
 
         override fun fromJson(reader: JsonReader): UUID? {
-            if(reader.peek() == JsonReader.Token.NULL) {
+            if (reader.peek() == JsonReader.Token.NULL) {
                 reader.nextNull<UUID>()
                 return null
             }

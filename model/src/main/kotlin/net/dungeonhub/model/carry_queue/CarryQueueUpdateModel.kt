@@ -43,42 +43,6 @@ class CarryQueueUpdateModel(
     var resetTime = false
         private set
 
-    /*override fun apply(carryQueueModel: CarryQueueModel): CarryQueueModel {
-        if (queueStep != null) {
-            carryQueueModel.setQueueStep(queueStep)
-        }
-
-        if (carrier != null) {
-            carryQueueModel.setCarrier(carrier)
-        }
-
-        if (player != null) {
-            carryQueueModel.setPlayer(player)
-        }
-
-        if (amount != null) {
-            carryQueueModel.setAmount(amount)
-        }
-
-        if (carryDifficulty != null) {
-            carryQueueModel.setCarryDifficulty(carryDifficulty)
-        }
-
-        if (relationId != null) {
-            carryQueueModel.setRelationId(relationId)
-        }
-
-        if (attachmentLink != null) {
-            carryQueueModel.setAttachmentLink(attachmentLink)
-        }
-
-        if (time != null) {
-            carryQueueModel.setTime(time)
-        }
-
-        return carryQueueModel
-    }*/
-
     fun toJson(): String {
         return MoshiService.moshi.adapter(CarryQueueUpdateModel::class.java).toJson(this)
     }

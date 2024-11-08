@@ -16,20 +16,4 @@ class WarningUpdateModel(
 
     var resetReason = false
         private set
-
-    /*override fun apply(model: WarningModel): WarningModel {
-        if (warningType != null) {
-            model.setWarningType(warningType)
-        }
-
-        if (reason != null) {
-            model.setReason(reason)
-        }
-
-        if (active != null) {
-            model.setActive(active)
-        }
-
-        return model
-    }*/
 }

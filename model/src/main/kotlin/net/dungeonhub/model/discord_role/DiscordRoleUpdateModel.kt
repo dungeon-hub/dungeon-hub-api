@@ -16,18 +16,6 @@ class DiscordRoleUpdateModel(
     var resetNameSchema = false
         private set
 
-    /*override fun apply(model: DiscordRoleModel): DiscordRoleModel {
-        if (nameSchema != null) {
-            model.setNameSchema(nameSchema)
-        }
-
-        if (verifiedRole != null) {
-            model.setVerifiedRole(verifiedRole)
-        }
-
-        return model
-    }*/
-
     fun toJson(): String {
         return MoshiService.moshi.adapter(DiscordRoleUpdateModel::class.java).toJson(this)
     }
