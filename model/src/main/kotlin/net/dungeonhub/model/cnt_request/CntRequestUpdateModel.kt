@@ -8,7 +8,8 @@ class CntRequestUpdateModel(
     claimer: DiscordUserModel?,
     var coinValue: String?,
     var description: String?,
-    var requirement: String?
+    var requirement: String?,
+    var completed: Boolean?
 ) : UpdateModel<CntRequestModel> {
     var claimer = claimer
         set(value) {
