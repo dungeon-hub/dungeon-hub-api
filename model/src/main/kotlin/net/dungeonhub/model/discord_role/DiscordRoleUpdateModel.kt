@@ -1,11 +1,12 @@
 package net.dungeonhub.model.discord_role
 
+import net.dungeonhub.enums.RoleAction
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.UpdateModel
 
 class DiscordRoleUpdateModel(
     nameSchema: String?,
-    var verifiedRole: Boolean?
+    var roleAction: RoleAction?
 ) : UpdateModel<DiscordRoleModel> {
     var nameSchema = nameSchema
         set(value) {
