@@ -34,26 +34,6 @@ class CarryTypeUpdateModel(
     var resetEventActive = false
         private set
 
-    /*override fun apply(carryTypeModel: CarryTypeModel): CarryTypeModel {
-        if (displayName != null) {
-            carryTypeModel.setDisplayName(displayName)
-        }
-
-        if (logChannel != null) {
-            carryTypeModel.setLogChannel(logChannel)
-        }
-
-        if (leaderboardChannel != null) {
-            carryTypeModel.setLeaderboardChannel(leaderboardChannel)
-        }
-
-        if (eventActive != null) {
-            carryTypeModel.setEventActive(eventActive)
-        }
-
-        return carryTypeModel
-    }*/
-
     fun toJson(): String {
         return MoshiService.moshi.adapter(CarryTypeUpdateModel::class.java).toJson(this)
     }

@@ -45,38 +45,6 @@ class CarryDifficultyUpdateModel(
     var resetPriceName = false
         private set
 
-    /*override fun apply(model: CarryDifficultyModel): CarryDifficultyModel {
-        if (displayName != null) {
-            model.setDisplayName(displayName)
-        }
-
-        if (thumbnailUrl != null) {
-            model.setThumbnailUrl(thumbnailUrl)
-        }
-
-        if (bulkPrice != null) {
-            model.setBulkPrice(bulkPrice)
-        }
-
-        if (bulkAmount != null) {
-            model.setBulkAmount(bulkAmount)
-        }
-
-        if (priceName != null) {
-            model.setPriceName(priceName)
-        }
-
-        if (price != null) {
-            model.setPrice(price)
-        }
-
-        if (score != null) {
-            model.setScore(score)
-        }
-
-        return model
-    }*/
-
     fun toJson(): String {
         return MoshiService.moshi.adapter(CarryDifficultyUpdateModel::class.java).toJson(this)
     }

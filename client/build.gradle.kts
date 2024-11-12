@@ -8,9 +8,9 @@ plugins {
 }
 
 group = "net.dungeon-hub.api"
-val artifactId = "model"
+val artifactId = "client"
 version = "0.3.0"
-description = "The model classes that are used in the Dungeon Hub API."
+description = "A client library written in Kotlin to simplify the integration of the Dungeon Hub API."
 
 repositories {
     mavenCentral()
@@ -30,19 +30,19 @@ repositories {
 }
 
 dependencies {
-    //Moshi, the JSON library
-    api("com.squareup.moshi:moshi-kotlin:1.15.1")
-    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
+    //Model classes
+    api(project(":model"))
 
-    //Gson, used for compatibility purposes
-    api("com.google.code.gson:gson:2.11.0")
+    //Logging
+    api("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
+
+    //HTTP Client
+    api("com.squareup.okhttp3:okhttp:4.10.0")
 
     //Used frameworks for compatible classes
     implementation("dev.kordex:kord-extensions:2.2.1-SNAPSHOT")
-    implementation("org.springframework:spring-web:6.1.12")
 
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    //Tests
     testImplementation(kotlin("test"))
 }
 

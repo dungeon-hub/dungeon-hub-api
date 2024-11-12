@@ -15,7 +15,8 @@ class CntRequestModel(
     val time: Instant,
     val coinValue: String,
     val description: String,
-    val requirement: String
+    val requirement: String,
+    val completed: Boolean
 ) : UpdateableModel<CntRequestUpdateModel, CntRequestModel> {
     companion object {
         fun fromJson(json: String): CntRequestModel {
@@ -24,6 +25,6 @@ class CntRequestModel(
     }
 
     override fun getUpdateModel(): CntRequestUpdateModel {
-        return CntRequestUpdateModel(null, null, null, null)
+        return CntRequestUpdateModel(null, null, null, null, null)
     }
 }
