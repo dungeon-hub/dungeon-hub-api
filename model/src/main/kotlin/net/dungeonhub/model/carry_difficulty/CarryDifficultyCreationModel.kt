@@ -1,5 +1,6 @@
 package net.dungeonhub.model.carry_difficulty
 
+import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.CreationModel
 
 class CarryDifficultyCreationModel(
@@ -11,4 +12,8 @@ class CarryDifficultyCreationModel(
     var priceName: String? = null,
     var price: Int,
     var score: Int
-) : CreationModel
+) : CreationModel {
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(CarryDifficultyCreationModel::class.java).toJson(this)
+    }
+}

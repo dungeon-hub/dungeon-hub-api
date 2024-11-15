@@ -1,10 +1,10 @@
 package net.dungeonhub.connection
 
 import com.squareup.moshi.adapter
+import net.dungeonhub.model.carry_difficulty.CarryDifficultyCreationModel
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyUpdateModel
 import net.dungeonhub.model.carry_tier.CarryTierModel
-import net.dungeonhub.service.MoshiService
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
@@ -54,6 +54,18 @@ class CarryDifficultyConnection(carryTierModel: CarryTierModel) : ModuleConnecti
         }
     }
 
+    fun createCarryDifficulty(creationModel: CarryDifficultyCreationModel): CarryDifficultyModel? {
+        val url: HttpUrl = getApiUrl().build()
+
+        val requestBody = creationModel.toJson().toRequestBody(jsonMediaType)
+
+        val request: Request = getApiRequest(url)
+            .post(requestBody)
+            .build()
+
+        return executeRequest(request) { CarryDifficultyModel.fromJson(it) }
+    }
+
     fun updateCarryDifficulty(id: Long, updateModel: CarryDifficultyUpdateModel): CarryDifficultyModel? {
         val url: HttpUrl = getApiUrl(id).build()
 
@@ -64,6 +76,16 @@ class CarryDifficultyConnection(carryTierModel: CarryTierModel) : ModuleConnecti
             .build()
 
         return executeRequest(request) { json: String -> CarryDifficultyModel.fromJson(json) }
+    }
+
+    fun deleteCarryDifficulty(id: Long): CarryDifficultyModel? {
+        val url: HttpUrl = getApiUrl(id).build()
+
+        val request: Request = getApiRequest(url)
+            .delete()
+            .build()
+
+        return executeRequest(request) { CarryDifficultyModel.fromJson(it) }
     }
 
     companion object {
