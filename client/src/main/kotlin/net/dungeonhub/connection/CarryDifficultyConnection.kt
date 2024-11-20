@@ -42,7 +42,7 @@ class CarryDifficultyConnection(carryTierModel: CarryTierModel) : ModuleConnecti
                 .get()
                 .build()
 
-            return executeRequest(request, moshi.adapter<List<CarryDifficultyModel>>()::fromJson)
+            return executeRequest(request, function = moshi.adapter<List<CarryDifficultyModel>>()::fromJson)
         }
 
     fun getByIdentifier(identifier: String?): CarryDifficultyModel? {

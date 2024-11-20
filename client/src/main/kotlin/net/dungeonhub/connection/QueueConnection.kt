@@ -7,7 +7,6 @@ import net.dungeonhub.model.carry_queue.CarryQueueCreationModel
 import net.dungeonhub.model.carry_queue.CarryQueueModel
 import net.dungeonhub.model.carry_queue.CarryQueueUpdateModel
 import net.dungeonhub.model.score.LoggedCarryModel
-import net.dungeonhub.service.MoshiService
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
@@ -51,7 +50,7 @@ object QueueConnection : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request, moshi.adapter<Set<CarryQueueModel>>()::fromJson)
+        return executeRequest(request, function = moshi.adapter<Set<CarryQueueModel>>()::fromJson)
     }
 
     fun getCarryQueueByRelatedId(id: Long): Set<CarryQueueModel>? {
@@ -63,7 +62,7 @@ object QueueConnection : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request, moshi.adapter<Set<CarryQueueModel>>()::fromJson)
+        return executeRequest(request, function = moshi.adapter<Set<CarryQueueModel>>()::fromJson)
     }
 
     fun getCarryQueuesByQueueStep(step: QueueStep): Set<CarryQueueModel>? {
@@ -75,7 +74,7 @@ object QueueConnection : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request, moshi.adapter<Set<CarryQueueModel>>()::fromJson)
+        return executeRequest(request, function = moshi.adapter<Set<CarryQueueModel>>()::fromJson)
     }
 
     fun updateQueue(id: Long, updateModel: CarryQueueUpdateModel): CarryQueueModel? {

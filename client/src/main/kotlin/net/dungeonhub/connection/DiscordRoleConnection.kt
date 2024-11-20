@@ -59,7 +59,7 @@ class DiscordRoleConnection(private val server: Long) : ModuleConnection {
 
             val request: Request = getApiRequest(url).get().build()
 
-            return executeRequest(request, moshi.adapter<List<DiscordRoleModel>>()::fromJson)
+            return executeRequest(request, function = moshi.adapter<List<DiscordRoleModel>>()::fromJson)
         }
 
     companion object {

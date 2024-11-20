@@ -33,7 +33,7 @@ class PurgeTypeConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
                 .get()
                 .build()
 
-            return executeRequest(request, moshi.adapter<List<PurgeTypeModel>>()::fromJson)
+            return executeRequest(request, function = moshi.adapter<List<PurgeTypeModel>>()::fromJson)
         }
 
     companion object {

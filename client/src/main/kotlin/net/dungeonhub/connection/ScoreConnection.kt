@@ -42,7 +42,7 @@ class ScoreConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
                 .get()
                 .build()
 
-            return executeRequest(request, moshi.adapter<List<ScoreModel>>()::fromJson)
+            return executeRequest(request, function = moshi.adapter<List<ScoreModel>>()::fromJson)
         }
 
     fun getScores(id: Long): List<ScoreModel>? {
@@ -54,7 +54,7 @@ class ScoreConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request, moshi.adapter<List<ScoreModel>>()::fromJson)
+        return executeRequest(request, function = moshi.adapter<List<ScoreModel>>()::fromJson)
     }
 
     fun getScore(id: Long): ScoreModel? {
@@ -70,7 +70,7 @@ class ScoreConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
             .put(requestBody)
             .build()
 
-        return executeRequest(request, moshi.adapter<List<ScoreModel>>()::fromJson)
+        return executeRequest(request, function = moshi.adapter<List<ScoreModel>>()::fromJson)
     }
 
     @JvmOverloads

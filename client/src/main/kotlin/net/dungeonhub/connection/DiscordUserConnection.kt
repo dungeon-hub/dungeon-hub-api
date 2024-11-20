@@ -24,7 +24,7 @@ object DiscordUserConnection : ModuleConnection {
 
         val request: Request = Request.Builder().url(url).build()
 
-        return executeRequest(request, java.lang.Long::parseLong)
+        return executeRequest(request, function = java.lang.Long::parseLong)
     }
 
     fun getById(id: Long): DiscordUserModel? {
@@ -49,7 +49,7 @@ object DiscordUserConnection : ModuleConnection {
                 .get()
                 .build()
 
-            return executeRequest(request, moshi.adapter<List<DiscordUserModel>>()::fromJson)
+            return executeRequest(request, function = moshi.adapter<List<DiscordUserModel>>()::fromJson)
         }
 
     fun updateUser(id: Long, updateModel: DiscordUserUpdateModel): DiscordUserModel? {
@@ -71,7 +71,7 @@ object DiscordUserConnection : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request, Integer::parseInt)
+        return executeRequest(request, function = Integer::parseInt)
     }
 
     fun findUserByUuid(uuid: UUID): DiscordUserModel? {

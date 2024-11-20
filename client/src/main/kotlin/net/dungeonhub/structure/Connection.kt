@@ -9,8 +9,14 @@ interface Connection {
     val jsonMediaType: MediaType
         get() = "application/json; charset=utf-8".toMediaType()
 
-    fun <T> executeRequest(request: Request, function: MappingFunction<String, T>): T? {
-        return DungeonHubConnection.executeRequest(request, function)
+    fun <T> executeRequest(request: Request, notFoundFallback: T? = null, function: MappingFunction<String, T>): T? {
+        val result = DungeonHubConnection.executeRawRequest(request)?.stringResult
+
+        if(result?.code == 404) {
+            return notFoundFallback
+        }
+
+        return result?.result?.let { function.apply(it) }
     }
 
     fun executeRequest(request: Request): String? {

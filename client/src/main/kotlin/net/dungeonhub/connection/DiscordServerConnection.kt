@@ -7,7 +7,6 @@ import net.dungeonhub.model.carry_tier.CarryTierModel
 import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.model.score.LeaderboardModel
 import net.dungeonhub.model.score.ScoreModel
-import net.dungeonhub.service.MoshiService
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
@@ -40,7 +39,7 @@ object DiscordServerConnection : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request, moshi.adapter<List<CarryTierModel>>()::fromJson)
+        return executeRequest(request, function = moshi.adapter<List<CarryTierModel>>()::fromJson)
     }
 
     fun getAllCarryDifficulties(serverId: Long): List<CarryDifficultyModel>? {
@@ -60,7 +59,7 @@ object DiscordServerConnection : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request, moshi.adapter<List<DiscordServerModel>>()::fromJson)
+        return executeRequest(request, function = moshi.adapter<List<DiscordServerModel>>()::fromJson)
     }
 
     fun getCarryTierFromCategory(serverId: Long, categoryId: Long): CarryTierModel? {
@@ -80,7 +79,7 @@ object DiscordServerConnection : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request, moshi.adapter<List<ScoreModel>>()::fromJson)
+        return executeRequest(request, function = moshi.adapter<List<ScoreModel>>()::fromJson)
     }
 
     @JvmOverloads
@@ -137,7 +136,7 @@ object DiscordServerConnection : ModuleConnection {
 
         val request: Request = getApiRequest(url.build()).get().build()
 
-        return executeRequest(request, java.lang.Long::parseLong)
+        return executeRequest(request, function = java.lang.Long::parseLong)
     }
 
     fun getCarryAmount(serverId: Long, since: Instant? = null): Long? {
@@ -149,6 +148,6 @@ object DiscordServerConnection : ModuleConnection {
 
         val request: Request = getApiRequest(url.build()).get().build()
 
-        return executeRequest(request, java.lang.Long::parseLong)
+        return executeRequest(request, function = java.lang.Long::parseLong)
     }
 }

@@ -43,7 +43,7 @@ class CarryTierConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
                 .get()
                 .build()
 
-            return executeRequest(request, moshi.adapter<List<CarryTierModel>>()::fromJson)
+            return executeRequest(request, function = moshi.adapter<List<CarryTierModel>>()::fromJson)
         }
 
     fun createCarryTier(creationModel: CarryTierCreationModel): CarryTierModel? {

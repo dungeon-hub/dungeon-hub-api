@@ -20,7 +20,7 @@ class DiscordRoleGroupConnection(server: Long) : ModuleConnection {
 
             val request: Request = getApiRequest(url).get().build()
 
-            return executeRequest(request, moshi.adapter<List<DiscordRoleGroupModel>>()::fromJson)
+            return executeRequest(request, function = moshi.adapter<List<DiscordRoleGroupModel>>()::fromJson)
         }
 
     companion object {

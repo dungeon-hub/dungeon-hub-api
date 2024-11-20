@@ -25,7 +25,7 @@ class WarningConnection(private val serverId: Long) : ModuleConnection {
 
         val request: Request = getApiRequest(url).get().build()
 
-        return executeRequest(request, moshi.adapter<List<DetailedWarningModel>>()::fromJson)
+        return executeRequest(request, function = moshi.adapter<List<DetailedWarningModel>>()::fromJson)
     }
 
     fun getActiveWarns(userId: Long): List<DetailedWarningModel>? {
@@ -35,7 +35,7 @@ class WarningConnection(private val serverId: Long) : ModuleConnection {
 
         val request: Request = getApiRequest(url).get().build()
 
-        return executeRequest(request, moshi.adapter<List<DetailedWarningModel>>()::fromJson)
+        return executeRequest(request, function = moshi.adapter<List<DetailedWarningModel>>()::fromJson)
     }
 
     fun addWarning(creationModel: WarningCreationModel): AddedWarningModel? {

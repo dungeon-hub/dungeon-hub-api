@@ -1,6 +1,7 @@
 package net.dungeonhub.connection
 
 import net.dungeonhub.structure.MappingFunction
+import net.dungeonhub.structure.RequestResult
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType
@@ -35,34 +36,32 @@ object DungeonHubConnection {
         .writeTimeout(Duration.ofSeconds(30))
         .build()
 
-    fun <T> executeRequest(request: Request, function: MappingFunction<String, T>): T? {
-        return executeRequest(request)?.let {
-            try {
-                function.apply(it)
-            } catch (e: IOException) {
-                null
-            }
+    fun <T> executeRequest(request: Request, notFoundFallback: T? = null, function: MappingFunction<String, T>): T? {
+        val result = executeRawRequest(request)?.stringResult
+
+        if (result?.code == 404 && result.result == null) {
+            return notFoundFallback
         }
+
+        return result?.result?.let { function.apply(it) }
     }
 
-    fun executeRawRequest(request: Request): ByteArray? {
+    fun executeRawRequest(request: Request): RequestResult? {
         try {
             httpClient.newCall(request).execute().use { response ->
+                val bytes = response.body?.let {
+                    try {
+                        it.bytes()
+                    } catch (ioException: IOException) {
+                        logger.error(null, ioException)
+                        null
+                    }
+                }
+
                 if (response.isSuccessful) {
                     logger.debug("Executed request to '{}' successfully.", request.url)
-
-                    return response.body?.let {
-                        try {
-                            it.bytes()
-                        } catch (ioException: IOException) {
-                            logger.error(null, ioException)
-                            null
-                        }
-                    }
                 } else if (response.code == 404) {
                     logger.debug("Executed request to '{}' returned a 404.", request.url)
-
-                    return null
                 } else {
                     val body = getBody(request)
 
@@ -71,20 +70,20 @@ object DungeonHubConnection {
                         request.url,
                         body,
                         response.code,
-                        if (response.body != null) response.body?.string() else null
+                        if (response.body != null) bytes?.let { String(it, StandardCharsets.UTF_8) } else null
                     )
                 }
+
+                return RequestResult(response.code, if (bytes?.isEmpty() != false) null else bytes)
             }
         } catch (ioException: IOException) {
             logger.error(null, ioException)
+            return null
         }
-        return null
     }
 
     fun executeRequest(request: Request): String? {
-        return executeRawRequest(request)?.let {
-            String(it, StandardCharsets.UTF_8)
-        }
+        return executeRawRequest(request)?.stringResult?.successResult
     }
 
     private fun getBody(request: Request): String? {

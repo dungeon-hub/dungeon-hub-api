@@ -4,6 +4,7 @@ import com.squareup.moshi.adapter
 import net.dungeonhub.model.carry_type.CarryTypeCreationModel
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.model.carry_type.CarryTypeUpdateModel
+import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
@@ -77,7 +78,7 @@ class CarryTypeConnection(server: Long) : ModuleConnection {
 
             val request: Request = getApiRequest(url).get().build()
 
-            return executeRequest(request, moshi.adapter<List<CarryTypeModel>>()::fromJson)
+            return executeRequest(request, function = moshi.adapter<List<CarryTypeModel>>()::fromJson)
         }
 
     companion object {

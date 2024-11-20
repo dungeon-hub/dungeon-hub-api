@@ -7,7 +7,7 @@ import org.slf4j.Logger
 import java.lang.reflect.Type
 
 interface ExternalConnection : Connection {
-    fun getLogger(): Logger
+    val logger: Logger
 
     fun getMoshi(): Moshi {
         return MoshiService.moshi
