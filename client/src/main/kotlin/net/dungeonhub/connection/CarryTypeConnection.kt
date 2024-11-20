@@ -88,5 +88,9 @@ class CarryTypeConnection(server: Long) : ModuleConnection {
         operator fun get(server: Long): CarryTypeConnection {
             return instances.computeIfAbsent(server) { CarryTypeConnection(it) }
         }
+
+        operator fun get(server: DiscordServerModel): CarryTypeConnection {
+            return get(server.id)
+        }
     }
 }
