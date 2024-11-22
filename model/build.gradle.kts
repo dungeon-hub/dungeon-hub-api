@@ -9,7 +9,7 @@ plugins {
 
 group = "net.dungeon-hub.api"
 val artifactId = "model"
-version = "0.4.0"
+version = "0.4.1"
 description = "The model classes that are used in the Dungeon Hub API."
 
 repositories {
@@ -38,11 +38,11 @@ dependencies {
     api("com.google.code.gson:gson:2.11.0")
 
     //Used frameworks for compatible classes
-    implementation("dev.kordex:kord-extensions:2.2.1-SNAPSHOT")
+    implementation(libs.kord.extensions)
     implementation("org.springframework:spring-web:6.1.12")
 
-    testImplementation(platform("org.junit:junit-bom:5.10.0"))
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    //Tests
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation(kotlin("test"))
 }
 

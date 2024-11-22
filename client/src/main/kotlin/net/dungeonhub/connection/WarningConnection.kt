@@ -5,7 +5,6 @@ import net.dungeonhub.model.warning.AddedWarningModel
 import net.dungeonhub.model.warning.DetailedWarningModel
 import net.dungeonhub.model.warning.WarningCreationModel
 import net.dungeonhub.model.warning.WarningEvidenceCreationModel
-import net.dungeonhub.service.MoshiService
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl

@@ -3,7 +3,6 @@ package net.dungeonhub.connection
 import com.squareup.moshi.adapter
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.model.purge_type.PurgeTypeModel
-import net.dungeonhub.service.MoshiService
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl

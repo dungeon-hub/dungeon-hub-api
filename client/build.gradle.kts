@@ -9,7 +9,7 @@ plugins {
 
 group = "net.dungeon-hub.api"
 val artifactId = "client"
-version = "0.4.0"
+version = "0.4.1"
 description = "A client library written in Kotlin to simplify the integration of the Dungeon Hub API."
 
 repositories {
@@ -34,15 +34,16 @@ dependencies {
     api(project(":model"))
 
     //Logging
-    api("org.apache.logging.log4j:log4j-slf4j2-impl:2.20.0")
+    api(libs.slf4j2.api)
 
     //HTTP Client
-    api("com.squareup.okhttp3:okhttp:4.10.0")
+    api(libs.okhttp)
 
     //Used frameworks for compatible classes
-    implementation("dev.kordex:kord-extensions:2.2.1-SNAPSHOT")
+    implementation(libs.kord.extensions)
 
     //Tests
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation(kotlin("test"))
 }
 

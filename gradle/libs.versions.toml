@@ -1,0 +1,9 @@
+[versions]
+slf4j2-api = "2.0.16"
+okhttp = "4.10.0"
+kord-extensions = "2.2.1-SNAPSHOT"
+
+[libraries]
+slf4j2-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j2-api" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+kord-extensions = { module = "dev.kordex:kord-extensions", version.ref = "kord-extensions" }

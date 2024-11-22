@@ -8,7 +8,6 @@ import net.dungeonhub.model.score.LeaderboardModel
 import net.dungeonhub.model.score.ScoreModel
 import net.dungeonhub.model.score.ScoreResetModel
 import net.dungeonhub.model.score.ScoreUpdateModel
-import net.dungeonhub.service.MoshiService
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
@@ -21,10 +20,11 @@ import org.slf4j.LoggerFactory
 @OptIn(ExperimentalStdlibApi::class)
 class ScoreConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
     override val moduleApiPrefix = "server/${carryTypeModel.server.id}/carry-type/${carryTypeModel.id}/score"
+    private val SCORE_TYPE = "score-type"
 
     fun getScore(id: Long, scoreType: ScoreType): ScoreModel? {
         val url: HttpUrl = getApiUrl(id)
-            .addQueryParameter("score-type", scoreType.name)
+            .addQueryParameter(SCORE_TYPE, scoreType.name)
             .build()
 
         val request: Request = getApiRequest(url)
@@ -80,7 +80,7 @@ class ScoreConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
         userId: Long? = null
     ): LeaderboardModel? {
         val urlBuilder = getApiUrl("leaderboard")
-            .addQueryParameter("score-type", scoreType.name)
+            .addQueryParameter(SCORE_TYPE, scoreType.name)
             .addQueryParameter("page", page.toString())
 
         if (userId != null) {
@@ -95,7 +95,7 @@ class ScoreConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
     }
 
     fun resetScore(scoreResetType: ScoreResetType): ScoreResetModel? {
-        val url: HttpUrl = getApiUrl().addQueryParameter("score-type", scoreResetType.name).build()
+        val url: HttpUrl = getApiUrl().addQueryParameter(SCORE_TYPE, scoreResetType.name).build()
 
         val request: Request = getApiRequest(url).delete().build()
 
