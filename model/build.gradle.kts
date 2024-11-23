@@ -9,7 +9,7 @@ plugins {
 
 group = "net.dungeon-hub.api"
 val artifactId = "model"
-version = "0.4.1"
+version = "0.5.0"
 description = "The model classes that are used in the Dungeon Hub API."
 
 repositories {
