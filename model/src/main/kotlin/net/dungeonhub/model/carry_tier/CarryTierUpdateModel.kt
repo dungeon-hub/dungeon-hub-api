@@ -61,38 +61,6 @@ class CarryTierUpdateModel(
     var resetPriceDescription = false
         private set
 
-    /*override fun apply(model: CarryTierModel): CarryTierModel {
-        if (category != null) {
-            model.setCategory(category)
-        }
-
-        if (priceChannel != null) {
-            model.setPriceChannel(priceChannel)
-        }
-
-        if (descriptiveName != null) {
-            model.setDescriptiveName(descriptiveName)
-        }
-
-        if (thumbnailUrl != null) {
-            model.setThumbnailUrl(thumbnailUrl)
-        }
-
-        if (priceTitle != null) {
-            model.setPriceTitle(priceTitle)
-        }
-
-        if (priceDescription != null) {
-            model.setPriceDescription(priceDescription)
-        }
-
-        if (displayName != null) {
-            model.setDisplayName(displayName)
-        }
-
-        return model
-    }*/
-
     fun toJson(): String {
         return MoshiService.moshi.adapter(CarryTierUpdateModel::class.java).toJson(this)
     }

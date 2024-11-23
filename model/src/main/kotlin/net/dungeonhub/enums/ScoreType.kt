@@ -9,7 +9,7 @@ enum class ScoreType(
     val leaderboardSuffix: String?
 ) : ChoiceEnum {
     Default("current", "Current"),
-    Alltime("alltime", "Alltime", "(all-time)"),
+    Alltime("alltime", "All time", "(all-time)"),
     Event("event", "Event", "(event)");
 
     constructor(name: String, displayName: String) : this(name, displayName, null)
