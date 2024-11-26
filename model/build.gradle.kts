@@ -36,7 +36,7 @@ kordEx {
 
     i18n {
         classPackage = "net.dungeonhub.i18n"
-        translationBundle = "dhub.strings"
+        translationBundle = "dh-api.strings"
     }
 }
 
