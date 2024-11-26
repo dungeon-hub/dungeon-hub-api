@@ -35,7 +35,7 @@ kordEx {
     jvmTarget = 17
 
     i18n {
-        classPackage = "net.dungeonhub.i18n"
+        classPackage = "net.dungeonhub.api.model.i18n"
         translationBundle = "dh-api.strings"
     }
 }
