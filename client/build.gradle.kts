@@ -3,13 +3,13 @@ import net.thebugmc.gradle.sonatypepublisher.PublishingType
 plugins {
     id("java-library")
     id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.3")
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm")
     id("com.google.devtools.ksp").version("2.0.21-1.0.26")
 }
 
 group = "net.dungeon-hub.api"
 val artifactId = "client"
-version = "0.5.0"
+version = "0.6.0"
 description = "A client library written in Kotlin to simplify the integration of the Dungeon Hub API."
 
 repositories {

@@ -1,18 +1,20 @@
 package net.dungeonhub.enums
 
 import dev.kordex.core.commands.application.slash.converters.ChoiceEnum
+import dev.kordex.core.i18n.types.Key
+import net.dungeonhub.i18n.Translations
 import net.dungeonhub.model.carry_type.CarryTypeModel
 
 enum class ScoreType(
-    override val readableName: String,
+    override val readableName: Key,
     val displayName: String,
     val leaderboardSuffix: String?
 ) : ChoiceEnum {
-    Default("current", "Current"),
-    Alltime("alltime", "All time", "(all-time)"),
-    Event("event", "Event", "(event)");
+    Default(Translations.ScoreType.Default.readableName, "Current"),
+    Alltime(Translations.ScoreType.Alltime.readableName, "All time", "(all-time)"),
+    Event(Translations.ScoreType.Event.readableName, "Event", "(event)");
 
-    constructor(name: String, displayName: String) : this(name, displayName, null)
+    constructor(readableName: Key, displayName: String) : this(readableName, displayName, null)
 
     fun getLeaderboardTitle(carryType: CarryTypeModel?): String {
         val suffix = if (leaderboardSuffix.isNullOrBlank()) "" else " $leaderboardSuffix"
@@ -22,11 +24,5 @@ enum class ScoreType(
         }
 
         return "Leaderboard | ${carryType.displayName}-Carries$suffix"
-    }
-
-    companion object {
-        fun fromName(name: String): ScoreType? = entries.firstOrNull { currentType: ScoreType ->
-            currentType.readableName.equals(name, ignoreCase = true)
-        }
     }
 }
