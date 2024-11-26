@@ -3,14 +3,13 @@ import net.thebugmc.gradle.sonatypepublisher.PublishingType
 plugins {
     id("java-library")
     id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.3")
-    kotlin("jvm")
+    kotlin("jvm") version "2.0.21"
     id("com.google.devtools.ksp").version("2.0.21-1.0.26")
-    id("dev.kordex.gradle.kordex") version "1.5.8"
 }
 
 group = "net.dungeon-hub.api"
 val artifactId = "model"
-version = "0.6.0"
+version = "0.5.0"
 description = "The model classes that are used in the Dungeon Hub API."
 
 repositories {
@@ -27,16 +26,6 @@ repositories {
     maven {
         url = uri("https://oss.sonatype.org/content/repositories/snapshots")
         name = "Sonatype Snapshots (Legacy)"
-    }
-}
-
-kordEx {
-    kordExVersion = libs.kord.extensions.get().version
-    jvmTarget = 17
-
-    i18n {
-        classPackage = "net.dungeonhub.i18n"
-        translationBundle = "dhub.strings"
     }
 }
 
