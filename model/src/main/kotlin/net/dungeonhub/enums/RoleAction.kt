@@ -2,7 +2,7 @@ package net.dungeonhub.enums
 
 import dev.kordex.core.commands.application.slash.converters.ChoiceEnum
 import dev.kordex.core.i18n.types.Key
-import net.dungeonhub.i18n.Translations
+import net.dungeonhub.api.model.i18n.Translations
 
 enum class RoleAction(override val readableName: Key) : ChoiceEnum {
     None(Translations.RoleActions.None.readableName),
