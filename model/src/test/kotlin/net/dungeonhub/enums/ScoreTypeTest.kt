@@ -2,8 +2,10 @@ package net.dungeonhub.enums
 
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.model.discord_server.DiscordServerModel
+import net.dungeonhub.service.TestHelper
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class ScoreTypeTest {
     @Test
@@ -21,6 +23,38 @@ class ScoreTypeTest {
             assertEquals(
                 "Leaderboard | DisplayName-Carries$suffix",
                 scoreType.getLeaderboardTitle(carryType)
+            )
+        }
+    }
+
+    @Test
+    fun testKeys() {
+        TestHelper.buildKoinContext()
+
+        val keys = mapOf(
+            ScoreType.Default to "score-type.default.readable-name",
+            ScoreType.Alltime to "score-type.alltime.readable-name",
+            ScoreType.Event to "score-type.event.readable-name"
+        )
+
+        val translations = mapOf(
+            ScoreType.Default to "current",
+            ScoreType.Alltime to "alltime",
+            ScoreType.Event to "event"
+        )
+
+        for(scoreType in ScoreType.entries) {
+            assertTrue(keys[scoreType] != null)
+            assertTrue(translations[scoreType] != null)
+
+            assertEquals(
+                keys[scoreType],
+                scoreType.readableName.key
+            )
+
+            assertEquals(
+                translations[scoreType],
+                scoreType.readableName.translate()
             )
         }
     }

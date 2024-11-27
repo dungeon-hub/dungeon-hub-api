@@ -32,7 +32,6 @@ dependencies {
     api("com.google.code.gson:gson:2.11.0")
 
     //Used frameworks for compatible classes
-    implementation(libs.kord.extensions)
     implementation("org.springframework:spring-web:6.1.12")
 
     //Tests

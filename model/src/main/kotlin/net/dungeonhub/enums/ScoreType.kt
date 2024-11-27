@@ -7,14 +7,14 @@ import net.dungeonhub.model.carry_type.CarryTypeModel
 
 enum class ScoreType(
     override val readableName: Key,
-    val displayName: String,
+    val displayName: Key,
     val leaderboardSuffix: String?
 ) : ChoiceEnum {
-    Default(Translations.ScoreType.Default.readableName, "Current"),
-    Alltime(Translations.ScoreType.Alltime.readableName, "All time", "(all-time)"),
-    Event(Translations.ScoreType.Event.readableName, "Event", "(event)");
+    Default(Translations.ScoreType.Default.readableName, Translations.ScoreType.Default.displayName),
+    Alltime(Translations.ScoreType.Alltime.readableName, Translations.ScoreType.Alltime.displayName, "(all-time)"),
+    Event(Translations.ScoreType.Event.readableName, Translations.ScoreType.Event.displayName, "(event)");
 
-    constructor(readableName: Key, displayName: String) : this(readableName, displayName, null)
+    constructor(readableName: Key, displayName: Key) : this(readableName, displayName, null)
 
     fun getLeaderboardTitle(carryType: CarryTypeModel?): String {
         val suffix = if (leaderboardSuffix.isNullOrBlank()) "" else " $leaderboardSuffix"
