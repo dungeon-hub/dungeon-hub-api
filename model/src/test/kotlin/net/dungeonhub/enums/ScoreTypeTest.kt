@@ -38,9 +38,9 @@ class ScoreTypeTest {
         )
 
         val translations = mapOf(
-            ScoreType.Default to "current",
-            ScoreType.Alltime to "alltime",
-            ScoreType.Event to "event"
+            ScoreType.Default to "Current",
+            ScoreType.Alltime to "All time",
+            ScoreType.Event to "Event"
         )
 
         for(scoreType in ScoreType.entries) {
