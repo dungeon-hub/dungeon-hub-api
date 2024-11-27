@@ -3,7 +3,7 @@ package net.dungeonhub.model.role_requirement
 import net.dungeonhub.enums.RoleRequirementComparison
 import net.dungeonhub.enums.RoleRequirementType
 import net.dungeonhub.model.discord_role.DiscordRoleModel
-import net.dungeonhub.structure.model.Model
+import net.dungeonhub.structure.model.UpdateableModel
 
 class RoleRequirementModel(
     val id: Long,
@@ -11,5 +11,13 @@ class RoleRequirementModel(
     val requirementType: RoleRequirementType,
     val comparison: RoleRequirementComparison,
     val count: Int,
-    val extraData: String
-) : Model
+    val extraData: String?
+) : UpdateableModel<RoleRequirementUpdateModel, RoleRequirementModel> {
+    fun checkExtraData(value: String?): Boolean {
+        return requirementType.extraDataType.checkExtraData(value)
+    }
+
+    override fun getUpdateModel(): RoleRequirementUpdateModel {
+        return RoleRequirementUpdateModel(null, null, null)
+    }
+}

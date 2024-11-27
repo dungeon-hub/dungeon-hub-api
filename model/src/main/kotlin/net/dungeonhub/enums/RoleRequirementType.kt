@@ -2,7 +2,7 @@ package net.dungeonhub.enums
 
 import dev.kordex.core.commands.application.slash.converters.ChoiceEnum
 
-enum class RoleRequirementType(val needsExtraData: ExtraDataType = ExtraDataType.None) : ChoiceEnum {
+enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.None) : ChoiceEnum {
     SkyblockLevel,
     CatacombsLevel,
     FarmingLevel,
@@ -18,12 +18,16 @@ enum class RoleRequirementType(val needsExtraData: ExtraDataType = ExtraDataType
     TotalCarries,
     TotalCarriesInTimeFrame(ExtraDataType.Duration),
     MoneySpent,
-    MoneySpentInTimeFrame(ExtraDataType.Duration);
+    MoneySpentInTimeFrame(ExtraDataType.Duration),
+    HypixelRank,
+    GuildMembership(ExtraDataType.GuildName),
+    GuildRank(ExtraDataType.GuildName);
 
     override val readableName = name.replace(Regex("([A-Z])"), " $1").trim()
 
     enum class ExtraDataType(val checkExtraData: (String?) -> Boolean) {
         None({ true }),
+        GuildName({ !it.isNullOrBlank() }),
         Duration({ !it.isNullOrBlank() && kotlin.time.Duration.parseOrNull(it) != null }),
         CarryType({ !it.isNullOrBlank() });
     }
