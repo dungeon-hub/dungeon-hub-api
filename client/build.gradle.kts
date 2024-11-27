@@ -3,7 +3,7 @@ import net.thebugmc.gradle.sonatypepublisher.PublishingType
 plugins {
     id("java-library")
     id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.3")
-    kotlin("jvm")
+    kotlin("jvm") version "2.0.21"
     id("com.google.devtools.ksp").version("2.0.21-1.0.26")
 }
 
