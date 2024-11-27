@@ -13,23 +13,6 @@ val artifactId = "model"
 version = "0.6.0"
 description = "The model classes that are used in the Dungeon Hub API."
 
-repositories {
-    mavenCentral()
-
-    maven {
-        url = uri("https://repo.kordex.dev/releases")
-        name = "KordEx (Releases)"
-    }
-    maven {
-        url = uri("https://repo.kordex.dev/snapshots")
-        name = "KordEx (Snapshots)"
-    }
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
-        name = "Sonatype Snapshots (Legacy)"
-    }
-}
-
 kordEx {
     kordExVersion = libs.kord.extensions.get().version
     jvmTarget = 17
