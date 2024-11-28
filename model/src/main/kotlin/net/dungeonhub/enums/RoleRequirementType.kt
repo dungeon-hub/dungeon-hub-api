@@ -12,10 +12,8 @@ enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.
     FishingLevel,
     SkillAverage,
     HighestSkill,
-    TotalAlltimeScore,
-    TotalCurrentScore,
-    CurrentScoreOfType(ExtraDataType.CarryType),
-    AlltimeScoreOfType(ExtraDataType.CarryType),
+    CurrentScore(ExtraDataType.CarryType),
+    AlltimeScore(ExtraDataType.CarryType),
     TotalCarries,
     TotalCarriesInTimeFrame(ExtraDataType.Duration),
     MoneySpent,
@@ -30,6 +28,6 @@ enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.
         None({ true }),
         GuildName({ !it.isNullOrBlank() }),
         Duration({ !it.isNullOrBlank() && kotlin.time.Duration.parseOrNull(it) != null }),
-        CarryType({ !it.isNullOrBlank() });
+        CarryType({ it == null || it.isNotBlank() });
     }
 }
