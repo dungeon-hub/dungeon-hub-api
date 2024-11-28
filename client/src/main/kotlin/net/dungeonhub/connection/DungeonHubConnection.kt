@@ -74,7 +74,7 @@ object DungeonHubConnection {
                     )
                 }
 
-                return RequestResult(response.code, if (bytes?.isEmpty() != false && response.isSuccessful) null else bytes)
+                return RequestResult(response.code, if (bytes?.isEmpty() != false || !response.isSuccessful) null else bytes)
             }
         } catch (ioException: IOException) {
             logger.error(null, ioException)
