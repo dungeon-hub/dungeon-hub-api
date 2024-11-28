@@ -7,7 +7,7 @@ import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.CreationModel
 
 class RoleRequirementCreationModel(
-    val discordRole: DiscordRoleModel,
+    val discordRole: Long,
     val requirementType: RoleRequirementType,
     val comparison: RoleRequirementComparison,
     val count: Int,

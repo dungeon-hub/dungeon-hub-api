@@ -3,8 +3,9 @@ import net.thebugmc.gradle.sonatypepublisher.PublishingType
 plugins {
     id("java-library")
     id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.3")
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm")
     id("com.google.devtools.ksp").version("2.0.21-1.0.26")
+    id("dev.kordex.gradle.kordex") version "1.5.8"
 }
 
 group = "net.dungeon-hub.api"
@@ -12,20 +13,13 @@ val artifactId = "model"
 version = "0.5.0"
 description = "The model classes that are used in the Dungeon Hub API."
 
-repositories {
-    mavenCentral()
+kordEx {
+    kordExVersion = libs.kord.extensions.get().version
+    jvmTarget = 17
 
-    maven {
-        url = uri("https://repo.kordex.dev/releases")
-        name = "KordEx (Releases)"
-    }
-    maven {
-        url = uri("https://repo.kordex.dev/snapshots")
-        name = "KordEx (Snapshots)"
-    }
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
-        name = "Sonatype Snapshots (Legacy)"
+    i18n {
+        classPackage = "net.dungeonhub.api.model.i18n"
+        translationBundle = "dh-api.strings"
     }
 }
 
@@ -38,7 +32,6 @@ dependencies {
     api("com.google.code.gson:gson:2.11.0")
 
     //Used frameworks for compatible classes
-    implementation(libs.kord.extensions)
     implementation("org.springframework:spring-web:6.1.12")
 
     //Tests
