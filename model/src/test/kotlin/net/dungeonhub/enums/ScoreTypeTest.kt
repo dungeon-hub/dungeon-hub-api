@@ -4,6 +4,7 @@ import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.service.TestHelper
 import org.junit.jupiter.api.Test
+import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -11,7 +12,14 @@ class ScoreTypeTest {
     @Test
     fun testLeaderboardTitle() {
         for(scoreType in ScoreType.entries) {
-            val suffix = if (scoreType.leaderboardSuffix.isNullOrBlank()) "" else " ${scoreType.leaderboardSuffix}"
+            TestHelper.buildKoinContext()
+
+            val locale = Locale.ENGLISH
+
+            val suffix = if (scoreType.leaderboardSuffix?.withLocale(locale)?.translate().isNullOrBlank())
+                ""
+            else
+                " ${scoreType.leaderboardSuffix?.withLocale(locale)?.translate()}"
 
             val carryType = CarryTypeModel(0, "identifier", "DisplayName", DiscordServerModel(0), null, null, false)
 
@@ -21,7 +29,7 @@ class ScoreTypeTest {
             )
 
             assertEquals(
-                "Leaderboard | DisplayName-Carries$suffix",
+                "Leaderboard | DisplayName score$suffix",
                 scoreType.getLeaderboardTitle(carryType)
             )
         }

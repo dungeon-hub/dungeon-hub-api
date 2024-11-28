@@ -18,6 +18,8 @@ object TestHelper {
         val botBuilder = ExtensibleBotBuilder()
         val pluginBuilder = PluginBuilder(botBuilder)
 
+        if(KordExContext.getKoinApplicationOrNull() != null) return
+
         KordExContext.startKoin {
             environmentProperties()
 
