@@ -16,7 +16,7 @@ interface Connection {
             return notFoundFallback
         }
 
-        return result?.result?.let { function.apply(it) }
+        return result?.successResult?.let { function.apply(it) }
     }
 
     fun executeRequest(request: Request): String? {
