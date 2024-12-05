@@ -2,7 +2,6 @@ package net.dungeonhub.model.role_requirement
 
 import net.dungeonhub.enums.RoleRequirementComparison
 import net.dungeonhub.enums.RoleRequirementType
-import net.dungeonhub.model.discord_role.DiscordRoleModel
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.CreationModel
 
