@@ -6,4 +6,14 @@ enum class RoleRequirementComparison {
     Greater,
     LessOrEqual,
     Less;
+
+    fun compare(value: Int, expected: Int): Boolean {
+        return when (this) {
+            Equal -> value == expected
+            GreaterOrEqual -> value >= expected
+            Greater -> value > expected
+            LessOrEqual -> value <= expected
+            Less -> value < expected
+        }
+    }
 }

@@ -18,6 +18,10 @@ class RoleRequirementModel(
         return requirementType.extraDataType.checkExtraData(value)
     }
 
+    fun compare(value: Int): Boolean {
+        return comparison.compare(value, count)
+    }
+
     override fun getUpdateModel(): RoleRequirementUpdateModel {
         return RoleRequirementUpdateModel(null, null, null)
     }
