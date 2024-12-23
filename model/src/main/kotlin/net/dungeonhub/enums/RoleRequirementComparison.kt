@@ -1,11 +1,11 @@
 package net.dungeonhub.enums
 
-enum class RoleRequirementComparison {
-    Equal,
-    GreaterOrEqual,
-    Greater,
-    LessOrEqual,
-    Less;
+enum class RoleRequirementComparison(val comparison: String) {
+    Equal("="),
+    GreaterOrEqual(">="),
+    Greater(">"),
+    LessOrEqual("<="),
+    Less("<");
 
     fun compare(value: Int, expected: Int): Boolean {
         return when (this) {
