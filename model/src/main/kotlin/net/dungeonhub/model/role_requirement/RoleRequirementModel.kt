@@ -14,8 +14,8 @@ class RoleRequirementModel(
     val count: Int,
     val extraData: String?
 ) : UpdateableModel<RoleRequirementUpdateModel, RoleRequirementModel> {
-    fun checkExtraData(value: String?): Boolean {
-        return requirementType.extraDataType.checkExtraData(value)
+    fun checkExtraData(): Boolean {
+        return requirementType.extraDataType.checkExtraData(extraData)
     }
 
     fun compare(value: Int): Boolean {
