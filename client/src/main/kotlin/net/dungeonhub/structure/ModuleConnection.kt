@@ -34,7 +34,7 @@ interface ModuleConnection : Connection {
         val prefix = if ((moduleApiPrefix == null || moduleApiPrefix!!.isBlank()))
             ""
         else
-            moduleApiPrefix + (if (uri == null || uri.isBlank()) "" else "/")
+            moduleApiPrefix + (if (uri.isNullOrBlank()) "" else "/")
 
         return (apiUrl + apiPrefix + prefix + uri).toHttpUrl()
             .newBuilder()
