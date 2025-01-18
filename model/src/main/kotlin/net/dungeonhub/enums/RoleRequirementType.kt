@@ -20,7 +20,8 @@ enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.
     MoneySpentInTimeFrame(ExtraDataType.Duration),
     HypixelRank,
     GuildMembership(ExtraDataType.GuildName),
-    GuildRank(ExtraDataType.GuildName);
+    GuildRank(ExtraDataType.GuildName),
+    ClassAverage;
 
     override val readableName = name.replace(Regex("([A-Z])"), " $1").trim().toKey()
 
