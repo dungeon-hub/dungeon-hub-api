@@ -9,7 +9,7 @@ plugins {
 
 group = "net.dungeon-hub.api"
 val artifactId = "client"
-version = "0.5.4"
+version = "0.5.5"
 description = "A client library written in Kotlin to simplify the integration of the Dungeon Hub API."
 
 repositories {
