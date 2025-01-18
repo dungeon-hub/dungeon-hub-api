@@ -1,32 +1,27 @@
 package net.dungeonhub.enums
 
 import dev.kordex.core.commands.application.slash.converters.ChoiceEnum
+import dev.kordex.core.i18n.types.Key
+import net.dungeonhub.api.model.i18n.Translations
 import net.dungeonhub.model.carry_type.CarryTypeModel
+import java.util.Locale
 
 enum class ScoreType(
-    override val readableName: String,
-    val displayName: String,
-    val leaderboardSuffix: String?
+    override val readableName: Key,
+    val leaderboardSuffix: Key?
 ) : ChoiceEnum {
-    Default("current", "Current"),
-    Alltime("alltime", "All time", "(all-time)"),
-    Event("event", "Event", "(event)");
+    Default(Translations.ScoreType.Default.readableName),
+    Alltime(Translations.ScoreType.Alltime.readableName, Translations.ScoreType.Alltime.suffix),
+    Event(Translations.ScoreType.Event.readableName, Translations.ScoreType.Event.suffix);
 
-    constructor(name: String, displayName: String) : this(name, displayName, null)
+    constructor(readableName: Key) : this(readableName, null)
 
-    fun getLeaderboardTitle(carryType: CarryTypeModel?): String {
-        val suffix = if (leaderboardSuffix.isNullOrBlank()) "" else " $leaderboardSuffix"
+    fun getLeaderboardTitle(carryType: CarryTypeModel?, locale: Locale? = Locale.ENGLISH): String {
+        val suffix = leaderboardSuffix?.withLocale(locale)?.translate()
 
-        if (carryType == null) {
-            return "Leaderboard | Total score$suffix"
-        }
-
-        return "Leaderboard | ${carryType.displayName}-Carries$suffix"
-    }
-
-    companion object {
-        fun fromName(name: String): ScoreType? = entries.firstOrNull { currentType: ScoreType ->
-            currentType.readableName.equals(name, ignoreCase = true)
-        }
+        return Translations.Leaderboard.title.withLocale(locale).translateNamed(
+            "name" to (carryType?.displayName ?: Translations.Leaderboard.Title.total.withLocale(locale).translate()),
+            "suffix" to if (suffix.isNullOrBlank()) "" else " $suffix"
+        )
     }
 }

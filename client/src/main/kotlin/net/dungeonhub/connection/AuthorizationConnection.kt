@@ -14,7 +14,6 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.time.Instant
 
-
 object AuthorizationConnection {
     val logger: Logger = LoggerFactory.getLogger(AuthorizationConnection::class.java)
 
