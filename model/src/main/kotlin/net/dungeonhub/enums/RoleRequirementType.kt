@@ -22,7 +22,8 @@ enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.
     GuildMembership(ExtraDataType.GuildName),
     GuildRank(ExtraDataType.GuildName),
     MagicalPower,
-    ClassAverage;
+    ClassAverage,
+    HighestCritDamage;
 
     override val readableName = name.replace(Regex("([A-Z])"), " $1").trim().toKey()
 

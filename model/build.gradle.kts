@@ -4,8 +4,8 @@ plugins {
     id("java-library")
     id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.3")
     kotlin("jvm")
-    id("com.google.devtools.ksp").version("2.0.21-1.0.26")
-    id("dev.kordex.gradle.kordex") version "1.5.8"
+    id("com.google.devtools.ksp").version("2.1.0-1.0.29")
+    id("dev.kordex.gradle.kordex") version "1.6.1"
 }
 
 group = "net.dungeon-hub.api"
