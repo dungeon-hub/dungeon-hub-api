@@ -26,7 +26,7 @@ kordEx {
 dependencies {
     //Moshi, the JSON library
     api("com.squareup.moshi:moshi-kotlin:1.15.1")
-    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.1")
+    ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.2")
 
     //Gson, used for compatibility purposes
     api("com.google.code.gson:gson:2.11.0")
