@@ -6,9 +6,6 @@
 version: 2
 updates:
   - package-ecosystem: "gradle"
-    directories: 
-      - "/" 
-      - "/model"
-      - "/client"
+    directory: "/" 
     schedule:
       interval: "weekly"
