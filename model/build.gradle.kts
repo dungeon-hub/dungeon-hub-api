@@ -29,7 +29,7 @@ dependencies {
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.2")
 
     //Gson, used for compatibility purposes
-    api("com.google.code.gson:gson:2.11.0")
+    api("com.google.code.gson:gson:2.12.1")
 
     //Used frameworks for compatible classes
     implementation("org.springframework:spring-web:6.2.2")
