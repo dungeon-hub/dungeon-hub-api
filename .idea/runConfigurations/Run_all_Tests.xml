@@ -10,6 +10,7 @@
       </option>
       <option name="taskNames">
         <list>
+          <option value="build" />
           <option value="model:test" />
           <option value="client:test" />
         </list>
