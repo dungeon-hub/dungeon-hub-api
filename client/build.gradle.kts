@@ -4,29 +4,18 @@ plugins {
     id("java-library")
     id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.3")
     kotlin("jvm")
-    id("com.google.devtools.ksp").version("2.0.21-1.0.26")
+    id("com.google.devtools.ksp").version("2.1.10-1.0.29")
+    id("dev.kordex.gradle.kordex") version "1.6.1"
 }
 
 group = "net.dungeon-hub.api"
 val artifactId = "client"
-version = "0.5.4"
+version = "0.5.5"
 description = "A client library written in Kotlin to simplify the integration of the Dungeon Hub API."
 
-repositories {
-    mavenCentral()
-
-    maven {
-        url = uri("https://repo.kordex.dev/releases")
-        name = "KordEx (Releases)"
-    }
-    maven {
-        url = uri("https://repo.kordex.dev/snapshots")
-        name = "KordEx (Snapshots)"
-    }
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
-        name = "Sonatype Snapshots (Legacy)"
-    }
+kordEx {
+    kordExVersion = libs.kord.extensions.get().version
+    jvmTarget = 17
 }
 
 dependencies {
