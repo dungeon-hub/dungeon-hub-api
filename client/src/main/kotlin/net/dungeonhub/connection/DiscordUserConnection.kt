@@ -36,6 +36,10 @@ object DiscordUserConnection : ModuleConnection {
         return executeRequest(request) { json: String -> DiscordUserModel.Companion.fromJson(json) }
     }
 
+    fun getByIdOrCreate(id: Long) : DiscordUserModel? {
+        return getById(id) ?: updateUser(id, DiscordUserUpdateModel(null))
+    }
+
     fun getLinkedById(id: Long): DiscordUserModel? {
         return getById(id)?.takeIf { discordUserModel -> discordUserModel.minecraftId != null }
     }
