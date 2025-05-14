@@ -5,7 +5,7 @@ plugins {
     id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.3")
     kotlin("jvm")
     id("com.google.devtools.ksp").version("2.1.0-1.0.29")
-    id("dev.kordex.gradle.kordex") version "1.6.1"
+    id("dev.kordex.gradle.kordex") version "1.7.0"
 }
 
 group = "net.dungeon-hub.api"
@@ -29,10 +29,10 @@ dependencies {
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.2")
 
     //Gson, used for compatibility purposes
-    api("com.google.code.gson:gson:2.11.0")
+    api("com.google.code.gson:gson:2.13.0")
 
     //Used frameworks for compatible classes
-    implementation("org.springframework:spring-web:6.2.2")
+    implementation("org.springframework:spring-web:6.2.5")
 
     //Tests
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
