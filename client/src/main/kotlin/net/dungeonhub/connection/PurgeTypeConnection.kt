@@ -1,17 +1,18 @@
 package net.dungeonhub.connection
 
 import com.squareup.moshi.adapter
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.model.purge_type.PurgeTypeModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 @OptIn(ExperimentalStdlibApi::class)
-class PurgeTypeConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
+class PurgeTypeConnection(carryTypeModel: CarryTypeModel, override val client: AuthenticatedClient) : ModuleConnection {
     override val moduleApiPrefix = "server/${carryTypeModel.server.id}/carry-type/${carryTypeModel.id}/purge-type"
 
     //TODO own endpoint
@@ -36,11 +37,17 @@ class PurgeTypeConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
         }
 
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(PurgeTypeConnection::class.java)
-        private val instances: MutableMap<CarryTypeModel, PurgeTypeConnection> = HashMap()
+        private val instances: MutableMap<CarryTypeModel, ClientlessPurgeTypeConnection> = HashMap()
 
-        operator fun get(carryTypeModel: CarryTypeModel): PurgeTypeConnection {
-            return instances.computeIfAbsent(carryTypeModel) { PurgeTypeConnection(it) }
+        operator fun get(carryTypeModel: CarryTypeModel): ClientlessPurgeTypeConnection {
+            return instances.computeIfAbsent(carryTypeModel) { ClientlessPurgeTypeConnection(it) }
+        }
+
+        class ClientlessPurgeTypeConnection(val carryTypeModel: CarryTypeModel) :
+            ClientlessConnection<PurgeTypeConnection> {
+            override fun authenticated(authenticationProvider: AuthenticationProvider): PurgeTypeConnection {
+                return PurgeTypeConnection(carryTypeModel, AuthenticatedClient(authenticationProvider))
+            }
         }
     }
 }

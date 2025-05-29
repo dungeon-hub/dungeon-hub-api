@@ -1,6 +1,7 @@
 package net.dungeonhub.connection
 
 import com.squareup.moshi.adapter
+import net.dungeonhub.client.DungeonHubClient
 import net.dungeonhub.enums.QueueStep
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
 import net.dungeonhub.model.carry_queue.CarryQueueCreationModel
@@ -8,17 +9,13 @@ import net.dungeonhub.model.carry_queue.CarryQueueModel
 import net.dungeonhub.model.carry_queue.CarryQueueUpdateModel
 import net.dungeonhub.model.score.LoggedCarryModel
 import net.dungeonhub.service.MoshiService.moshi
-import net.dungeonhub.structure.ModuleConnection
+import net.dungeonhub.structure.AuthenticatedModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 @OptIn(ExperimentalStdlibApi::class)
-object QueueConnection : ModuleConnection {
-    private val logger: Logger = LoggerFactory.getLogger(QueueConnection::class.java)
-
+class QueueConnection(override val client: DungeonHubClient) : AuthenticatedModuleConnection() {
     override val moduleApiPrefix = "queue"
 
     fun addNewQueue(
@@ -34,7 +31,7 @@ object QueueConnection : ModuleConnection {
             .post(requestBody)
             .build()
 
-        return executeRequest(request) { json: String -> CarryQueueModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> CarryQueueModel.fromJson(json) }
     }
 
     fun getCarryQueueByRelatedIdAndQueueStep(
@@ -87,7 +84,7 @@ object QueueConnection : ModuleConnection {
             .put(requestBody)
             .build()
 
-        return executeRequest(request) { json: String -> CarryQueueModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> CarryQueueModel.fromJson(json) }
     }
 
     fun deleteQueue(id: Long): Boolean {
@@ -111,6 +108,6 @@ object QueueConnection : ModuleConnection {
             .post(requestBody)
             .build()
 
-        return executeRequest(request) { json: String -> LoggedCarryModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> LoggedCarryModel.fromJson(json) }
     }
 }

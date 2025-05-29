@@ -1,6 +1,7 @@
 package net.dungeonhub.connection
 
-import net.dungeonhub.structure.Connection
+import net.dungeonhub.client.DungeonHubClient
+import net.dungeonhub.structure.AuthenticatedConnection
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
@@ -8,16 +9,16 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
-object ContentConnection : Connection {
+class ContentConnection(override val client: DungeonHubClient) : AuthenticatedConnection() {
     private val apiUrl: HttpUrl.Builder
-        get() = (DungeonHubConnection.apiUrl + "cdn/").toHttpUrl().newBuilder()
+        get() = (DungeonHubClient.apiUrl + "cdn/").toHttpUrl().newBuilder()
 
     fun getApiUrl(uri: String): HttpUrl.Builder {
-        return (DungeonHubConnection.apiUrl + "cdn/" + uri).toHttpUrl().newBuilder()
+        return (DungeonHubClient.apiUrl + "cdn/" + uri).toHttpUrl().newBuilder()
     }
 
     fun getStaticUrl(uri: String): HttpUrl.Builder {
-        val prefix = DungeonHubConnection.staticUrl
+        val prefix = DungeonHubClient.staticUrl
         if (prefix.isNullOrBlank()) {
             return getCdnUrl("static/$uri")
         }
@@ -26,9 +27,9 @@ object ContentConnection : Connection {
     }
 
     fun getCdnUrl(uri: String): HttpUrl.Builder {
-        var prefix = DungeonHubConnection.cdnUrl
+        var prefix = DungeonHubClient.cdnUrl
         if (prefix.isNullOrBlank()) {
-            prefix = DungeonHubConnection.apiUrl + "cdn/"
+            prefix = DungeonHubClient.apiUrl + "cdn/"
         }
 
         return (prefix + uri).toHttpUrl().newBuilder()
@@ -37,7 +38,7 @@ object ContentConnection : Connection {
     private fun performUpload(data: ByteArray, url: HttpUrl): String? {
         val requestBody: RequestBody = data.toRequestBody("application/octet-stream".toMediaType())
 
-        val request: Request = DungeonHubConnection.getApiRequest(url)
+        val request: Request = client.getApiRequest(url)
             .post(requestBody)
             .build()
 
@@ -64,6 +65,6 @@ object ContentConnection : Connection {
             .get()
             .build()
 
-        return DungeonHubConnection.executeRequest(request)
+        return client.executeRequest(request)
     }
 }

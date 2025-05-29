@@ -1,6 +1,8 @@
 package net.dungeonhub.connection
 
 import com.squareup.moshi.adapter
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.enums.ScoreResetType
 import net.dungeonhub.enums.ScoreType
 import net.dungeonhub.model.carry_type.CarryTypeModel
@@ -9,16 +11,15 @@ import net.dungeonhub.model.score.ScoreModel
 import net.dungeonhub.model.score.ScoreResetModel
 import net.dungeonhub.model.score.ScoreUpdateModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.jetbrains.annotations.Range
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 @OptIn(ExperimentalStdlibApi::class)
-class ScoreConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
+class ScoreConnection(carryTypeModel: CarryTypeModel, override val client: AuthenticatedClient) : ModuleConnection {
     override val moduleApiPrefix = "server/${carryTypeModel.server.id}/carry-type/${carryTypeModel.id}/score"
     private val SCORE_TYPE = "score-type"
 
@@ -31,7 +32,7 @@ class ScoreConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request) { json: String -> ScoreModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> ScoreModel.fromJson(json) }
     }
 
     val scores: List<ScoreModel>?
@@ -91,7 +92,7 @@ class ScoreConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request) { json: String -> LeaderboardModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> LeaderboardModel.fromJson(json) }
     }
 
     fun resetScore(scoreResetType: ScoreResetType): ScoreResetModel? {
@@ -99,15 +100,20 @@ class ScoreConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
 
         val request: Request = getApiRequest(url).delete().build()
 
-        return executeRequest(request) { json: String -> ScoreResetModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> ScoreResetModel.fromJson(json) }
     }
 
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(ScoreConnection::class.java)
-        private val instances: MutableMap<CarryTypeModel, ScoreConnection> = HashMap()
+        private val instances: MutableMap<CarryTypeModel, ClientlessScoreConnection> = HashMap()
 
-        operator fun get(carryTypeModel: CarryTypeModel): ScoreConnection {
-            return instances.computeIfAbsent(carryTypeModel) { ScoreConnection(it) }
+        operator fun get(carryTypeModel: CarryTypeModel): ClientlessScoreConnection {
+            return instances.computeIfAbsent(carryTypeModel) { ClientlessScoreConnection(it) }
+        }
+
+        class ClientlessScoreConnection(val carryTypeModel: CarryTypeModel) : ClientlessConnection<ScoreConnection> {
+            override fun authenticated(authenticationProvider: AuthenticationProvider): ScoreConnection {
+                return ScoreConnection(carryTypeModel, AuthenticatedClient(authenticationProvider))
+            }
         }
     }
 }

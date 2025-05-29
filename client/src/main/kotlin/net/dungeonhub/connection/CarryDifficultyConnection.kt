@@ -1,21 +1,23 @@
 package net.dungeonhub.connection
 
 import com.squareup.moshi.adapter
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyCreationModel
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyUpdateModel
 import net.dungeonhub.model.carry_tier.CarryTierModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
 @OptIn(ExperimentalStdlibApi::class)
-class CarryDifficultyConnection(carryTierModel: CarryTierModel) : ModuleConnection {
+class CarryDifficultyConnection(carryTierModel: CarryTierModel, override val client: AuthenticatedClient) :
+    ModuleConnection {
     override val moduleApiPrefix = ("server/"
             + carryTierModel.carryType.server.id
             + "/carry-type/"
@@ -27,9 +29,7 @@ class CarryDifficultyConnection(carryTierModel: CarryTierModel) : ModuleConnecti
     fun getCarryDifficulty(id: Long): CarryDifficultyModel? {
         val url: HttpUrl = getApiUrl(id).build()
 
-        val request: Request = getApiRequest(url)
-            .get()
-            .build()
+        val request: Request = getApiRequest(url).get().build()
 
         return executeRequest(request) { json: String -> CarryDifficultyModel.fromJson(json) }
     }
@@ -38,9 +38,7 @@ class CarryDifficultyConnection(carryTierModel: CarryTierModel) : ModuleConnecti
         get() {
             val url: HttpUrl = getApiUrl("all").build()
 
-            val request: Request = getApiRequest(url)
-                .get()
-                .build()
+            val request: Request = getApiRequest(url).get().build()
 
             return executeRequest(request, function = moshi.adapter<List<CarryDifficultyModel>>()::fromJson)
         }
@@ -59,9 +57,7 @@ class CarryDifficultyConnection(carryTierModel: CarryTierModel) : ModuleConnecti
 
         val requestBody = creationModel.toJson().toRequestBody(jsonMediaType)
 
-        val request: Request = getApiRequest(url)
-            .post(requestBody)
-            .build()
+        val request: Request = getApiRequest(url).post(requestBody).build()
 
         return executeRequest(request) { CarryDifficultyModel.fromJson(it) }
     }
@@ -71,9 +67,7 @@ class CarryDifficultyConnection(carryTierModel: CarryTierModel) : ModuleConnecti
 
         val requestBody: RequestBody = updateModel.toJson().toRequestBody(jsonMediaType)
 
-        val request: Request = getApiRequest(url)
-            .put(requestBody)
-            .build()
+        val request: Request = getApiRequest(url).put(requestBody).build()
 
         return executeRequest(request) { json: String -> CarryDifficultyModel.fromJson(json) }
     }
@@ -81,19 +75,23 @@ class CarryDifficultyConnection(carryTierModel: CarryTierModel) : ModuleConnecti
     fun deleteCarryDifficulty(id: Long): CarryDifficultyModel? {
         val url: HttpUrl = getApiUrl(id).build()
 
-        val request: Request = getApiRequest(url)
-            .delete()
-            .build()
+        val request: Request = getApiRequest(url).delete().build()
 
         return executeRequest(request) { CarryDifficultyModel.fromJson(it) }
     }
 
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(CarryDifficultyConnection::class.java)
-        private val instances: MutableMap<CarryTierModel, CarryDifficultyConnection> = HashMap()
+        private val instances: MutableMap<CarryTierModel, ClientlessCarryDifficultyConnection> = HashMap()
 
-        operator fun get(carryTierModel: CarryTierModel): CarryDifficultyConnection {
-            return instances.computeIfAbsent(carryTierModel) { CarryDifficultyConnection(it) }
+        operator fun get(carryTierModel: CarryTierModel): ClientlessCarryDifficultyConnection {
+            return instances.computeIfAbsent(carryTierModel) { ClientlessCarryDifficultyConnection(it) }
+        }
+
+        class ClientlessCarryDifficultyConnection(val carryTierModel: CarryTierModel) :
+            ClientlessConnection<CarryDifficultyConnection> {
+            override fun authenticated(authenticationProvider: AuthenticationProvider): CarryDifficultyConnection {
+                return CarryDifficultyConnection(carryTierModel, AuthenticatedClient(authenticationProvider))
+            }
         }
     }
 }

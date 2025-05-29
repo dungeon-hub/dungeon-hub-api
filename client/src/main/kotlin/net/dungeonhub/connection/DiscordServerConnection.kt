@@ -1,6 +1,7 @@
 package net.dungeonhub.connection
 
 import com.squareup.moshi.adapter
+import net.dungeonhub.client.DungeonHubClient
 import net.dungeonhub.enums.ScoreType
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
 import net.dungeonhub.model.carry_tier.CarryTierModel
@@ -8,18 +9,14 @@ import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.model.score.LeaderboardModel
 import net.dungeonhub.model.score.ScoreModel
 import net.dungeonhub.service.MoshiService.moshi
-import net.dungeonhub.structure.ModuleConnection
+import net.dungeonhub.structure.AuthenticatedModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import org.jetbrains.annotations.Range
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.time.Instant
 
 @OptIn(ExperimentalStdlibApi::class)
-object DiscordServerConnection : ModuleConnection {
-    private val logger: Logger = LoggerFactory.getLogger(DiscordServerConnection::class.java)
-
+class DiscordServerConnection(override val client: DungeonHubClient) : AuthenticatedModuleConnection() {
     override val moduleApiPrefix = "server"
 
     fun findServerById(id: Long): DiscordServerModel? {
@@ -29,7 +26,7 @@ object DiscordServerConnection : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request) { json: String -> DiscordServerModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> DiscordServerModel.fromJson(json) }
     }
 
     fun getAllCarryTiers(serverId: Long): List<CarryTierModel>? {
@@ -69,7 +66,7 @@ object DiscordServerConnection : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request) { json: String -> CarryTierModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> CarryTierModel.fromJson(json) }
     }
 
     fun getScores(serverModel: DiscordServerModel, id: Long): List<ScoreModel>? {
@@ -101,7 +98,7 @@ object DiscordServerConnection : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request) { json: String -> LeaderboardModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> LeaderboardModel.fromJson(json) }
     }
 
     fun getTotalAmountOfMoneySpent(

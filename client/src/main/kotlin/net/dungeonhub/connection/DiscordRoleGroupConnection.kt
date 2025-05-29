@@ -1,17 +1,18 @@
 package net.dungeonhub.connection
 
 import com.squareup.moshi.adapter
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.discord_role_group.DiscordRoleGroupModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.util.*
 
 @OptIn(ExperimentalStdlibApi::class)
-class DiscordRoleGroupConnection(server: Long) : ModuleConnection {
+class DiscordRoleGroupConnection(server: Long, override val client: AuthenticatedClient) : ModuleConnection {
     override val moduleApiPrefix = "server/$server/role-group"
 
     val all: List<DiscordRoleGroupModel>?
@@ -24,11 +25,16 @@ class DiscordRoleGroupConnection(server: Long) : ModuleConnection {
         }
 
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(DiscordRoleGroupConnection::class.java)
-        private val instances: MutableMap<Long, DiscordRoleGroupConnection> = HashMap()
+        private val instances: MutableMap<Long, ClientlessDiscordRoleGroupConnection> = HashMap()
 
-        operator fun get(server: Long): DiscordRoleGroupConnection {
-            return instances.computeIfAbsent(server) { DiscordRoleGroupConnection(it) }
+        operator fun get(server: Long): ClientlessDiscordRoleGroupConnection {
+            return instances.computeIfAbsent(server) { ClientlessDiscordRoleGroupConnection(it) }
+        }
+
+        class ClientlessDiscordRoleGroupConnection(val server: Long) : ClientlessConnection<DiscordRoleGroupConnection> {
+            override fun authenticated(authenticationProvider: AuthenticationProvider): DiscordRoleGroupConnection {
+                return DiscordRoleGroupConnection(server, AuthenticatedClient(authenticationProvider))
+            }
         }
     }
 }
