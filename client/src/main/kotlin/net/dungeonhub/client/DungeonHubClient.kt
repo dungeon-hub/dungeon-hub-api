@@ -1,40 +1,20 @@
-package net.dungeonhub.connection
+package net.dungeonhub.client
 
+import net.dungeonhub.providers.HttpClientProvider.httpClient
 import net.dungeonhub.structure.MappingFunction
 import net.dungeonhub.structure.RequestResult
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import okio.Buffer
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.nio.charset.StandardCharsets
-import java.time.Duration
 
-object DungeonHubConnection {
-    private const val API_PREFIX: String = "api/v1/"
-    private const val AUTHORIZATION: String = "Authorization"
-
-    var apiUrl: String? = System.getenv("DHAPI_URL")
-    var cdnUrl: String? = System.getenv("DHAPI_CDN_URL")
-    var staticUrl: String? = System.getenv("DHAPI_STATIC_URL")
-
-    var authLoginUrl: String? = System.getenv("DHAPI_AUTH_LOGIN_URL")
-    var clientId: String? = System.getenv("DHAPI_CLIENT_ID")
-    var clientSecret: String? = System.getenv("DHAPI_CLIENT_SECRET")
-
-    private val logger = LoggerFactory.getLogger(DungeonHubConnection::class.java)
-
-    val httpClient: OkHttpClient = OkHttpClient.Builder()
-        .retryOnConnectionFailure(true)
-        .connectTimeout(Duration.ofSeconds(30))
-        .readTimeout(Duration.ofSeconds(30))
-        .callTimeout(Duration.ofSeconds(30))
-        .writeTimeout(Duration.ofSeconds(30))
-        .build()
+open class DungeonHubClient {
+    private val logger = LoggerFactory.getLogger(DungeonHubClient::class.java)
 
     fun <T> executeRequest(request: Request, notFoundFallback: T? = null, function: MappingFunction<String, T>): T? {
         val result = executeRawRequest(request)?.stringResult
@@ -98,9 +78,9 @@ object DungeonHubConnection {
                 newRequest.body!!.writeTo(buffer)
                 return buffer.readUtf8()
             }
-        } catch (exception: IOException) {
+        } catch (_: IOException) {
             return null
-        } catch (exception: NullPointerException) {
+        } catch (_: NullPointerException) {
             return null
         }
     }
@@ -109,16 +89,23 @@ object DungeonHubConnection {
         return getApiRequest(getApiUrl(uri).build())
     }
 
-    fun getApiRequest(httpUrl: HttpUrl): Request.Builder {
+    open fun getApiRequest(httpUrl: HttpUrl): Request.Builder {
         val mediaType: MediaType = "multipart/form-data; boundary=---011000010111000001101001".toMediaType()
 
         return Request.Builder()
             .url(httpUrl)
             .addHeader("Content-Type", mediaType.toString())
-            .addHeader(AUTHORIZATION, "Bearer " + AuthorizationConnection.apiToken)
     }
 
     fun getApiUrl(uri: String): HttpUrl.Builder {
         return (apiUrl + API_PREFIX + uri).toHttpUrl().newBuilder()
+    }
+
+    companion object {
+        private const val API_PREFIX: String = "api/v1/"
+
+        var apiUrl: String? = System.getenv("DHAPI_URL")
+        var cdnUrl: String? = System.getenv("DHAPI_CDN_URL")
+        var staticUrl: String? = System.getenv("DHAPI_STATIC_URL")
     }
 }

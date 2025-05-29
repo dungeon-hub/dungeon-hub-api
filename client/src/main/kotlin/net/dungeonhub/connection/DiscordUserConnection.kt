@@ -1,21 +1,18 @@
 package net.dungeonhub.connection
 
 import com.squareup.moshi.adapter
+import net.dungeonhub.client.DungeonHubClient
 import net.dungeonhub.model.discord_user.DiscordUserModel
 import net.dungeonhub.model.discord_user.DiscordUserUpdateModel
 import net.dungeonhub.service.MoshiService.moshi
-import net.dungeonhub.structure.ModuleConnection
+import net.dungeonhub.structure.AuthenticatedModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.util.*
 
 @OptIn(ExperimentalStdlibApi::class)
-object DiscordUserConnection : ModuleConnection {
-    private val logger: Logger = LoggerFactory.getLogger(DiscordUserConnection::class.java)
-
+class DiscordUserConnection(override val client: DungeonHubClient) : AuthenticatedModuleConnection() {
     override val moduleApiPrefix = "discord-users"
 
     fun countLinkedUsers(): Long? {
@@ -33,7 +30,7 @@ object DiscordUserConnection : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request) { json: String -> DiscordUserModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> DiscordUserModel.fromJson(json) }
     }
 
     fun getByIdOrCreate(id: Long) : DiscordUserModel? {
@@ -64,7 +61,7 @@ object DiscordUserConnection : ModuleConnection {
             .put(requestBody)
             .build()
 
-        return executeRequest(request) { json: String -> DiscordUserModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> DiscordUserModel.fromJson(json) }
     }
 
     fun getCarryCount(id: Long, guildId: Long): Int? {
@@ -86,6 +83,6 @@ object DiscordUserConnection : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request) { json: String -> DiscordUserModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> DiscordUserModel.fromJson(json) }
     }
 }

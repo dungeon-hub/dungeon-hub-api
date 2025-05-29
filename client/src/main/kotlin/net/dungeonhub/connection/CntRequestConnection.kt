@@ -1,17 +1,18 @@
 package net.dungeonhub.connection
 
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.cnt_request.CntRequestCreationModel
 import net.dungeonhub.model.cnt_request.CntRequestModel
 import net.dungeonhub.model.cnt_request.CntRequestUpdateModel
+import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 
-class CntRequestConnection(private val server: Long) : ModuleConnection {
+class CntRequestConnection(private val server: Long, override val client: AuthenticatedClient) : ModuleConnection {
     override val moduleApiPrefix = "server/$server/cnt-request"
 
     fun findCntRequest(messageId: Long): CntRequestModel? {
@@ -23,7 +24,7 @@ class CntRequestConnection(private val server: Long) : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request) { json: String -> CntRequestModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> CntRequestModel.fromJson(json) }
     }
 
     fun createCntRequest(creationModel: CntRequestCreationModel): CntRequestModel? {
@@ -35,7 +36,7 @@ class CntRequestConnection(private val server: Long) : ModuleConnection {
             .post(requestBody)
             .build()
 
-        return executeRequest(request) { json: String -> CntRequestModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> CntRequestModel.fromJson(json) }
     }
 
     fun updateCntRequest(id: Long, updateModel: CntRequestUpdateModel): CntRequestModel? {
@@ -47,15 +48,20 @@ class CntRequestConnection(private val server: Long) : ModuleConnection {
             .put(requestBody)
             .build()
 
-        return executeRequest(request) { json: String -> CntRequestModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> CntRequestModel.fromJson(json) }
     }
 
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(CntRequestConnection::class.java)
-        private val instances: MutableMap<Long, CntRequestConnection> = HashMap()
+        private val instances: MutableMap<Long, ClientlessCntRequestConnection> = HashMap()
 
-        operator fun get(server: Long): CntRequestConnection {
-            return instances.computeIfAbsent(server) { CntRequestConnection(it) }
+        operator fun get(server: Long): ClientlessCntRequestConnection {
+            return instances.computeIfAbsent(server) { ClientlessCntRequestConnection(it) }
+        }
+
+        class ClientlessCntRequestConnection(val server: Long) : ClientlessConnection<CntRequestConnection> {
+            override fun authenticated(authenticationProvider: AuthenticationProvider): CntRequestConnection {
+                return CntRequestConnection(server, AuthenticatedClient(authenticationProvider))
+            }
         }
     }
 }

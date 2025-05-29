@@ -1,22 +1,23 @@
 package net.dungeonhub.connection
 
 import com.squareup.moshi.adapter
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.carry_tier.CarryTierCreationModel
 import net.dungeonhub.model.carry_tier.CarryTierModel
 import net.dungeonhub.model.carry_tier.CarryTierUpdateModel
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.util.*
 
 @OptIn(ExperimentalStdlibApi::class)
-class CarryTierConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
+class CarryTierConnection(carryTypeModel: CarryTypeModel, override val client: AuthenticatedClient) : ModuleConnection {
     override val moduleApiPrefix = "server/${carryTypeModel.server.id}/carry-type/${carryTypeModel.id}/carry-tier"
 
     fun getByIdentifier(identifier: String?): CarryTierModel? {
@@ -55,7 +56,7 @@ class CarryTierConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
             .post(requestBody)
             .build()
 
-        return executeRequest(request) { json: String -> CarryTierModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> CarryTierModel.fromJson(json) }
     }
 
     fun updateCarryTier(id: Long, updateModel: CarryTierUpdateModel): CarryTierModel? {
@@ -81,11 +82,16 @@ class CarryTierConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
     }
 
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(CarryTierConnection::class.java)
-        private val instances: MutableMap<CarryTypeModel, CarryTierConnection> = HashMap<CarryTypeModel, CarryTierConnection>()
+        private val instances: MutableMap<CarryTypeModel, ClientlessCarryTierConnection> = HashMap()
 
-        operator fun get(carryTypeModel: CarryTypeModel): CarryTierConnection {
-            return instances.computeIfAbsent(carryTypeModel) { CarryTierConnection(it) }
+        operator fun get(carryTypeModel: CarryTypeModel): ClientlessCarryTierConnection {
+            return instances.computeIfAbsent(carryTypeModel) { ClientlessCarryTierConnection(it) }
+        }
+
+        class ClientlessCarryTierConnection(val carryTypeModel: CarryTypeModel) : ClientlessConnection<CarryTierConnection> {
+            override fun authenticated(authenticationProvider: AuthenticationProvider): CarryTierConnection {
+                return CarryTierConnection(carryTypeModel, AuthenticatedClient(authenticationProvider))
+            }
         }
     }
 }

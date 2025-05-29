@@ -1,7 +1,7 @@
 package net.dungeonhub.structure
 
-import net.dungeonhub.connection.AuthorizationConnection
-import net.dungeonhub.connection.DungeonHubConnection.apiUrl
+import net.dungeonhub.auth.AuthenticationConnection
+import net.dungeonhub.client.DungeonHubClient.Companion.apiUrl
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType
@@ -21,7 +21,7 @@ interface ModuleConnection : Connection {
         return Request.Builder()
             .url(httpUrl)
             .addHeader("Content-Type", mediaType.toString())
-            .addHeader("Authorization", "Bearer " + AuthorizationConnection.apiToken)
+            .addHeader("Authorization", "Bearer " + AuthenticationConnection.apiToken)
     }
 
     fun getApiUrl(): HttpUrl.Builder = getApiUrl("")

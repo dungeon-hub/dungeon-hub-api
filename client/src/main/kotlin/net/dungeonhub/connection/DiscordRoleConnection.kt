@@ -1,21 +1,22 @@
 package net.dungeonhub.connection
 
 import com.squareup.moshi.adapter
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.discord_role.DiscordRoleCreationModel
 import net.dungeonhub.model.discord_role.DiscordRoleModel
 import net.dungeonhub.model.discord_role.DiscordRoleUpdateModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.util.*
 
 @OptIn(ExperimentalStdlibApi::class)
-class DiscordRoleConnection(private val server: Long) : ModuleConnection {
+class DiscordRoleConnection(private val server: Long, override val client: AuthenticatedClient) : ModuleConnection {
     override val moduleApiPrefix = "server/$server/roles"
 
     fun getById(id: Long): DiscordRoleModel? {
@@ -25,7 +26,7 @@ class DiscordRoleConnection(private val server: Long) : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request) { json: String -> DiscordRoleModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> DiscordRoleModel.fromJson(json) }
     }
 
     fun addNewRole(creationModel: DiscordRoleCreationModel): DiscordRoleModel? {
@@ -37,7 +38,7 @@ class DiscordRoleConnection(private val server: Long) : ModuleConnection {
             .post(requestBody)
             .build()
 
-        return executeRequest(request) { json: String -> DiscordRoleModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> DiscordRoleModel.fromJson(json) }
     }
 
     fun updateRole(id: Long, updateModel: DiscordRoleUpdateModel): DiscordRoleModel? {
@@ -49,7 +50,7 @@ class DiscordRoleConnection(private val server: Long) : ModuleConnection {
             .put(requestBody)
             .build()
 
-        return executeRequest(request) { json: String -> DiscordRoleModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> DiscordRoleModel.fromJson(json) }
     }
 
     val allRoles: List<DiscordRoleModel>?
@@ -62,11 +63,16 @@ class DiscordRoleConnection(private val server: Long) : ModuleConnection {
         }
 
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(DiscordRoleConnection::class.java)
-        private val instances: MutableMap<Long, DiscordRoleConnection> = HashMap()
+        private val instances: MutableMap<Long, ClientlessDiscordRoleConnection> = HashMap()
 
-        operator fun get(server: Long): DiscordRoleConnection {
-            return instances.computeIfAbsent(server) { DiscordRoleConnection(it) }
+        operator fun get(server: Long): ClientlessDiscordRoleConnection {
+            return instances.computeIfAbsent(server) { ClientlessDiscordRoleConnection(it) }
+        }
+
+        class ClientlessDiscordRoleConnection(val server: Long) : ClientlessConnection<DiscordRoleConnection> {
+            override fun authenticated(authenticationProvider: AuthenticationProvider): DiscordRoleConnection {
+                return DiscordRoleConnection(server, AuthenticatedClient(authenticationProvider))
+            }
         }
     }
 }

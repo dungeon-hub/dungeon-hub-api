@@ -1,21 +1,22 @@
 package net.dungeonhub.connection
 
 import com.squareup.moshi.adapter
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.carry_type.CarryTypeCreationModel
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.model.carry_type.CarryTypeUpdateModel
 import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.util.*
 
 @OptIn(ExperimentalStdlibApi::class)
-class CarryTypeConnection(server: Long) : ModuleConnection {
+class CarryTypeConnection(server: Long, override val client: AuthenticatedClient) : ModuleConnection {
     override val moduleApiPrefix = "server/$server/carry-type"
 
     fun getById(id: Long): CarryTypeModel? {
@@ -25,7 +26,7 @@ class CarryTypeConnection(server: Long) : ModuleConnection {
             .get()
             .build()
 
-        return executeRequest(request) { json: String -> CarryTypeModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> CarryTypeModel.fromJson(json) }
     }
 
     //TODO dedicated endpoint?
@@ -47,7 +48,7 @@ class CarryTypeConnection(server: Long) : ModuleConnection {
             .post(requestBody)
             .build()
 
-        return executeRequest(request) { json: String -> CarryTypeModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> CarryTypeModel.fromJson(json) }
     }
 
     fun updateCarryType(id: Long, updateModel: CarryTypeUpdateModel): CarryTypeModel? {
@@ -59,7 +60,7 @@ class CarryTypeConnection(server: Long) : ModuleConnection {
             .put(requestBody)
             .build()
 
-        return executeRequest(request) { json: String -> CarryTypeModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> CarryTypeModel.fromJson(json) }
     }
 
     fun deleteCarryType(carryTypeModel: CarryTypeModel): CarryTypeModel? {
@@ -69,7 +70,7 @@ class CarryTypeConnection(server: Long) : ModuleConnection {
             .delete()
             .build()
 
-        return executeRequest(request) { json: String -> CarryTypeModel.Companion.fromJson(json) }
+        return executeRequest(request) { json: String -> CarryTypeModel.fromJson(json) }
     }
 
     val allCarryTypes: List<CarryTypeModel>?
@@ -82,15 +83,20 @@ class CarryTypeConnection(server: Long) : ModuleConnection {
         }
 
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(CarryTypeConnection::class.java)
-        private val instances: MutableMap<Long, CarryTypeConnection> = HashMap()
+        private val instances: MutableMap<Long, ClientlessCarryTypeConnection> = HashMap()
 
-        operator fun get(server: Long): CarryTypeConnection {
-            return instances.computeIfAbsent(server) { CarryTypeConnection(it) }
+        operator fun get(server: Long): ClientlessCarryTypeConnection {
+            return instances.computeIfAbsent(server) { ClientlessCarryTypeConnection(it) }
         }
 
-        operator fun get(server: DiscordServerModel): CarryTypeConnection {
+        operator fun get(server: DiscordServerModel): ClientlessCarryTypeConnection {
             return get(server.id)
+        }
+
+        class ClientlessCarryTypeConnection(val server: Long) : ClientlessConnection<CarryTypeConnection> {
+            override fun authenticated(authenticationProvider: AuthenticationProvider): CarryTypeConnection {
+                return CarryTypeConnection(server, AuthenticatedClient(authenticationProvider))
+            }
         }
     }
 }

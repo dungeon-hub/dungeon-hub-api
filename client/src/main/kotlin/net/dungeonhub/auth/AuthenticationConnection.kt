@@ -1,9 +1,7 @@
-package net.dungeonhub.connection
+package net.dungeonhub.auth
 
-import net.dungeonhub.connection.DungeonHubConnection.authLoginUrl
-import net.dungeonhub.connection.DungeonHubConnection.clientId
-import net.dungeonhub.connection.DungeonHubConnection.clientSecret
 import net.dungeonhub.model.auth.JwtTokenModel
+import net.dungeonhub.providers.HttpClientProvider.httpClient
 import net.dungeonhub.service.MoshiService
 import okhttp3.FormBody
 import okhttp3.Request
@@ -14,12 +12,16 @@ import java.io.IOException
 import java.nio.charset.StandardCharsets
 import java.time.Instant
 
-object AuthorizationConnection {
-    val logger: Logger = LoggerFactory.getLogger(AuthorizationConnection::class.java)
+object AuthenticationConnection : AuthenticationProvider {
+    val logger: Logger = LoggerFactory.getLogger(AuthenticationConnection::class.java)
 
     private var jwtToken: JwtTokenModel = loadToken()
 
-    val apiToken: String
+    var authLoginUrl: String? = System.getenv("DHAPI_AUTH_LOGIN_URL")
+    var clientId: String? = System.getenv("DHAPI_CLIENT_ID")
+    var clientSecret: String? = System.getenv("DHAPI_CLIENT_SECRET")
+
+    override val apiToken: String
         @Synchronized
         get() {
             if (jwtToken.validUntil.isBefore(Instant.now())) {
@@ -42,12 +44,12 @@ object AuthorizationConnection {
             .build()
 
         val responseBody = try {
-            DungeonHubConnection.httpClient.newCall(request).execute().use { response ->
+            httpClient.newCall(request).execute().use { response ->
                 if (response.isSuccessful) {
                     response.body?.let { body: ResponseBody ->
                         try {
                             body.bytes()
-                        } catch (ioException: IOException) {
+                        } catch (_: IOException) {
                             null
                         }
                     }?.let { bytes: ByteArray? ->
