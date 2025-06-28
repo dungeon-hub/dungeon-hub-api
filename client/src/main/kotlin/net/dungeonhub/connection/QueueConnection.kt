@@ -1,6 +1,8 @@
 package net.dungeonhub.connection
 
 import com.squareup.moshi.adapter
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.client.DungeonHubClient
 import net.dungeonhub.enums.QueueStep
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
@@ -10,6 +12,7 @@ import net.dungeonhub.model.carry_queue.CarryQueueUpdateModel
 import net.dungeonhub.model.score.LoggedCarryModel
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.AuthenticatedModuleConnection
+import net.dungeonhub.structure.ClientlessConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -109,5 +112,11 @@ class QueueConnection(override val client: DungeonHubClient) : AuthenticatedModu
             .build()
 
         return executeRequest(request) { json: String -> LoggedCarryModel.fromJson(json) }
+    }
+
+    companion object : ClientlessConnection<QueueConnection> {
+        override fun authenticated(authenticationProvider: AuthenticationProvider): QueueConnection {
+            return QueueConnection(AuthenticatedClient(authenticationProvider))
+        }
     }
 }
