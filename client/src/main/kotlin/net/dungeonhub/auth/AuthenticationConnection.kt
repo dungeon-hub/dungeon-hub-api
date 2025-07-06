@@ -1,5 +1,8 @@
 package net.dungeonhub.auth
 
+import net.dungeonhub.auth.AuthenticationCredentials.authLoginUrl
+import net.dungeonhub.auth.AuthenticationCredentials.clientId
+import net.dungeonhub.auth.AuthenticationCredentials.clientSecret
 import net.dungeonhub.model.auth.JwtTokenModel
 import net.dungeonhub.providers.HttpClientProvider.httpClient
 import net.dungeonhub.service.MoshiService
@@ -16,10 +19,6 @@ object AuthenticationConnection : AuthenticationProvider {
     val logger: Logger = LoggerFactory.getLogger(AuthenticationConnection::class.java)
 
     private var jwtToken: JwtTokenModel = loadToken()
-
-    var authLoginUrl: String? = System.getenv("DHAPI_AUTH_LOGIN_URL")
-    var clientId: String? = System.getenv("DHAPI_CLIENT_ID")
-    var clientSecret: String? = System.getenv("DHAPI_CLIENT_SECRET")
 
     override val apiToken: String
         @Synchronized
