@@ -1,5 +1,6 @@
 package net.dungeonhub.auth
 
+import com.squareup.moshi.Json
 import net.dungeonhub.auth.AuthenticationCredentials.authLoginUrl
 import net.dungeonhub.auth.AuthenticationCredentials.clientId
 import net.dungeonhub.auth.AuthenticationCredentials.clientSecret
@@ -67,13 +68,15 @@ object AuthenticationConnection : AuthenticationProvider {
 
         val response = MoshiService.moshi.adapter(LoginResponse::class.java).fromJson(responseBody)!!
 
-        val token = response.access_token
-        val expiresIn = response.expires_in
+        val token = response.accessToken
+        val expiresIn = response.expiresIn
         val validUntil = Instant.now().plusSeconds(expiresIn.toLong())
 
         return JwtTokenModel(token, validUntil)
     }
 
-    @Suppress("PropertyName", "kotlin:S117")
-    class LoginResponse(val access_token: String, val expires_in: Int)
+    class LoginResponse(
+        @Json(name = "access_token") val accessToken: String,
+        @Json(name = "expires_in") val expiresIn: Int
+    )
 }
