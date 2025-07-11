@@ -1,6 +1,6 @@
 package net.dungeonhub.structure.entity
 
-import net.dungeonhub.expections.EntityUnknownException
+import net.dungeonhub.exceptions.EntityUnknownException
 import net.dungeonhub.structure.model.CreationModel
 import net.dungeonhub.structure.model.InitializeModel
 import net.dungeonhub.structure.model.Model

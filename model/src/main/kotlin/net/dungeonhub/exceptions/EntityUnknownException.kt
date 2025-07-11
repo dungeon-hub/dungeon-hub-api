@@ -1,4 +1,4 @@
-package net.dungeonhub.expections
+package net.dungeonhub.exceptions
 
 class EntityUnknownException(
     val id: Long
