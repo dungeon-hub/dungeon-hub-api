@@ -14,7 +14,7 @@ class ReputationModel(
     val time: Instant
 ): UpdateableModel<ReputationUpdateModel, ReputationModel> {
     override fun getUpdateModel(): ReputationUpdateModel {
-        return ReputationUpdateModel(null)
+        return ReputationUpdateModel(null, null)
     }
 
     companion object {
