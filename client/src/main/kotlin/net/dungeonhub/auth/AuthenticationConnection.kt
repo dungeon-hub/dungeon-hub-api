@@ -1,5 +1,9 @@
 package net.dungeonhub.auth
 
+import com.squareup.moshi.Json
+import net.dungeonhub.auth.AuthenticationCredentials.authLoginUrl
+import net.dungeonhub.auth.AuthenticationCredentials.clientId
+import net.dungeonhub.auth.AuthenticationCredentials.clientSecret
 import net.dungeonhub.model.auth.JwtTokenModel
 import net.dungeonhub.providers.HttpClientProvider.httpClient
 import net.dungeonhub.service.MoshiService
@@ -16,10 +20,6 @@ object AuthenticationConnection : AuthenticationProvider {
     val logger: Logger = LoggerFactory.getLogger(AuthenticationConnection::class.java)
 
     private var jwtToken: JwtTokenModel = loadToken()
-
-    var authLoginUrl: String? = System.getenv("DHAPI_AUTH_LOGIN_URL")
-    var clientId: String? = System.getenv("DHAPI_CLIENT_ID")
-    var clientSecret: String? = System.getenv("DHAPI_CLIENT_SECRET")
 
     override val apiToken: String
         @Synchronized
@@ -68,13 +68,15 @@ object AuthenticationConnection : AuthenticationProvider {
 
         val response = MoshiService.moshi.adapter(LoginResponse::class.java).fromJson(responseBody)!!
 
-        val token = response.access_token
-        val expiresIn = response.expires_in
+        val token = response.accessToken
+        val expiresIn = response.expiresIn
         val validUntil = Instant.now().plusSeconds(expiresIn.toLong())
 
         return JwtTokenModel(token, validUntil)
     }
 
-    @Suppress("PropertyName", "kotlin:S117")
-    class LoginResponse(val access_token: String, val expires_in: Int)
+    class LoginResponse(
+        @Json(name = "access_token") val accessToken: String,
+        @Json(name = "expires_in") val expiresIn: Int
+    )
 }

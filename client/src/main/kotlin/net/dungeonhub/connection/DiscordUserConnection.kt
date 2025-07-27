@@ -1,11 +1,14 @@
 package net.dungeonhub.connection
 
 import com.squareup.moshi.adapter
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.client.DungeonHubClient
 import net.dungeonhub.model.discord_user.DiscordUserModel
 import net.dungeonhub.model.discord_user.DiscordUserUpdateModel
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.AuthenticatedModuleConnection
+import net.dungeonhub.structure.ClientlessConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -84,5 +87,11 @@ class DiscordUserConnection(override val client: DungeonHubClient) : Authenticat
             .build()
 
         return executeRequest(request) { json: String -> DiscordUserModel.fromJson(json) }
+    }
+
+    companion object : ClientlessConnection<DiscordUserConnection> {
+        override fun authenticated(authenticationProvider: AuthenticationProvider): DiscordUserConnection {
+            return DiscordUserConnection(AuthenticatedClient(authenticationProvider))
+        }
     }
 }

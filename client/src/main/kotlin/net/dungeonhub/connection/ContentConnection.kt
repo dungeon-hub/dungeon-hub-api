@@ -1,7 +1,10 @@
 package net.dungeonhub.connection
 
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.client.DungeonHubClient
 import net.dungeonhub.structure.AuthenticatedConnection
+import net.dungeonhub.structure.ClientlessConnection
 import okhttp3.HttpUrl
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
@@ -66,5 +69,11 @@ class ContentConnection(override val client: DungeonHubClient) : AuthenticatedCo
             .build()
 
         return client.executeRequest(request)
+    }
+
+    companion object : ClientlessConnection<ContentConnection> {
+        override fun authenticated(authenticationProvider: AuthenticationProvider): ContentConnection {
+            return ContentConnection(AuthenticatedClient(authenticationProvider))
+        }
     }
 }

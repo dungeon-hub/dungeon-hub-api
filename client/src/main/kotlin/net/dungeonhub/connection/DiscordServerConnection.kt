@@ -1,6 +1,8 @@
 package net.dungeonhub.connection
 
 import com.squareup.moshi.adapter
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.client.DungeonHubClient
 import net.dungeonhub.enums.ScoreType
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
@@ -10,6 +12,7 @@ import net.dungeonhub.model.score.LeaderboardModel
 import net.dungeonhub.model.score.ScoreModel
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.AuthenticatedModuleConnection
+import net.dungeonhub.structure.ClientlessConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import org.jetbrains.annotations.Range
@@ -146,5 +149,11 @@ class DiscordServerConnection(override val client: DungeonHubClient) : Authentic
         val request: Request = getApiRequest(url.build()).get().build()
 
         return executeRequest(request, function = java.lang.Long::parseLong)
+    }
+
+    companion object : ClientlessConnection<DiscordServerConnection> {
+        override fun authenticated(authenticationProvider: AuthenticationProvider): DiscordServerConnection {
+            return DiscordServerConnection(AuthenticatedClient(authenticationProvider))
+        }
     }
 }
