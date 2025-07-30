@@ -18,7 +18,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 class CntRequestConnection(private val server: Long, override val client: AuthenticatedClient) : ModuleConnection {
     override val moduleApiPrefix = "server/$server/cnt-request"
 
-    fun findCntRequest(messageId: Long): List<CntRequestModel>? {
+    fun findCntRequests(messageId: Long): List<CntRequestModel>? {
         val url: HttpUrl = getApiUrl("find")
             .addQueryParameter("message-id", messageId.toString())
             .build()
