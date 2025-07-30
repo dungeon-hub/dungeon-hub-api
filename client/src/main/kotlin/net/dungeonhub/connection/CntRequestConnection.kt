@@ -1,10 +1,12 @@
 package net.dungeonhub.connection
 
+import com.squareup.moshi.adapter
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.cnt_request.CntRequestCreationModel
 import net.dungeonhub.model.cnt_request.CntRequestModel
 import net.dungeonhub.model.cnt_request.CntRequestUpdateModel
+import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
@@ -12,10 +14,11 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
+@OptIn(ExperimentalStdlibApi::class)
 class CntRequestConnection(private val server: Long, override val client: AuthenticatedClient) : ModuleConnection {
     override val moduleApiPrefix = "server/$server/cnt-request"
 
-    fun findCntRequest(messageId: Long): CntRequestModel? {
+    fun findCntRequest(messageId: Long): List<CntRequestModel>? {
         val url: HttpUrl = getApiUrl("find")
             .addQueryParameter("message-id", messageId.toString())
             .build()
@@ -24,7 +27,19 @@ class CntRequestConnection(private val server: Long, override val client: Authen
             .get()
             .build()
 
-        return executeRequest(request) { json: String -> CntRequestModel.fromJson(json) }
+        return executeRequest(request, function = moshi.adapter<List<CntRequestModel>>()::fromJson)
+    }
+
+    fun findCntRequestsByUser(userId: Long): List<CntRequestModel>? {
+        val url: HttpUrl = getApiUrl("find")
+            .addQueryParameter("user", userId.toString())
+            .build()
+
+        val request: Request = getApiRequest(url)
+            .get()
+            .build()
+
+        return executeRequest(request, function = moshi.adapter<List<CntRequestModel>>()::fromJson)
     }
 
     fun createCntRequest(creationModel: CntRequestCreationModel): CntRequestModel? {
