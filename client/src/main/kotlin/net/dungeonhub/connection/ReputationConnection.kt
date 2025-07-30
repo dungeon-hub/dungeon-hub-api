@@ -1,5 +1,6 @@
 package net.dungeonhub.connection
 
+import com.squareup.moshi.adapter
 import dev.kord.core.behavior.MemberBehavior
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
@@ -7,6 +8,7 @@ import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.model.discord_user.DiscordUserModel
 import net.dungeonhub.model.reputation.ReputationCreationModel
 import net.dungeonhub.model.reputation.ReputationModel
+import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
@@ -35,6 +37,15 @@ class ReputationConnection(server: Long, discordUser: Long, override val client:
             .build()
 
         return executeRequest(request) { json: String -> ReputationModel.fromJson(json) }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    fun getReputations(): List<ReputationModel>? {
+        val url: HttpUrl = getApiUrl("all").build()
+
+        val request: Request = getApiRequest(url).get().build()
+
+        return executeRequest(request, function = moshi.adapter<List<ReputationModel>>()::fromJson)
     }
 
     companion object {
