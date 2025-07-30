@@ -83,6 +83,7 @@ class DiscordServerConnection(override val client: DungeonHubClient) : Authentic
         return executeRequest(request, function = moshi.adapter<List<ScoreModel>>()::fromJson)
     }
 
+    @JvmOverloads
     fun loadTotalLeaderboard(
         serverId: Long,
         scoreType: ScoreType = ScoreType.Default,
