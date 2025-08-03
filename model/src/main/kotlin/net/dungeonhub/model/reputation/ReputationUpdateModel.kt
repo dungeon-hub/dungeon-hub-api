@@ -3,7 +3,7 @@ package net.dungeonhub.model.reputation
 import net.dungeonhub.structure.model.UpdateModel
 
 class ReputationUpdateModel(
-    val reason: String?,
-    val amount: Int?,
-    val active: Boolean?
+    var reason: String?,
+    var amount: Int?,
+    var active: Boolean?
 ) : UpdateModel<ReputationModel>
