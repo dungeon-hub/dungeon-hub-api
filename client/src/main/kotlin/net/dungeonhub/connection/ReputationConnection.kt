@@ -8,6 +8,7 @@ import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.model.discord_user.DiscordUserModel
 import net.dungeonhub.model.reputation.ReputationCreationModel
 import net.dungeonhub.model.reputation.ReputationModel
+import net.dungeonhub.model.reputation.ReputationUpdateModel
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.ModuleConnection
@@ -39,7 +40,7 @@ class ReputationConnection(server: Long, discordUser: Long, override val client:
         return executeRequest(request) { json: String -> ReputationModel.fromJson(json) }
     }
 
-    fun updateReputation(id: Long, updateModel: ReputationCreationModel): ReputationModel? {
+    fun updateReputation(id: Long, updateModel: ReputationUpdateModel): ReputationModel? {
         val url: HttpUrl = getApiUrl(id).build()
 
         val requestBody = updateModel.toJson().toRequestBody(jsonMediaType)
