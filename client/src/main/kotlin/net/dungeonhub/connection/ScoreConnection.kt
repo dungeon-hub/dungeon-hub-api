@@ -6,7 +6,7 @@ import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.enums.ScoreResetType
 import net.dungeonhub.enums.ScoreType
 import net.dungeonhub.model.carry_type.CarryTypeModel
-import net.dungeonhub.model.score.LeaderboardModel
+import net.dungeonhub.model.score.ScoreLeaderboardModel
 import net.dungeonhub.model.score.ScoreModel
 import net.dungeonhub.model.score.ScoreResetModel
 import net.dungeonhub.model.score.ScoreUpdateModel
@@ -79,7 +79,7 @@ class ScoreConnection(carryTypeModel: CarryTypeModel, override val client: Authe
         scoreType: ScoreType = ScoreType.Default,
         page: @Range(from = 0, to = Integer.MAX_VALUE.toLong()) Int = 0,
         userId: Long? = null
-    ): LeaderboardModel? {
+    ): ScoreLeaderboardModel? {
         val urlBuilder = getApiUrl("leaderboard")
             .addQueryParameter(SCORE_TYPE, scoreType.name)
             .addQueryParameter("page", page.toString())
@@ -92,7 +92,7 @@ class ScoreConnection(carryTypeModel: CarryTypeModel, override val client: Authe
             .get()
             .build()
 
-        return executeRequest(request) { json: String -> LeaderboardModel.fromJson(json) }
+        return executeRequest(request) { json: String -> ScoreLeaderboardModel.fromJson(json) }
     }
 
     fun resetScore(scoreResetType: ScoreResetType): ScoreResetModel? {

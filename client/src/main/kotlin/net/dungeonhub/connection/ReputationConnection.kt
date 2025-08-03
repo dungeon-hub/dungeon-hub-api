@@ -1,12 +1,15 @@
 package net.dungeonhub.connection
 
-import dev.kord.core.entity.Member
+import com.squareup.moshi.adapter
+import dev.kord.core.behavior.MemberBehavior
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.model.discord_user.DiscordUserModel
 import net.dungeonhub.model.reputation.ReputationCreationModel
 import net.dungeonhub.model.reputation.ReputationModel
+import net.dungeonhub.model.reputation.ReputationUpdateModel
+import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
@@ -37,6 +40,27 @@ class ReputationConnection(server: Long, discordUser: Long, override val client:
         return executeRequest(request) { json: String -> ReputationModel.fromJson(json) }
     }
 
+    fun updateReputation(id: Long, updateModel: ReputationUpdateModel): ReputationModel? {
+        val url: HttpUrl = getApiUrl(id).build()
+
+        val requestBody = updateModel.toJson().toRequestBody(jsonMediaType)
+
+        val request: Request = getApiRequest(url)
+            .put(requestBody)
+            .build()
+
+        return executeRequest(request) { json: String -> ReputationModel.fromJson(json) }
+    }
+
+    @OptIn(ExperimentalStdlibApi::class)
+    fun getReputations(): List<ReputationModel>? {
+        val url: HttpUrl = getApiUrl("all").build()
+
+        val request: Request = getApiRequest(url).get().build()
+
+        return executeRequest(request, function = moshi.adapter<List<ReputationModel>>()::fromJson)
+    }
+
     companion object {
         private val instances: MutableMap<Long, MutableMap<Long, ClientlessReputationConnection>> = HashMap()
 
@@ -50,7 +74,7 @@ class ReputationConnection(server: Long, discordUser: Long, override val client:
             return get(server.id, discordUser.id)
         }
 
-        operator fun get(member: Member): ClientlessReputationConnection {
+        operator fun get(member: MemberBehavior): ClientlessReputationConnection {
             return get(member.guild.id.value.toLong(), member.id.value.toLong())
         }
 

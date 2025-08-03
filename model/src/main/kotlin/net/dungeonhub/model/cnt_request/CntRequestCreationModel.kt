@@ -1,11 +1,13 @@
 package net.dungeonhub.model.cnt_request
 
+import net.dungeonhub.enums.CntRequestType
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.CreationModel
 import java.time.Instant
 
 class CntRequestCreationModel(
     var messageId: Long,
+    var requestType: CntRequestType,
     var user: Long,
     var claimer: Long? = null,
     var time: Instant,
