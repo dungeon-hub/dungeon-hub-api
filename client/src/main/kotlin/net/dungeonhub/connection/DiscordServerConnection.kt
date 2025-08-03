@@ -9,6 +9,7 @@ import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
 import net.dungeonhub.model.carry_tier.CarryTierModel
 import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.model.reputation.ReputationLeaderboardModel
+import net.dungeonhub.model.reputation.ReputationModel
 import net.dungeonhub.model.score.ScoreLeaderboardModel
 import net.dungeonhub.model.score.ScoreModel
 import net.dungeonhub.service.MoshiService.moshi
@@ -71,6 +72,16 @@ class DiscordServerConnection(override val client: DungeonHubClient) : Authentic
             .build()
 
         return executeRequest(request) { json: String -> CarryTierModel.fromJson(json) }
+    }
+
+    fun getReputation(serverId: Long, reputationId: Long): ReputationModel? {
+        val url: HttpUrl = getApiUrl("$serverId/reputation/$reputationId").build()
+
+        val request: Request = getApiRequest(url)
+            .get()
+            .build()
+
+        return executeRequest(request) { json: String -> ReputationModel.fromJson(json) }
     }
 
     fun getScores(serverModel: DiscordServerModel, id: Long): List<ScoreModel>? {
