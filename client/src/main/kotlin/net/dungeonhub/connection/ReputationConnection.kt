@@ -39,6 +39,18 @@ class ReputationConnection(server: Long, discordUser: Long, override val client:
         return executeRequest(request) { json: String -> ReputationModel.fromJson(json) }
     }
 
+    fun updateReputation(id: Long, updateModel: ReputationCreationModel): ReputationModel? {
+        val url: HttpUrl = getApiUrl(id).build()
+
+        val requestBody = updateModel.toJson().toRequestBody(jsonMediaType)
+
+        val request: Request = getApiRequest(url)
+            .put(requestBody)
+            .build()
+
+        return executeRequest(request) { json: String -> ReputationModel.fromJson(json) }
+    }
+
     @OptIn(ExperimentalStdlibApi::class)
     fun getReputations(): List<ReputationModel>? {
         val url: HttpUrl = getApiUrl("all").build()
