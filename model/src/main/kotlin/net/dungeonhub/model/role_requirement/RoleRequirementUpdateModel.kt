@@ -5,8 +5,8 @@ import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.UpdateModel
 
 class RoleRequirementUpdateModel(
-    val comparison: RoleRequirementComparison?,
-    val count: Int?,
+    var comparison: RoleRequirementComparison?,
+    var count: Int?,
     extraData: String?
 ) : UpdateModel<RoleRequirementModel> {
     var extraData = extraData
