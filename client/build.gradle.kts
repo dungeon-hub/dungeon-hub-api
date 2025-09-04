@@ -5,7 +5,7 @@ plugins {
     id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.3")
     kotlin("jvm")
     id("com.google.devtools.ksp").version("2.1.0-1.0.29")
-    id("dev.kordex.gradle.kordex") version "1.6.1"
+    id("dev.kordex.gradle.kordex") version "1.7.2"
 }
 
 group = "net.dungeon-hub.api"
@@ -16,6 +16,7 @@ description = "A client library written in Kotlin to simplify the integration of
 kordEx {
     kordExVersion = libs.kord.extensions.get().version
     jvmTarget = 17
+    configurations = listOf("compileOnly")
 }
 
 dependencies {
@@ -27,9 +28,6 @@ dependencies {
 
     //HTTP Client
     api(libs.okhttp)
-
-    //Used frameworks for compatible classes
-    implementation(libs.kord.extensions)
 
     //Tests
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
