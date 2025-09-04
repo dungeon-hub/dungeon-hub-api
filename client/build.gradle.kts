@@ -29,9 +29,6 @@ dependencies {
     //HTTP Client
     api(libs.okhttp)
 
-    //Used frameworks for compatible classes
-    implementation(libs.kord.extensions)
-
     //Tests
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     testImplementation(kotlin("test"))
