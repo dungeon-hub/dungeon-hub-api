@@ -16,6 +16,7 @@ description = "The model classes that are used in the Dungeon Hub API."
 kordEx {
     kordExVersion = libs.kord.extensions.get().version
     jvmTarget = 17
+    configurations = listOf("compileOnly")
 
     i18n {
         classPackage = "net.dungeonhub.api.model.i18n"

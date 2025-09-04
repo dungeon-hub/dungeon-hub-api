@@ -16,6 +16,7 @@ description = "A client library written in Kotlin to simplify the integration of
 kordEx {
     kordExVersion = libs.kord.extensions.get().version
     jvmTarget = 17
+    configurations = listOf("compileOnly")
 }
 
 dependencies {
