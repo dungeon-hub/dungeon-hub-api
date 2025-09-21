@@ -13,6 +13,7 @@ import net.dungeonhub.structure.model.UpdateableModel
 //TODO message settings
 //TODO setting: DM a message to the user once a ticket is closed / created?
 //TODO add a ticket form
+//TODO nullable boolean setting: "should show player embed"
 class TicketPanelModel(
     val id: Long,
     val name: String,
