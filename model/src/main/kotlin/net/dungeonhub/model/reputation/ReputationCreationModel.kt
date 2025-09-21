@@ -6,6 +6,7 @@ import net.dungeonhub.structure.model.CreationModel
 class ReputationCreationModel(
     val user: Long,
     val reputor: Long,
+    val cntRequest: Long? = null,
     val amount: Int,
     val reason: String?
 ) : CreationModel {

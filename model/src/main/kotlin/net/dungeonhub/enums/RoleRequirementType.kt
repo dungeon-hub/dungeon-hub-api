@@ -26,7 +26,8 @@ enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.
     HighestCritDamage,
     BingoRank,
     TotalBingoPoints,
-    Reputation;
+    Reputation,
+    LeaderboardRank;
 
     override val readableName = name.replace(Regex("([A-Z])"), " $1").trim().toKey()
 

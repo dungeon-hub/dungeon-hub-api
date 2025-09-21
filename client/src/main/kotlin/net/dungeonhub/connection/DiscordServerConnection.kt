@@ -8,7 +8,9 @@ import net.dungeonhub.enums.ScoreType
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
 import net.dungeonhub.model.carry_tier.CarryTierModel
 import net.dungeonhub.model.discord_server.DiscordServerModel
-import net.dungeonhub.model.score.LeaderboardModel
+import net.dungeonhub.model.reputation.ReputationLeaderboardModel
+import net.dungeonhub.model.reputation.ReputationModel
+import net.dungeonhub.model.score.ScoreLeaderboardModel
 import net.dungeonhub.model.score.ScoreModel
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.AuthenticatedModuleConnection
@@ -72,6 +74,16 @@ class DiscordServerConnection(override val client: DungeonHubClient) : Authentic
         return executeRequest(request) { json: String -> CarryTierModel.fromJson(json) }
     }
 
+    fun getReputation(serverId: Long, reputationId: Long): ReputationModel? {
+        val url: HttpUrl = getApiUrl("$serverId/reputation/$reputationId").build()
+
+        val request: Request = getApiRequest(url)
+            .get()
+            .build()
+
+        return executeRequest(request) { json: String -> ReputationModel.fromJson(json) }
+    }
+
     fun getScores(serverModel: DiscordServerModel, id: Long): List<ScoreModel>? {
         val url: HttpUrl = getApiUrl(serverModel.id.toString() + "/score/" + id).build()
 
@@ -88,7 +100,7 @@ class DiscordServerConnection(override val client: DungeonHubClient) : Authentic
         scoreType: ScoreType = ScoreType.Default,
         page: @Range(from = 0, to = Integer.MAX_VALUE.toLong()) Int = 0,
         userId: Long? = null
-    ): LeaderboardModel? {
+    ): ScoreLeaderboardModel? {
         val urlBuilder = getApiUrl("$serverId/total-leaderboard")
             .addQueryParameter("score-type", scoreType.name)
             .addQueryParameter("page", page.toString())
@@ -101,7 +113,26 @@ class DiscordServerConnection(override val client: DungeonHubClient) : Authentic
             .get()
             .build()
 
-        return executeRequest(request) { json: String -> LeaderboardModel.fromJson(json) }
+        return executeRequest(request) { json: String -> ScoreLeaderboardModel.fromJson(json) }
+    }
+
+    fun loadReputationLeaderboard(
+        serverId: Long,
+        page: @Range(from = 0, to = Integer.MAX_VALUE.toLong()) Int = 0,
+        userId: Long? = null
+    ): ReputationLeaderboardModel? {
+        val urlBuilder = getApiUrl("$serverId/reputation-leaderboard")
+            .addQueryParameter("page", page.toString())
+
+        if (userId != null) {
+            urlBuilder.addQueryParameter("user", userId.toString())
+        }
+
+        val request: Request = getApiRequest(urlBuilder.build())
+            .get()
+            .build()
+
+        return executeRequest(request) { json: String -> ReputationLeaderboardModel.fromJson(json) }
     }
 
     fun getTotalAmountOfMoneySpent(

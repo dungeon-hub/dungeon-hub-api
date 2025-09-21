@@ -5,7 +5,7 @@ plugins {
     id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.3")
     kotlin("jvm")
     id("com.google.devtools.ksp").version("2.1.0-1.0.29")
-    id("dev.kordex.gradle.kordex") version "1.7.0"
+    id("dev.kordex.gradle.kordex") version "1.7.2"
 }
 
 group = "net.dungeon-hub.api"
@@ -16,6 +16,7 @@ description = "The model classes that are used in the Dungeon Hub API."
 kordEx {
     kordExVersion = libs.kord.extensions.get().version
     jvmTarget = 17
+    configurations = listOf("compileOnly")
 
     i18n {
         classPackage = "net.dungeonhub.api.model.i18n"
