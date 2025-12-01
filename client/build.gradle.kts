@@ -2,10 +2,10 @@ import net.thebugmc.gradle.sonatypepublisher.PublishingType
 
 plugins {
     id("java-library")
-    id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.3")
+    id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.4")
     kotlin("jvm")
-    id("com.google.devtools.ksp").version("2.1.0-1.0.29")
-    id("dev.kordex.gradle.kordex") version "1.7.2"
+    id("com.google.devtools.ksp").version("2.2.20-2.0.4")
+    id("dev.kordex.gradle.kordex") version "1.7.4"
 }
 
 group = "net.dungeon-hub.api"
@@ -15,8 +15,8 @@ description = "A client library written in Kotlin to simplify the integration of
 
 kordEx {
     kordExVersion = libs.kord.extensions.get().version
-    jvmTarget = 17
-    configurations = listOf("compileOnly")
+    jvmTarget = 21
+    configurations = listOf("compileOnly", "testImplementation")
 }
 
 dependencies {
@@ -79,7 +79,7 @@ tasks.test {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
     compilerOptions {
         freeCompilerArgs.add("-Xjvm-default=all")
     }

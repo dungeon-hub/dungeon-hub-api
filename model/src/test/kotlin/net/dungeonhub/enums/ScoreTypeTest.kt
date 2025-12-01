@@ -19,9 +19,9 @@ class ScoreTypeTest {
             val suffix = if (scoreType.leaderboardSuffix?.withLocale(locale)?.translate().isNullOrBlank())
                 ""
             else
-                " ${scoreType.leaderboardSuffix?.withLocale(locale)?.translate()}"
+                " ${scoreType.leaderboardSuffix.withLocale(locale).translate()}"
 
-            val carryType = CarryTypeModel(0, "identifier", "DisplayName", DiscordServerModel(0), null, null, false)
+            val carryType = CarryTypeModel(0, "identifier", "DisplayName", DiscordServerModel(0), null, false)
 
             assertEquals(
                 "Leaderboard | Total score$suffix",

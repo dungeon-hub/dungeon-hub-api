@@ -2,10 +2,10 @@ import net.thebugmc.gradle.sonatypepublisher.PublishingType
 
 plugins {
     id("java-library")
-    id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.3")
+    id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.4")
     kotlin("jvm")
-    id("com.google.devtools.ksp").version("2.1.0-1.0.29")
-    id("dev.kordex.gradle.kordex") version "1.7.2"
+    id("com.google.devtools.ksp").version("2.2.20-2.0.4")
+    id("dev.kordex.gradle.kordex") version "1.7.4"
 }
 
 group = "net.dungeon-hub.api"
@@ -15,8 +15,8 @@ description = "The model classes that are used in the Dungeon Hub API."
 
 kordEx {
     kordExVersion = libs.kord.extensions.get().version
-    jvmTarget = 17
-    configurations = listOf("compileOnly")
+    jvmTarget = 21
+    configurations = listOf("compileOnly", "testImplementation")
 
     i18n {
         classPackage = "net.dungeonhub.api.model.i18n"
@@ -30,10 +30,10 @@ dependencies {
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.2")
 
     //Gson, used for compatibility purposes
-    api("com.google.code.gson:gson:2.13.0")
+    api("com.google.code.gson:gson:2.13.2")
 
     //Used frameworks for compatible classes
-    implementation("org.springframework:spring-web:6.2.5")
+    implementation("org.springframework:spring-web:6.2.14")
 
     //Tests
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -85,7 +85,7 @@ tasks.test {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
     compilerOptions {
         freeCompilerArgs.add("-Xjvm-default=all")
     }
