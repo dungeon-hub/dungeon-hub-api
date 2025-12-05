@@ -25,9 +25,7 @@ class StaticMessageConnection(private val server: Long, override val client: Aut
         return executeRequest(request, function = moshi.adapter<StaticMessageModel>()::fromJson)
     }
 
-    fun findAll(): List<StaticMessageModel>? = findStaticMessages(null, null)
-
-    fun findStaticMessages(staticMessageType: StaticMessageType?, channelId: Long?): List<StaticMessageModel>? {
+    fun findStaticMessages(staticMessageType: StaticMessageType? = null, channelId: Long? = null): List<StaticMessageModel>? {
         var url = getApiUrl("find")
 
         if (staticMessageType != null) {
