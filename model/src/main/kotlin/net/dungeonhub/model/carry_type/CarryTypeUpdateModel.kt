@@ -6,19 +6,12 @@ import net.dungeonhub.structure.model.UpdateModel
 class CarryTypeUpdateModel(
     var displayName: String?,
     logChannel: Long?,
-    leaderboardChannel: Long?,
     eventActive: Boolean?
 ) : UpdateModel<CarryTypeModel> {
     var logChannel = logChannel
         set(value) {
             field = value
             resetLogChannel = value == null
-        }
-
-    var leaderboardChannel = leaderboardChannel
-        set(value) {
-            field = value
-            resetLeaderboardChannel = value == null
         }
 
     var eventActive = eventActive
@@ -28,8 +21,6 @@ class CarryTypeUpdateModel(
         }
 
     var resetLogChannel = false
-        private set
-    var resetLeaderboardChannel = false
         private set
     var resetEventActive = false
         private set

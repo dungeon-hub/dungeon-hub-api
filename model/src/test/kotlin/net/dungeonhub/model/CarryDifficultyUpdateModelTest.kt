@@ -53,7 +53,6 @@ class CarryDifficultyUpdateModelTest {
                     "displayName",
                     DiscordServerModel(0),
                     0,
-                    0,
                     false
                 ),
                 0,
