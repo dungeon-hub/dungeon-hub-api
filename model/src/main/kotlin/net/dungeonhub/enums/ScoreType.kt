@@ -1,7 +1,7 @@
 package net.dungeonhub.enums
 
 import dev.kordex.core.commands.application.slash.converters.ChoiceEnum
-import dev.kordex.core.i18n.types.Key
+import dev.kordex.i18n.Key
 import net.dungeonhub.api.model.i18n.Translations
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import java.util.Locale

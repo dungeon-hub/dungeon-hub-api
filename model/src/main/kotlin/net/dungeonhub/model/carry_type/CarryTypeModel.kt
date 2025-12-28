@@ -10,7 +10,6 @@ class CarryTypeModel(
     val displayName: String,
     val server: DiscordServerModel,
     logChannel: Long?,
-    leaderboardChannel: Long?,
     isEventActive: Boolean?
 ) : UpdateableModel<CarryTypeUpdateModel, CarryTypeModel> {
     val isEventActive = isEventActive
@@ -19,11 +18,8 @@ class CarryTypeModel(
     val logChannel = logChannel
         get() = (if (field != null && field > 0L) field else null)
 
-    val leaderboardChannel = leaderboardChannel
-        get() = (if (field != null && field > 0L) field else null)
-
     override fun getUpdateModel(): CarryTypeUpdateModel {
-        return CarryTypeUpdateModel(null, null, null, null)
+        return CarryTypeUpdateModel(null, null, null)
     }
 
     override fun equals(other: Any?): Boolean {

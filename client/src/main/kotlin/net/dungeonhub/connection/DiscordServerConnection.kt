@@ -12,6 +12,7 @@ import net.dungeonhub.model.reputation.ReputationLeaderboardModel
 import net.dungeonhub.model.reputation.ReputationModel
 import net.dungeonhub.model.score.ScoreLeaderboardModel
 import net.dungeonhub.model.score.ScoreModel
+import net.dungeonhub.model.static_message.StaticMessageModel
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
@@ -180,6 +181,14 @@ class DiscordServerConnection(override val client: DungeonHubClient) : Authentic
         val request: Request = getApiRequest(url.build()).get().build()
 
         return executeRequest(request, function = java.lang.Long::parseLong)
+    }
+
+    fun findGlobalStaticMessages(): List<StaticMessageModel>? {
+        val url: HttpUrl = getApiUrl("static-messages").build()
+
+        val request: Request = getApiRequest(url).get().build()
+
+        return executeRequest(request, function = moshi.adapter<List<StaticMessageModel>>()::fromJson)
     }
 
     companion object : ClientlessConnection<DiscordServerConnection> {

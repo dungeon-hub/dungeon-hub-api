@@ -27,7 +27,8 @@ enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.
     BingoRank,
     TotalBingoPoints,
     Reputation,
-    LeaderboardRank;
+    ScoreLeaderboardRank(ExtraDataType.ScoreLeaderboardRank),
+    ReputationLeaderboardRank;
 
     override val readableName = name.replace(Regex("([A-Z])"), " $1").trim().toKey()
 
@@ -35,6 +36,23 @@ enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.
         None({ true }),
         GuildName({ !it.isNullOrBlank() }),
         Duration({ !it.isNullOrBlank() && kotlin.time.Duration.parseOrNull(it) != null }),
-        CarryType({ it == null || it.isNotBlank() });
+        CarryType({ it == null || it.isNotBlank() }),
+        ScoreLeaderboardRank(checkExtraData@{
+            if(it.isNullOrBlank()) return@checkExtraData false
+
+            val extraData = it.split(";")
+
+            try {
+                ScoreType.valueOf(extraData[0])
+            } catch (_: IllegalArgumentException) {
+                return@checkExtraData false
+            }
+
+            if(extraData.size >= 2) {
+                return@checkExtraData CarryType.checkExtraData(extraData[1])
+            }
+
+            true
+        });
     }
 }
