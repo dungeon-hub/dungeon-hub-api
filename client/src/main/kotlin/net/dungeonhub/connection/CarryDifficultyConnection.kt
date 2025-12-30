@@ -9,6 +9,7 @@ import net.dungeonhub.model.carry_difficulty.CarryDifficultyUpdateModel
 import net.dungeonhub.model.carry_tier.CarryTierModel
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.ClientlessConnection
+import net.dungeonhub.structure.Connection.Companion.jsonMediaType
 import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request

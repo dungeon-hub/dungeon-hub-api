@@ -13,6 +13,7 @@ import net.dungeonhub.model.score.LoggedCarryModel
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
+import net.dungeonhub.structure.Connection.Companion.jsonMediaType
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
