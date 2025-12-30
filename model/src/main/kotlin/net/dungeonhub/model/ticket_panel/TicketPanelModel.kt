@@ -1,6 +1,8 @@
 package net.dungeonhub.model.ticket_panel
 
 import dev.kord.common.entity.Permissions
+import net.dungeonhub.enums.TicketPermissionCandidate
+import net.dungeonhub.enums.TicketPermissionType
 import net.dungeonhub.model.discord_channel.DiscordChannelModel
 import net.dungeonhub.model.discord_role.DiscordRoleModel
 import net.dungeonhub.model.discord_server.DiscordServerModel
@@ -8,31 +10,31 @@ import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.UpdateableModel
 
 //TODO settings about when a transcript should be dmed / logged?
-//TODO panel settings
-//TODO buttons settings
-//TODO message settings
 //TODO setting: DM a message to the user once a ticket is closed / created?
 //TODO add a ticket form
-//TODO nullable boolean setting: "should show player embed"
 class TicketPanelModel(
     val id: Long,
     val name: String,
+    val displayName: String?,
+    val emoji: String?,
     val discordServer: DiscordServerModel,
+
+    // ticket settings
     val closeable: Boolean,
     val closeConfirmation: Boolean,
-    val openChannelName: String,
-    val claimedChannelName: String,
-    val closedChannelName: String,
-    val transcriptChannel: DiscordChannelModel,
+    val claimable: Boolean,
+    val openChannelName: String?,
+    val claimedChannelName: String?,
+    val closedChannelName: String?,
+    val transcriptChannel: DiscordChannelModel?,
+    val ticketMessage: String?,
 
+    // role and permission stuff
     val supportRoles: List<DiscordRoleModel>,
     val additionalRoles: List<DiscordRoleModel>,
-    val categories: List<DiscordChannelModel>, //TODO should this be separated?
-    val supportTeamPermissions: Permissions,
-    val additionalRolesPermissions: Permissions,
-    val ticketCreatorPermissions: Permissions,
-    val ticketClaimerPermissions: Permissions,
-    val everyonePermissions: Permissions,
+    val openCategories: List<DiscordChannelModel>,
+    val closedCategories: List<DiscordChannelModel>,
+    val permissions: Map<TicketPermissionCandidate, Map<TicketPermissionType, Permissions>>
 ): UpdateableModel<TicketPanelUpdateModel, TicketPanelModel> {
     companion object {
         fun fromJson(json: String): TicketPanelModel {
@@ -41,6 +43,6 @@ class TicketPanelModel(
     }
 
     override fun getUpdateModel(): TicketPanelUpdateModel {
-        return TicketPanelUpdateModel(null)
+        return TicketPanelUpdateModel(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
     }
 }

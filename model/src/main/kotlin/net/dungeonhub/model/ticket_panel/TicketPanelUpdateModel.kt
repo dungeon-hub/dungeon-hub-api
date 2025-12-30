@@ -1,25 +1,31 @@
 package net.dungeonhub.model.ticket_panel
 
 import dev.kord.common.entity.Permissions
-import net.dungeonhub.model.discord_channel.DiscordChannelModel
-import net.dungeonhub.model.discord_role.DiscordRoleModel
+import net.dungeonhub.enums.TicketPermissionCandidate
+import net.dungeonhub.enums.TicketPermissionType
+import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.UpdateModel
 
 class TicketPanelUpdateModel(
-    val name: String?,
-    val closeable: Boolean?,
-    val closeConfirmation: Boolean?,
-    val openChannelName: String?,
-    val claimedChannelName: String?,
-    val closedChannelName: String?,
-    val transcriptChannel: DiscordChannelModel?,
+    var name: String?,
+    var displayName: String?,
+    var emoji: String?,
+    var closeable: Boolean?,
+    var closeConfirmation: Boolean?,
+    val claimable: Boolean?,
+    var openChannelName: String?,
+    var claimedChannelName: String?,
+    var closedChannelName: String?,
+    var transcriptChannel: Long?,
 
     //TODO do those need to be changed?
-    val supportRoles: List<DiscordRoleModel>?,
-    val additionalRoles: List<DiscordRoleModel>?,
-    val categories: List<DiscordChannelModel>?, //TODO should this be separated?
-    val supportTeamPermissions: Permissions?,
-    val additionalRolesPermissions: Permissions?,
-    val ticketCreatorPermissions: Permissions?,
-    val everyonePermissions: Permissions?,
-): UpdateModel<TicketPanelModel>
+    var supportRoles: List<Long>?,
+    var additionalRoles: List<Long>?,
+    var openCategories: List<Long>?,
+    var closedCategories: List<Long>?,
+    var permissions: Map<TicketPermissionCandidate, Map<TicketPermissionType, Permissions>>?
+): UpdateModel<TicketPanelModel> {
+    fun toJson(): String {
+        return MoshiService.moshi.adapter(TicketPanelUpdateModel::class.java).toJson(this)
+    }
+}

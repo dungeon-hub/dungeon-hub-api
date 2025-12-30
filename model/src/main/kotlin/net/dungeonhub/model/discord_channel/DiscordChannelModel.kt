@@ -7,7 +7,8 @@ import net.dungeonhub.structure.model.UpdateableModel
 class DiscordChannelModel (
     val id: Long,
     val name: String?,
-    val discordServer: DiscordServerModel
+    val discordServer: DiscordServerModel,
+    val deleted: Boolean
 ) : UpdateableModel<DiscordChannelUpdateModel, DiscordChannelModel> {
     companion object {
         fun fromJson(json: String): DiscordChannelModel {
@@ -16,6 +17,6 @@ class DiscordChannelModel (
     }
 
     override fun getUpdateModel(): DiscordChannelUpdateModel {
-        return DiscordChannelUpdateModel(null)
+        return DiscordChannelUpdateModel(null, null)
     }
 }

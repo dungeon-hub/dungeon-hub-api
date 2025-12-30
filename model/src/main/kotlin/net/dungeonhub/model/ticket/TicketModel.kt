@@ -1,16 +1,24 @@
 package net.dungeonhub.model.ticket
 
-import kotlinx.datetime.Instant
+import net.dungeonhub.enums.TicketState
 import net.dungeonhub.model.discord_channel.DiscordChannelModel
 import net.dungeonhub.model.discord_user.DiscordUserModel
 import net.dungeonhub.model.ticket_panel.TicketPanelModel
+import net.dungeonhub.structure.model.UpdateableModel
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
 
+@OptIn(ExperimentalTime::class)
 class TicketModel(
     val id: Long,
-    val state: Int, //TODO enum -> open, closed, deleted
-    val channel: DiscordChannelModel,
+    val state: TicketState,
+    val channel: DiscordChannelModel?,
     val ticketPanel: TicketPanelModel,
     val user: DiscordUserModel,
-    val claimed: DiscordUserModel?,
+    val claimer: DiscordUserModel?,
     val created: Instant
-)
+): UpdateableModel<TicketUpdateModel, TicketModel> {
+    override fun getUpdateModel(): TicketUpdateModel {
+        return TicketUpdateModel(null, null, null)
+    }
+}
