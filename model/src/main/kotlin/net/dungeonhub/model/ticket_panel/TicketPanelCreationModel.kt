@@ -20,6 +20,7 @@ class TicketPanelCreationModel(
     val claimedChannelName: String?,
     val closedChannelName: String?,
     val transcriptChannel: Long?,
+    val requiresLinking: Boolean,
 
     // role and permission stuff
     val supportRoles: List<Long>,

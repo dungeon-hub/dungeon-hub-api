@@ -28,12 +28,13 @@ class TicketPanelModel(
     val closedChannelName: String?,
     val transcriptChannel: DiscordChannelModel?,
     val ticketMessage: String?,
+    val requiresLinking: Boolean,
 
     // role and permission stuff
     val supportRoles: List<DiscordRoleModel>,
     val additionalRoles: List<DiscordRoleModel>,
-    val openCategories: List<DiscordChannelModel>,
-    val closedCategories: List<DiscordChannelModel>,
+    val openCategories: List<Long>,
+    val closedCategories: List<Long>,
     val permissions: Map<TicketPermissionCandidate, Map<TicketPermissionType, Permissions>>
 ): UpdateableModel<TicketPanelUpdateModel, TicketPanelModel> {
     companion object {
@@ -43,6 +44,6 @@ class TicketPanelModel(
     }
 
     override fun getUpdateModel(): TicketPanelUpdateModel {
-        return TicketPanelUpdateModel(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+        return TicketPanelUpdateModel(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
     }
 }

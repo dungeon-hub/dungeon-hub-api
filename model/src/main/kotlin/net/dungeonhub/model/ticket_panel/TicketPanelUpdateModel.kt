@@ -17,6 +17,7 @@ class TicketPanelUpdateModel(
     var claimedChannelName: String?,
     var closedChannelName: String?,
     var transcriptChannel: Long?,
+    val requiresLinking: Boolean?,
 
     //TODO do those need to be changed?
     var supportRoles: List<Long>?,
