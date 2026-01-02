@@ -5,6 +5,11 @@ import com.squareup.moshi.JsonReader
 import com.squareup.moshi.JsonWriter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import dev.kord.common.DiscordBitSet
+import dev.kord.common.entity.Permissions
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.long
 import java.awt.Color
 import java.time.Instant
 import java.util.*
@@ -15,6 +20,7 @@ object MoshiService {
         .add(Instant::class.java, InstantAdapter())
         .add(Color::class.java, ColorAdapter())
         .add(UUID::class.java, UUIDAdapter())
+        .add(Permissions::class.java, PermissionsAdapter())
         .addLast(KotlinJsonAdapterFactory())
         .build()
 
@@ -93,4 +99,38 @@ object MoshiService {
             return UUID.fromString(reader.nextString())
         }
     }
+
+    class PermissionsAdapter : JsonAdapter<Permissions>() {
+        override fun toJson(writer: JsonWriter, value: Permissions?) {
+            if (value == null) {
+                writer.nullValue()
+                return
+            }
+
+            val jsonElement = toJsonElement(value.code).jsonPrimitive
+            writer.value(jsonElement.long)
+        }
+
+        override fun fromJson(reader: JsonReader): Permissions? {
+            if (reader.peek() == JsonReader.Token.NULL) {
+                reader.nextNull<Permissions>()
+                return null
+            }
+
+            val content = kotlinx.serialization.json.JsonPrimitive(reader.nextLong())
+            val result = discordBitSetFromJsonElement(content)
+            return Permissions.Builder(result).build()
+        }
+    }
+
+    private val json = Json {
+        encodeDefaults = true
+        explicitNulls = false
+    }
+
+    fun toJsonElement(discordBitSet: DiscordBitSet): kotlinx.serialization.json.JsonElement =
+        json.encodeToJsonElement(DiscordBitSet.serializer(), discordBitSet)
+
+    fun discordBitSetFromJsonElement(element: kotlinx.serialization.json.JsonElement): DiscordBitSet =
+        json.decodeFromJsonElement(DiscordBitSet.serializer(), element)
 }

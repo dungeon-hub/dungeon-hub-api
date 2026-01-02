@@ -6,6 +6,9 @@ import com.google.gson.TypeAdapter
 import com.google.gson.stream.JsonReader
 import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
+import dev.kord.common.entity.Permissions
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.long
 import java.awt.Color
 import java.io.IOException
 import java.time.Instant
@@ -20,6 +23,7 @@ object GsonService {
     val gson: Gson = GsonBuilder()
         .registerTypeAdapter(Instant::class.java, InstantTypeAdapter())
         .registerTypeAdapter(Color::class.java, ColorTypeAdapter())
+        .registerTypeAdapter(Permissions::class.java, PermissionsTypeAdapter())
         .create()
 
     private class InstantTypeAdapter : TypeAdapter<Instant>() {
@@ -63,6 +67,29 @@ object GsonService {
             }
 
             return Color.decode(jsonReader.nextString())
+        }
+    }
+
+    private class PermissionsTypeAdapter : TypeAdapter<Permissions>() {
+        override fun write(writer: JsonWriter, value: Permissions?) {
+            if (value == null) {
+                writer.nullValue()
+                return
+            }
+
+            val jsonElement = MoshiService.toJsonElement(value.code).jsonPrimitive
+            writer.value(jsonElement.long)
+        }
+
+        override fun read(reader: JsonReader): Permissions? {
+            if(reader.peek() == JsonToken.NULL) {
+                reader.nextNull()
+                return null
+            }
+
+            val content = kotlinx.serialization.json.JsonPrimitive(reader.nextLong())
+            val result = MoshiService.discordBitSetFromJsonElement(content)
+            return Permissions.Builder(result).build()
         }
     }
 }

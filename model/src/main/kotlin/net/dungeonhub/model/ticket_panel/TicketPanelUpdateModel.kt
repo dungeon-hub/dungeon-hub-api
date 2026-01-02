@@ -6,6 +6,7 @@ import net.dungeonhub.enums.TicketPermissionType
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.UpdateModel
 
+// TODO support nullable fields
 class TicketPanelUpdateModel(
     var name: String?,
     var displayName: String?,
@@ -17,7 +18,8 @@ class TicketPanelUpdateModel(
     var claimedChannelName: String?,
     var closedChannelName: String?,
     var transcriptChannel: Long?,
-    val requiresLinking: Boolean?,
+    var ticketMessage: String?,
+    var requiresLinking: Boolean?,
 
     //TODO do those need to be changed?
     var supportRoles: List<Long>?,

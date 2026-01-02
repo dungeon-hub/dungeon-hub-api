@@ -10,7 +10,6 @@ class TicketPanelCreationModel(
     val name: String,
     val displayName: String?,
     val emoji: String?,
-    val discordServer: Long,
 
     // ticket settings
     val closeable: Boolean,
@@ -20,14 +19,15 @@ class TicketPanelCreationModel(
     val claimedChannelName: String?,
     val closedChannelName: String?,
     val transcriptChannel: Long?,
+    val ticketMessage: String?,
     val requiresLinking: Boolean,
 
     // role and permission stuff
-    val supportRoles: List<Long>,
-    val additionalRoles: List<Long>,
-    val openCategories: List<Long>,
-    val closedCategories: List<Long>,
-    val permissions: Map<TicketPermissionCandidate, Map<TicketPermissionType, Permissions>>
+    val supportRoles: List<Long>?,
+    val additionalRoles: List<Long>?,
+    val openCategories: List<Long>?,
+    val closedCategories: List<Long>?,
+    val permissions: Map<TicketPermissionCandidate, Map<TicketPermissionType, Permissions>>?
 ) : CreationModel {
     fun toJson(): String {
         return MoshiService.moshi.adapter(TicketPanelCreationModel::class.java).toJson(this)
