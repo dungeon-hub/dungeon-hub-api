@@ -7,7 +7,6 @@ import net.dungeonhub.structure.model.CreationModel
 class TicketCreationModel(
     val state: TicketState,
     val channel: Long?,
-    val ticketPanel: Long,
     val user: Long,
     val claimer: Long?
 ) : CreationModel {
