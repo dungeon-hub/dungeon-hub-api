@@ -5,10 +5,8 @@ import net.dungeonhub.model.discord_channel.DiscordChannelModel
 import net.dungeonhub.model.discord_user.DiscordUserModel
 import net.dungeonhub.model.ticket_panel.TicketPanelModel
 import net.dungeonhub.structure.model.UpdateableModel
-import kotlin.time.ExperimentalTime
-import kotlin.time.Instant
+import java.time.Instant
 
-@OptIn(ExperimentalTime::class)
 class TicketModel(
     val id: Long,
     val state: TicketState,
