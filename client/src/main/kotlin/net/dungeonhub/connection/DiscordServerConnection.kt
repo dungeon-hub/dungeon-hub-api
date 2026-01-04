@@ -13,6 +13,7 @@ import net.dungeonhub.model.reputation.ReputationModel
 import net.dungeonhub.model.score.ScoreLeaderboardModel
 import net.dungeonhub.model.score.ScoreModel
 import net.dungeonhub.model.static_message.StaticMessageModel
+import net.dungeonhub.model.ticket.TicketModel
 import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
@@ -189,6 +190,18 @@ class DiscordServerConnection(override val client: DungeonHubClient) : Authentic
         val request: Request = getApiRequest(url).get().build()
 
         return executeRequest(request, function = moshi.adapter<List<StaticMessageModel>>()::fromJson)
+    }
+
+    fun findTickets(serverId: Long, channelId: Long? = null): List<TicketModel>? {
+        val url = getApiUrl("$serverId/ticket/find")
+
+        if (channelId != null) {
+            url.addQueryParameter("channel", channelId.toString())
+        }
+
+        val request: Request = getApiRequest(url.build()).get().build()
+
+        return executeRequest(request, function = moshi.adapter<List<TicketModel>>()::fromJson)
     }
 
     companion object : ClientlessConnection<DiscordServerConnection> {
