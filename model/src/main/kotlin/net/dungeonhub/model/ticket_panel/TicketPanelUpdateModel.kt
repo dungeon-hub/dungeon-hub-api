@@ -26,7 +26,7 @@ class TicketPanelUpdateModel(
     var additionalRoles: List<Long>?,
     var openCategories: List<Long>?,
     var closedCategories: List<Long>?,
-    var permissions: Map<TicketPermissionCandidate, Map<TicketPermissionType, Permissions>>?
+    var permissions: Map<TicketPermissionCandidate, Map<TicketPermissionType, Permissions?>>?
 ): UpdateModel<TicketPanelModel> {
     var displayName = displayName
         set(value) {
