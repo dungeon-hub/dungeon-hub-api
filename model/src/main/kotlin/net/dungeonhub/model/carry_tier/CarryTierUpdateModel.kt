@@ -5,6 +5,7 @@ import net.dungeonhub.structure.model.UpdateModel
 
 class CarryTierUpdateModel(
     var displayName: String?,
+    relatedTicketPanel: Long?,
     category: Long?,
     priceChannel: Long?,
     descriptiveName: String?,
@@ -12,6 +13,12 @@ class CarryTierUpdateModel(
     priceTitle: String?,
     priceDescription: String?
 ) : UpdateModel<CarryTierModel> {
+    var relatedTicketPanel = relatedTicketPanel
+        set(value) {
+            field = value
+            resetRelatedTicketPanel = value == null
+        }
+
     var category = category
         set(value) {
             field = value
@@ -48,6 +55,8 @@ class CarryTierUpdateModel(
             resetPriceDescription = value == null
         }
 
+    var resetRelatedTicketPanel = false
+        private set
     var resetCategory = false
         private set
     var resetPriceChannel = false
