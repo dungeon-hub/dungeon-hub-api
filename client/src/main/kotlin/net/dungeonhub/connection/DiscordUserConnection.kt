@@ -1,6 +1,7 @@
 package net.dungeonhub.connection
 
 import com.squareup.moshi.adapter
+import dev.kord.core.behavior.UserBehavior
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.client.DungeonHubClient
@@ -93,6 +94,11 @@ class DiscordUserConnection(override val client: DungeonHubClient) : Authenticat
     companion object : ClientlessConnection<DiscordUserConnection> {
         override fun authenticated(authenticationProvider: AuthenticationProvider): DiscordUserConnection {
             return DiscordUserConnection(AuthenticatedClient(authenticationProvider))
+        }
+
+        //TODO move to connection?
+        fun UserBehavior.getUUIDOrNull(): UUID? {
+            return authenticated().getById(id.value.toLong())?.minecraftId
         }
     }
 }
