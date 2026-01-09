@@ -36,6 +36,21 @@ class CarryDifficultyModel(
     val carryType: CarryTypeModel
         get() = carryTier.carryType
 
+    fun calculatePricePerCarry(amount: Int): Long {
+        val bulkPrice = bulkPrice
+        val bulkAmount = bulkAmount
+
+        if (bulkPrice != null && bulkAmount != null && bulkAmount <= amount) {
+            return bulkPrice.toLong()
+        }
+
+        return price.toLong()
+    }
+
+    fun calculateTotalPrice(amount: Int): Long {
+        return calculatePricePerCarry(amount) * amount
+    }
+
     fun toJson(): String {
         return MoshiService.moshi.adapter(CarryDifficultyModel::class.java).toJson(this)
     }
