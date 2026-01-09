@@ -36,20 +36,9 @@ class CarryDifficultyModel(
     val carryType: CarryTypeModel
         get() = carryTier.carryType
 
-    fun calculatePricePerCarry(amount: Int): Long {
-        val bulkPrice = bulkPrice
-        val bulkAmount = bulkAmount
+    fun calculatePricePerCarry(amount: Int): Long = calculatePricePerCarry(amount, bulkPrice, bulkAmount, price)
 
-        if (bulkPrice != null && bulkAmount != null && bulkAmount <= amount) {
-            return bulkPrice.toLong()
-        }
-
-        return price.toLong()
-    }
-
-    fun calculateTotalPrice(amount: Int): Long {
-        return calculatePricePerCarry(amount) * amount
-    }
+    fun calculateTotalPrice(amount: Int): Long = calculateTotalPrice(amount, bulkPrice, bulkAmount, price)
 
     fun toJson(): String {
         return MoshiService.moshi.adapter(CarryDifficultyModel::class.java).toJson(this)
@@ -75,6 +64,21 @@ class CarryDifficultyModel(
     companion object {
         fun fromJson(json: String): CarryDifficultyModel {
             return MoshiService.moshi.adapter(CarryDifficultyModel::class.java).fromJson(json)!!
+        }
+
+        fun calculatePricePerCarry(amount: Int, bulkPrice: Int?, bulkAmount: Int?, price: Int): Long {
+            val bulkPrice = bulkPrice
+            val bulkAmount = bulkAmount
+
+            if (bulkPrice != null && bulkAmount != null && bulkAmount <= amount) {
+                return bulkPrice.toLong()
+            }
+
+            return price.toLong()
+        }
+
+        fun calculateTotalPrice(amount: Int, bulkPrice: Int?, bulkAmount: Int?, price: Int): Long {
+            return calculatePricePerCarry(amount, bulkPrice, bulkAmount, price) * amount
         }
     }
 }
