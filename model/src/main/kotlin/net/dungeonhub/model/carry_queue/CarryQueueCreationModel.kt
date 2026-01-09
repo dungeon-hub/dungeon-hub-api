@@ -9,7 +9,7 @@ class CarryQueueCreationModel(
     var queueStep: QueueStep,
     var carrier: Long,
     var player: Long,
-    var amount: Long,
+    var amount: Int,
     var relationId: Long? = null,
     var attachmentLink: String? = null,
     var time: Instant? = null,

@@ -11,7 +11,7 @@ class CarryQueueUpdateModel(
     var queueStep: QueueStep?,
     var carrier: DiscordUserModel?,
     var player: DiscordUserModel?,
-    var amount: Long?,
+    var amount: Int?,
     var carryDifficulty: CarryDifficultyModel?,
     relationId: Long?,
     attachmentLink: String?,
