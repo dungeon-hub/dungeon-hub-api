@@ -8,7 +8,6 @@ class CarryTierCreationModel(
     var displayName: String,
     val relatedTicketPanel: Long?,
     var category: Long? = null,
-    var priceChannel: Long? = null,
     var descriptiveName: String? = null,
     var thumbnailUrl: String? = null,
     var priceTitle: String? = null,

@@ -7,7 +7,6 @@ class CarryTierUpdateModel(
     var displayName: String?,
     relatedTicketPanel: Long?,
     category: Long?,
-    priceChannel: Long?,
     descriptiveName: String?,
     thumbnailUrl: String?,
     priceTitle: String?,
@@ -23,12 +22,6 @@ class CarryTierUpdateModel(
         set(value) {
             field = value
             resetCategory = value == null
-        }
-
-    var priceChannel = priceChannel
-        set(value) {
-            field = value
-            resetPriceChannel = value == null
         }
 
     var descriptiveName = descriptiveName
@@ -58,8 +51,6 @@ class CarryTierUpdateModel(
     var resetRelatedTicketPanel = false
         private set
     var resetCategory = false
-        private set
-    var resetPriceChannel = false
         private set
     var resetDescriptiveName = false
         private set
