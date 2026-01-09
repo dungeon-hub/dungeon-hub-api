@@ -7,7 +7,8 @@ enum class StaticMessageType : ChoiceEnum {
     ScoreLeaderboard,
     TotalLeaderboard,
     ReputationLeaderboard,
-    TicketPanel;
+    TicketPanel,
+    PriceMessage;
 
     override val readableName = name.replace(Regex("([A-Z])"), " $1").trim().toKey()
 }
