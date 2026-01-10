@@ -3,6 +3,7 @@ package net.dungeonhub.model.ticket_panel
 import dev.kord.common.entity.Permissions
 import net.dungeonhub.enums.TicketPermissionCandidate
 import net.dungeonhub.enums.TicketPermissionType
+import net.dungeonhub.enums.TranscriptTarget
 import net.dungeonhub.model.discord_channel.DiscordChannelModel
 import net.dungeonhub.model.discord_role.DiscordRoleModel
 import net.dungeonhub.model.discord_server.DiscordServerModel
@@ -29,6 +30,8 @@ class TicketPanelModel(
     val transcriptChannel: DiscordChannelModel?,
     val ticketMessage: String?,
     val requiresLinking: Boolean,
+    val closeTranscriptTarget: TranscriptTarget,
+    val deleteTranscriptTarget: TranscriptTarget,
 
     // role and permission stuff
     val supportRoles: List<DiscordRoleModel>,
@@ -44,6 +47,6 @@ class TicketPanelModel(
     }
 
     override fun getUpdateModel(): TicketPanelUpdateModel {
-        return TicketPanelUpdateModel(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+        return TicketPanelUpdateModel(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
     }
 }

@@ -3,6 +3,7 @@ package net.dungeonhub.model.ticket_panel
 import dev.kord.common.entity.Permissions
 import net.dungeonhub.enums.TicketPermissionCandidate
 import net.dungeonhub.enums.TicketPermissionType
+import net.dungeonhub.enums.TranscriptTarget
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.CreationModel
 
@@ -21,6 +22,8 @@ class TicketPanelCreationModel(
     val transcriptChannel: Long?,
     val ticketMessage: String?,
     val requiresLinking: Boolean,
+    val closeTranscriptTarget: TranscriptTarget?,
+    val deleteTranscriptTarget: TranscriptTarget?,
 
     // role and permission stuff
     val supportRoles: List<Long>?,

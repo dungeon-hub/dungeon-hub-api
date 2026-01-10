@@ -3,6 +3,7 @@ package net.dungeonhub.model.ticket_panel
 import dev.kord.common.entity.Permissions
 import net.dungeonhub.enums.TicketPermissionCandidate
 import net.dungeonhub.enums.TicketPermissionType
+import net.dungeonhub.enums.TranscriptTarget
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.UpdateModel
 
@@ -20,6 +21,8 @@ class TicketPanelUpdateModel(
     transcriptChannel: Long?,
     ticketMessage: String?,
     var requiresLinking: Boolean?,
+    var closeTranscriptTarget: TranscriptTarget?,
+    var deleteTranscriptTarget: TranscriptTarget?,
 
     //TODO do those need to be changed?
     var supportRoles: List<Long>?,
