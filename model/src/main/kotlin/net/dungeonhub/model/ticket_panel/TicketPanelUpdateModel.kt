@@ -23,6 +23,7 @@ class TicketPanelUpdateModel(
     var requiresLinking: Boolean?,
     var closeTranscriptTarget: TranscriptTarget?,
     var deleteTranscriptTarget: TranscriptTarget?,
+    userTranscriptDm: String?,
 
     //TODO do those need to be changed?
     var supportRoles: List<Long>?,
@@ -84,6 +85,13 @@ class TicketPanelUpdateModel(
         }
     var resetTicketMessage = false
         private set
+
+    var userTranscriptDm = userTranscriptDm
+        set(value) {
+            resetUserTranscriptDm = value == null
+            field = value
+        }
+    var resetUserTranscriptDm = false
 
     fun toJson(): String {
         return MoshiService.moshi.adapter(TicketPanelUpdateModel::class.java).toJson(this)

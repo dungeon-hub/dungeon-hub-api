@@ -24,6 +24,7 @@ class TicketPanelCreationModel(
     val requiresLinking: Boolean,
     val closeTranscriptTarget: TranscriptTarget?,
     val deleteTranscriptTarget: TranscriptTarget?,
+    val userTranscriptDm: String?,
 
     // role and permission stuff
     val supportRoles: List<Long>?,

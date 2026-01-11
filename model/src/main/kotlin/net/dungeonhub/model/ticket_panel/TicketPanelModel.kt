@@ -10,8 +10,6 @@ import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.UpdateableModel
 
-//TODO settings about when a transcript should be dmed / logged?
-//TODO setting: DM a message to the user once a ticket is closed / created?
 //TODO add a ticket form
 class TicketPanelModel(
     val id: Long,
@@ -32,6 +30,7 @@ class TicketPanelModel(
     val requiresLinking: Boolean,
     val closeTranscriptTarget: TranscriptTarget,
     val deleteTranscriptTarget: TranscriptTarget,
+    val userTranscriptDm: String?,
 
     // role and permission stuff
     val supportRoles: List<DiscordRoleModel>,
@@ -47,6 +46,6 @@ class TicketPanelModel(
     }
 
     override fun getUpdateModel(): TicketPanelUpdateModel {
-        return TicketPanelUpdateModel(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+        return TicketPanelUpdateModel(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
     }
 }
