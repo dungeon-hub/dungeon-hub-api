@@ -7,7 +7,6 @@ import net.dungeonhub.enums.TranscriptTarget
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.UpdateModel
 
-// TODO support nullable fields
 class TicketPanelUpdateModel(
     var name: String?,
     displayName: String?,
@@ -24,6 +23,7 @@ class TicketPanelUpdateModel(
     var closeTranscriptTarget: TranscriptTarget?,
     var deleteTranscriptTarget: TranscriptTarget?,
     userTranscriptDm: String?,
+    var formQuestions: List<TicketPanelFormModel>?,
 
     //TODO do those need to be changed?
     var supportRoles: List<Long>?,

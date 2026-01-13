@@ -15,7 +15,8 @@ class TicketModel(
     val ticketPanel: TicketPanelModel,
     val user: DiscordUserModel,
     val claimer: DiscordUserModel?,
-    val created: Instant
+    val created: Instant,
+    val formResponses: List<TicketFormResponseModel>
 ): UpdateableModel<TicketUpdateModel, TicketModel> {
     companion object {
         fun fromJson(json: String): TicketModel {

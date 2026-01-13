@@ -10,7 +10,6 @@ import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.UpdateableModel
 
-//TODO add a ticket form
 class TicketPanelModel(
     val id: Long,
     val name: String,
@@ -31,6 +30,7 @@ class TicketPanelModel(
     val closeTranscriptTarget: TranscriptTarget,
     val deleteTranscriptTarget: TranscriptTarget,
     val userTranscriptDm: String?,
+    val formQuestions: List<TicketPanelFormModel>,
 
     // role and permission stuff
     val supportRoles: List<DiscordRoleModel>,
@@ -46,6 +46,6 @@ class TicketPanelModel(
     }
 
     override fun getUpdateModel(): TicketPanelUpdateModel {
-        return TicketPanelUpdateModel(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+        return TicketPanelUpdateModel(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
     }
 }

@@ -25,6 +25,7 @@ class TicketPanelCreationModel(
     val closeTranscriptTarget: TranscriptTarget?,
     val deleteTranscriptTarget: TranscriptTarget?,
     val userTranscriptDm: String?,
+    val formQuestions: List<TicketPanelFormModel>?,
 
     // role and permission stuff
     val supportRoles: List<Long>?,
