@@ -40,6 +40,15 @@ class CarryTypeConnection(server: Long, override val client: AuthenticatedClient
         }
     }
 
+    fun findCarryTypeByString(input: String): CarryTypeModel? {
+        val allCarryTypes = allCarryTypes ?: return null
+
+        return allCarryTypes.singleOrNull { it.displayName.equals(input, true) }
+            ?: allCarryTypes.singleOrNull { it.identifier.equals(input, true) }
+            ?: allCarryTypes.singleOrNull { it.displayName.startsWith(input) }
+            ?: allCarryTypes.singleOrNull { it.identifier.startsWith(input) }
+    }
+
     fun addNewCarryType(creationModel: CarryTypeCreationModel): CarryTypeModel? {
         val url: HttpUrl = getApiUrl().build()
 

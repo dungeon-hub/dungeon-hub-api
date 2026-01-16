@@ -53,6 +53,15 @@ class CarryDifficultyConnection(carryTierModel: CarryTierModel, override val cli
         }
     }
 
+    fun findCarryDifficultyByString(input: String): CarryDifficultyModel? {
+        val allCarryDifficulties = allCarryDifficulties ?: return null
+
+        return allCarryDifficulties.singleOrNull { it.displayName.equals(input, true) }
+            ?: allCarryDifficulties.singleOrNull { it.identifier.equals(input, true) }
+            ?: allCarryDifficulties.singleOrNull { it.displayName.startsWith(input) }
+            ?: allCarryDifficulties.singleOrNull { it.identifier.startsWith(input) }
+    }
+
     fun createCarryDifficulty(creationModel: CarryDifficultyCreationModel): CarryDifficultyModel? {
         val url: HttpUrl = getApiUrl().build()
 

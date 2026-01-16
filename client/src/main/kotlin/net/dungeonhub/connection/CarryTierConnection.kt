@@ -31,6 +31,15 @@ class CarryTierConnection(carryTypeModel: CarryTypeModel, override val client: A
         }
     }
 
+    fun findCarryTierByString(input: String): CarryTierModel? {
+        val allCarryTiers = allCarryTiers ?: return null
+
+        return allCarryTiers.singleOrNull { it.displayName.equals(input, true) }
+            ?: allCarryTiers.singleOrNull { it.identifier.equals(input, true) }
+            ?: allCarryTiers.singleOrNull { it.displayName.startsWith(input) }
+            ?: allCarryTiers.singleOrNull { it.identifier.startsWith(input) }
+    }
+
     val allCarryTiers: List<CarryTierModel>?
         /**
          * Loads all available carry tiers for the given carry type.

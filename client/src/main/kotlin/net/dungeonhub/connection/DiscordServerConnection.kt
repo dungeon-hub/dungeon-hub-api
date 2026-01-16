@@ -46,6 +46,15 @@ class DiscordServerConnection(override val client: DungeonHubClient) : Authentic
         return executeRequest(request, function = moshi.adapter<List<CarryTierModel>>()::fromJson)
     }
 
+    fun findCarryTierByString(serverId: Long, input: String): CarryTierModel? {
+        val allCarryTiers = getAllCarryTiers(serverId) ?: return null
+
+        return allCarryTiers.singleOrNull { it.displayName.equals(input, true) }
+            ?: allCarryTiers.singleOrNull { it.identifier.equals(input, true) }
+            ?: allCarryTiers.singleOrNull { it.displayName.startsWith(input) }
+            ?: allCarryTiers.singleOrNull { it.identifier.startsWith(input) }
+    }
+
     fun getAllCarryDifficulties(serverId: Long): List<CarryDifficultyModel>? {
         val url: HttpUrl = getApiUrl("$serverId/carry-difficulties").build()
 
