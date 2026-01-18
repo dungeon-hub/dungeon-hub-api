@@ -7,16 +7,16 @@ import net.dungeonhub.model.cnt_request.CntRequestCreationModel
 import net.dungeonhub.model.cnt_request.CntRequestModel
 import net.dungeonhub.model.cnt_request.CntRequestUpdateModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.Connection.Companion.jsonMediaType
-import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
 @OptIn(ExperimentalStdlibApi::class)
-class CntRequestConnection(private val server: Long, override val client: AuthenticatedClient) : ModuleConnection {
+class CntRequestConnection(private val server: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/$server/cnt-request"
 
     fun findCntRequests(messageId: Long): List<CntRequestModel>? {

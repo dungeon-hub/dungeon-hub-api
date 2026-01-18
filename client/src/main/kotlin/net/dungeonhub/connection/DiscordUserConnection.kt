@@ -17,7 +17,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.*
 
 @OptIn(ExperimentalStdlibApi::class)
-class DiscordUserConnection(override val client: DungeonHubClient) : AuthenticatedModuleConnection() {
+class DiscordUserConnection(override val client: DungeonHubClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "discord-users"
 
     fun countLinkedUsers(): Long? {

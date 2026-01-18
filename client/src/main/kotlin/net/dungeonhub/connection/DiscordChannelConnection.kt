@@ -7,9 +7,9 @@ import net.dungeonhub.model.discord_channel.DiscordChannelCreationModel
 import net.dungeonhub.model.discord_channel.DiscordChannelModel
 import net.dungeonhub.model.discord_channel.DiscordChannelUpdateModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.Connection.Companion.jsonMediaType
-import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -17,7 +17,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.HashMap
 
 @OptIn(ExperimentalStdlibApi::class)
-class DiscordChannelConnection(private val server: Long, override val client: AuthenticatedClient) : ModuleConnection {
+class DiscordChannelConnection(private val server: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/$server/channel"
 
     fun getById(id: Long): DiscordChannelModel? {

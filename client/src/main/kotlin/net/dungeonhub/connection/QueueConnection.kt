@@ -19,7 +19,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 
 @OptIn(ExperimentalStdlibApi::class)
-class QueueConnection(override val client: DungeonHubClient) : AuthenticatedModuleConnection() {
+class QueueConnection(override val client: DungeonHubClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "queue"
 
     fun addNewQueue(

@@ -8,16 +8,16 @@ import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.model.carry_type.CarryTypeUpdateModel
 import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.Connection.Companion.jsonMediaType
-import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.*
 
 @OptIn(ExperimentalStdlibApi::class)
-class CarryTypeConnection(server: Long, override val client: AuthenticatedClient) : ModuleConnection {
+class CarryTypeConnection(server: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/$server/carry-type"
 
     fun getById(id: Long): CarryTypeModel? {

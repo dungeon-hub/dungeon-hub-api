@@ -7,9 +7,9 @@ import net.dungeonhub.model.discord_role.DiscordRoleCreationModel
 import net.dungeonhub.model.discord_role.DiscordRoleModel
 import net.dungeonhub.model.discord_role.DiscordRoleUpdateModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.Connection.Companion.jsonMediaType
-import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -17,7 +17,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.*
 
 @OptIn(ExperimentalStdlibApi::class)
-class DiscordRoleConnection(private val server: Long, override val client: AuthenticatedClient) : ModuleConnection {
+class DiscordRoleConnection(private val server: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/$server/roles"
 
     fun getById(id: Long): DiscordRoleModel? {

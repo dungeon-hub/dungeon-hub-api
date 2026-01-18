@@ -9,9 +9,9 @@ import net.dungeonhub.model.ticket.TicketModel
 import net.dungeonhub.model.ticket.TicketUpdateModel
 import net.dungeonhub.model.ticket_panel.TicketPanelModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.Connection.Companion.jsonMediaType
-import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -19,7 +19,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.HashMap
 
 @OptIn(ExperimentalStdlibApi::class)
-class TicketConnection(private val server: Long, private val ticketPanel: Long, override val client: AuthenticatedClient) : ModuleConnection {
+class TicketConnection(private val server: Long, private val ticketPanel: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/$server/ticket-panel/$ticketPanel/ticket"
 
     fun getById(id: Long): TicketModel? {

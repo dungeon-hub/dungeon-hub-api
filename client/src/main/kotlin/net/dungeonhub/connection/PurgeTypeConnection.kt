@@ -6,13 +6,13 @@ import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.model.purge_type.PurgeTypeModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
-import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 
 @OptIn(ExperimentalStdlibApi::class)
-class PurgeTypeConnection(carryTypeModel: CarryTypeModel, override val client: AuthenticatedClient) : ModuleConnection {
+class PurgeTypeConnection(carryTypeModel: CarryTypeModel, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/${carryTypeModel.server.id}/carry-type/${carryTypeModel.id}/purge-type"
 
     //TODO own endpoint

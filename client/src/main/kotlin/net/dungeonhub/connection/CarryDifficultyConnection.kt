@@ -8,9 +8,9 @@ import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyUpdateModel
 import net.dungeonhub.model.carry_tier.CarryTierModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.Connection.Companion.jsonMediaType
-import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -18,7 +18,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 
 @OptIn(ExperimentalStdlibApi::class)
 class CarryDifficultyConnection(carryTierModel: CarryTierModel, override val client: AuthenticatedClient) :
-    ModuleConnection {
+    AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = ("server/"
             + carryTierModel.carryType.server.id
             + "/carry-type/"

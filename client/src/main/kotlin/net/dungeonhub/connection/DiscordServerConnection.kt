@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Range
 import java.time.Instant
 
 @OptIn(ExperimentalStdlibApi::class)
-class DiscordServerConnection(override val client: DungeonHubClient) : AuthenticatedModuleConnection() {
+class DiscordServerConnection(override val client: DungeonHubClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server"
 
     fun findServerById(id: Long): DiscordServerModel? {

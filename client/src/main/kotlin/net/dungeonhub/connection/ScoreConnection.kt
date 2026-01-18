@@ -11,16 +11,16 @@ import net.dungeonhub.model.score.ScoreModel
 import net.dungeonhub.model.score.ScoreResetModel
 import net.dungeonhub.model.score.ScoreUpdateModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.Connection.Companion.jsonMediaType
-import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.jetbrains.annotations.Range
 
 @OptIn(ExperimentalStdlibApi::class)
-class ScoreConnection(carryTypeModel: CarryTypeModel, override val client: AuthenticatedClient) : ModuleConnection {
+class ScoreConnection(carryTypeModel: CarryTypeModel, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/${carryTypeModel.server.id}/carry-type/${carryTypeModel.id}/score"
     private val SCORE_TYPE = "score-type"
 

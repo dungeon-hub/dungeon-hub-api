@@ -5,14 +5,14 @@ import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.discord_role_group.DiscordRoleGroupModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
-import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import java.util.*
 
 @OptIn(ExperimentalStdlibApi::class)
-class DiscordRoleGroupConnection(server: Long, override val client: AuthenticatedClient) : ModuleConnection {
+class DiscordRoleGroupConnection(server: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/$server/role-group"
 
     val all: List<DiscordRoleGroupModel>?

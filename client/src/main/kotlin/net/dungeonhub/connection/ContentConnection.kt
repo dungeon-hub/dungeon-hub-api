@@ -12,7 +12,7 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 
-class ContentConnection(override val client: DungeonHubClient) : AuthenticatedConnection() {
+class ContentConnection(override val client: DungeonHubClient) : AuthenticatedConnection(client) {
     private val apiUrl: HttpUrl.Builder
         get() = (DungeonHubClient.apiUrl + "cdn/").toHttpUrl().newBuilder()
 

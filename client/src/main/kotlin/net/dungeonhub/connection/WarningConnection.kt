@@ -8,15 +8,15 @@ import net.dungeonhub.model.warning.DetailedWarningModel
 import net.dungeonhub.model.warning.WarningCreationModel
 import net.dungeonhub.model.warning.WarningEvidenceCreationModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.Connection.Companion.jsonMediaType
-import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 
 @OptIn(ExperimentalStdlibApi::class)
-class WarningConnection(private val serverId: Long, override val client: AuthenticatedClient) : ModuleConnection {
+class WarningConnection(private val serverId: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/$serverId/warns"
 
     fun getAllWarns(userId: Long): List<DetailedWarningModel>? {

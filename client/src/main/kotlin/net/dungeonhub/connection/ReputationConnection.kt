@@ -10,15 +10,15 @@ import net.dungeonhub.model.reputation.ReputationCreationModel
 import net.dungeonhub.model.reputation.ReputationModel
 import net.dungeonhub.model.reputation.ReputationUpdateModel
 import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.Connection.Companion.jsonMediaType
-import net.dungeonhub.structure.ModuleConnection
 import okhttp3.HttpUrl
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 
 class ReputationConnection(server: Long, discordUser: Long, override val client: AuthenticatedClient) :
-    ModuleConnection {
+    AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/$server/discord-user/$discordUser/reputation"
 
     fun calculateReputation(): Long? {
