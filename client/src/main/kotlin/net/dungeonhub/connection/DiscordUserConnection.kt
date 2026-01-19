@@ -39,7 +39,7 @@ class DiscordUserConnection(override val client: DungeonHubClient) : Authenticat
     }
 
     fun getByIdOrCreate(id: Long) : DiscordUserModel? {
-        return getById(id) ?: updateUser(id, DiscordUserUpdateModel(null))
+        return getById(id) ?: updateUser(id, DiscordUserUpdateModel(null, null))
     }
 
     fun getLinkedById(id: Long): DiscordUserModel? {
