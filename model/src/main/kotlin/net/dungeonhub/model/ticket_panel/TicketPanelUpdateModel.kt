@@ -13,7 +13,7 @@ class TicketPanelUpdateModel(
     emoji: String?,
     var closeable: Boolean?,
     var closeConfirmation: Boolean?,
-    val claimable: Boolean?,
+    var claimable: Boolean?,
     openChannelName: String?,
     claimedChannelName: String?,
     closedChannelName: String?,
@@ -25,7 +25,6 @@ class TicketPanelUpdateModel(
     userTranscriptDm: String?,
     var formQuestions: List<TicketPanelFormModel>?,
 
-    //TODO do those need to be changed?
     var supportRoles: List<Long>?,
     var additionalRoles: List<Long>?,
     var openCategories: List<Long>?,
