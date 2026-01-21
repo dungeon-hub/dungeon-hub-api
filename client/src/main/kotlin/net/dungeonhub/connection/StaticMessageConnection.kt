@@ -26,7 +26,7 @@ class StaticMessageConnection(private val server: Long, override val client: Aut
         return executeRequest(request, function = moshi.adapter<StaticMessageModel>()::fromJson)
     }
 
-    fun findStaticMessages(staticMessageType: StaticMessageType? = null, channelId: Long? = null): List<StaticMessageModel>? {
+    fun findStaticMessages(staticMessageType: StaticMessageType? = null, channelId: Long? = null, messageId: Long? = null): List<StaticMessageModel>? {
         var url = getApiUrl("find")
 
         if (staticMessageType != null) {
@@ -35,6 +35,10 @@ class StaticMessageConnection(private val server: Long, override val client: Aut
 
         if (channelId != null) {
             url = url.addQueryParameter("channelId", channelId.toString())
+        }
+
+        if (messageId != null) {
+            url = url.addQueryParameter("messageId", messageId.toString())
         }
 
         val request: Request = getApiRequest(url.build()).get().build()
