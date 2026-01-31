@@ -1,73 +1,54 @@
 package net.dungeonhub.connection
 
-import com.squareup.moshi.adapter
+import io.ktor.client.request.parameter
+import io.ktor.client.request.setBody
+import io.ktor.http.HttpMethod
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.warning.AddedWarningModel
 import net.dungeonhub.model.warning.DetailedWarningModel
 import net.dungeonhub.model.warning.WarningCreationModel
 import net.dungeonhub.model.warning.WarningEvidenceCreationModel
-import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
-import net.dungeonhub.structure.Connection.Companion.jsonMediaType
-import okhttp3.HttpUrl
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 
 @OptIn(ExperimentalStdlibApi::class)
 class WarningConnection(private val serverId: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/$serverId/warns"
 
-    fun getAllWarns(userId: Long): List<DetailedWarningModel>? {
-        val url: HttpUrl = getApiUrl("all")
-            .addQueryParameter("user", userId.toString())
-            .build()
-
-        val request: Request = getApiRequest(url).get().build()
-
-        return executeRequest(request, function = moshi.adapter<List<DetailedWarningModel>>()::fromJson)
+    suspend fun getAllWarns(userId: Long): List<DetailedWarningModel>? {
+        return dhApiRequest("all") {
+            parameter("user", userId.toString())
+        }
     }
 
-    fun getActiveWarns(userId: Long): List<DetailedWarningModel>? {
-        val url: HttpUrl = getApiUrl("active")
-            .addQueryParameter("user", userId.toString())
-            .build()
-
-        val request: Request = getApiRequest(url).get().build()
-
-        return executeRequest(request, function = moshi.adapter<List<DetailedWarningModel>>()::fromJson)
+    suspend fun getActiveWarns(userId: Long): List<DetailedWarningModel>? {
+        return dhApiRequest("active") {
+            parameter("user", userId.toString())
+        }
     }
 
-    fun addWarning(creationModel: WarningCreationModel): AddedWarningModel? {
-        val url: HttpUrl = getApiUrl().build()
-
-        val requestBody = creationModel.toJson().toRequestBody(jsonMediaType)
-
-        val request: Request = getApiRequest(url).post(requestBody).build()
-
-        return executeRequest(request) { json: String -> AddedWarningModel.fromJson(json) }
+    suspend fun addWarning(creationModel: WarningCreationModel): AddedWarningModel? {
+        return dhApiRequest {
+            method = HttpMethod.Post
+            setBody(creationModel)
+        }
     }
 
-    fun deactivateWarning(id: Long): DetailedWarningModel? {
-        val url: HttpUrl = getApiUrl(id).build()
-
-        val request: Request = getApiRequest(url).delete().build()
-
-        return executeRequest(request) { json: String -> DetailedWarningModel.fromJson(json) }
+    suspend fun deactivateWarning(id: Long): DetailedWarningModel? {
+        return dhApiRequest(id) {
+            method = HttpMethod.Delete
+        }
     }
 
-    fun addEvidence(
+    suspend fun addEvidence(
         warningId: Long,
         evidenceCreationModel: WarningEvidenceCreationModel
     ): DetailedWarningModel? {
-        val url: HttpUrl = getApiUrl("$warningId/evidence").build()
-
-        val requestBody = evidenceCreationModel.toJson().toRequestBody(jsonMediaType)
-
-        val request: Request = getApiRequest(url).put(requestBody).build()
-
-        return executeRequest(request) { json: String -> DetailedWarningModel.fromJson(json) }
+        return dhApiRequest("$warningId/evidence") {
+            method = HttpMethod.Put
+            setBody(evidenceCreationModel)
+        }
     }
 
     companion object {

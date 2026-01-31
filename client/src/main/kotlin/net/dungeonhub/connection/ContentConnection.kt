@@ -1,74 +1,70 @@
 package net.dungeonhub.connection
 
+import io.ktor.client.request.setBody
+import io.ktor.client.request.url
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.ContentType
+import io.ktor.http.HttpMethod
+import io.ktor.http.Url
+import io.ktor.http.content.ByteArrayContent
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.client.DungeonHubClient
 import net.dungeonhub.structure.AuthenticatedConnection
 import net.dungeonhub.structure.ClientlessConnection
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 
 class ContentConnection(override val client: DungeonHubClient) : AuthenticatedConnection(client) {
-    private val apiUrl: HttpUrl.Builder
-        get() = (DungeonHubClient.apiUrl + "cdn/").toHttpUrl().newBuilder()
+    private val apiUrl: Url
+        get() = Url(DungeonHubClient.apiUrl + "cdn/")
 
-    fun getApiUrl(uri: String): HttpUrl.Builder {
-        return (DungeonHubClient.apiUrl + "cdn/" + uri).toHttpUrl().newBuilder()
+    fun getApiUrl(uri: String): Url {
+        return Url(DungeonHubClient.apiUrl + "cdn/" + uri)
     }
 
-    fun getStaticUrl(uri: String): HttpUrl.Builder {
+    fun getStaticUrl(uri: String): Url {
         val prefix = DungeonHubClient.staticUrl
         if (prefix.isNullOrBlank()) {
             return getCdnUrl("static/$uri")
         }
 
-        return (prefix + uri).toHttpUrl().newBuilder()
+        return Url(prefix + uri)
     }
 
-    fun getCdnUrl(uri: String): HttpUrl.Builder {
+    fun getCdnUrl(uri: String): Url {
         var prefix = DungeonHubClient.cdnUrl
         if (prefix.isNullOrBlank()) {
             prefix = DungeonHubClient.apiUrl + "cdn/"
         }
 
-        return (prefix + uri).toHttpUrl().newBuilder()
+        return Url(prefix + uri)
     }
 
-    private fun performUpload(data: ByteArray, url: HttpUrl): String? {
-        val requestBody: RequestBody = data.toRequestBody("application/octet-stream".toMediaType())
-
-        val request: Request = client.getApiRequest(url)
-            .post(requestBody)
-            .build()
-
-        return executeRequest(request)
+    private suspend fun performUpload(data: ByteArray, url: Url): String? {
+        return client.executeRawRequest {
+            client.setupRequest(this)
+            url(url)
+            method = HttpMethod.Post
+            setBody(ByteArrayContent(data, ContentType.Application.OctetStream))
+        }?.bodyAsText()
     }
 
-    fun uploadFile(data: ByteArray, fileName: String): String? {
-        val url: HttpUrl = getApiUrl(fileName).build()
+    suspend fun uploadFile(data: ByteArray, fileName: String): String? {
+        val url = getApiUrl(fileName)
 
         return performUpload(data, url)
     }
 
-    fun uploadFile(data: ByteArray): String? {
-        val url: HttpUrl = this.apiUrl.build()
-
-        return performUpload(data, url)
+    suspend fun uploadFile(data: ByteArray): String? {
+        return performUpload(data, this.apiUrl)
     }
 
-    fun downloadFile(uri: String): String? {
-        val url: HttpUrl = getApiUrl(uri).build()
+    suspend fun downloadFile(uri: String): String? {
+        val url = getApiUrl(uri)
 
-        val request: Request = Request.Builder()
-            .url(url)
-            .get()
-            .build()
-
-        return client.executeRequest(request)
+        return client.executeRawRequest {
+            url(url)
+            method = HttpMethod.Get
+        }?.bodyAsText()
     }
 
     companion object : ClientlessConnection<ContentConnection> {

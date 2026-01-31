@@ -1,60 +1,55 @@
 package net.dungeonhub.client
 
+import io.ktor.client.call.body
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.request
+import io.ktor.client.request.url
+import io.ktor.client.statement.HttpResponse
+import io.ktor.client.statement.bodyAsText
+import io.ktor.client.statement.request
+import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.Url
+import io.ktor.http.contentLength
+import io.ktor.http.contentType
+import io.ktor.http.isSuccess
+import io.ktor.http.userAgent
 import net.dungeonhub.providers.HttpClientProvider.httpClient
-import net.dungeonhub.structure.MappingFunction
-import net.dungeonhub.structure.RequestResult
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.Request
-import okio.Buffer
+import net.dungeonhub.structure.ModuleConnection
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.IOException
-import java.nio.charset.StandardCharsets
 
 open class DungeonHubClient {
-    private val logger = LoggerFactory.getLogger(DungeonHubClient::class.java)
+    val logger: Logger = LoggerFactory.getLogger(DungeonHubClient::class.java)
 
-    fun <T> executeRequest(request: Request, notFoundFallback: T? = null, function: MappingFunction<String, T>): T? {
-        val result = executeRawRequest(request)?.stringResult
-
-        if (result?.code == 404 && result.result == null) {
-            return notFoundFallback
-        }
-
-        return result?.result?.let { function.apply(it) }
-    }
-
-    fun executeRawRequest(request: Request): RequestResult? {
+    suspend fun executeRawRequest(request: HttpRequestBuilder.() -> Unit): HttpResponse? {
         try {
-            httpClient.newCall(request).execute().use { response ->
-                val bytes = response.body?.let {
-                    try {
-                        it.bytes()
-                    } catch (ioException: IOException) {
-                        logger.error(null, ioException)
-                        null
-                    }
+            httpClient.request(request).let { response ->
+                val bodyText = if(response.contentLength() == 0L || response.contentLength() == null) {
+                    null
+                } else {
+                    response.bodyAsText()
                 }
 
-                if (response.isSuccessful) {
-                    logger.debug("Executed request to '{}' successfully.", request.url)
-                } else if (response.code == 404) {
-                    logger.debug("Executed request to '{}' returned a 404.", request.url)
+                if(response.status.isSuccess()) {
+                    logger.debug("Executed request to '{}' successfully.", response.request.url)
+                } else if(response.status == HttpStatusCode.NotFound) {
+                    logger.debug("Executed request to '{}' returned a 404.", response.request.url)
                 } else {
-                    val body = getBody(request)
+                    val body = response.request.content
 
                     logger.error(
-                        "Request to '{}' wasn't successful. Body:\n{}\nResponse: {}\n{}",
-                        request.url,
+                        "Request to '{}' wasn't successful. Body:\n{}\nResponse: {} ({})\n{}",
+                        response.request.url,
                         body,
-                        response.code,
-                        if (response.body != null) bytes?.let { String(it, StandardCharsets.UTF_8) } else null
+                        response.status.value,
+                        response.status.description,
+                        bodyText
                     )
                 }
 
-                return RequestResult(response.code, if (bytes?.isEmpty() != false) null else bytes)
+                return response
             }
         } catch (ioException: IOException) {
             logger.error(null, ioException)
@@ -62,43 +57,30 @@ open class DungeonHubClient {
         }
     }
 
-    fun executeRequest(request: Request): String? {
-        return executeRawRequest(request)?.stringResult?.successResult
-    }
-
-    private fun getBody(request: Request): String? {
-        val newRequest = request.newBuilder().build()
-
-        if (newRequest.body == null) {
-            return null
-        }
-
+    suspend inline fun <reified T> dhApiRequest(uri: String, noinline request: HttpRequestBuilder.() -> Unit, module: ModuleConnection? = null): T? {
         try {
-            Buffer().use { buffer ->
-                newRequest.body!!.writeTo(buffer)
-                return buffer.readUtf8()
-            }
-        } catch (_: IOException) {
-            return null
-        } catch (_: NullPointerException) {
+            return executeRawRequest {
+                url(module?.getApiUrl(uri) ?: getApiUrl(uri))
+                setupRequest(this)
+                request()
+            }?.body<T>()
+        } catch (exception: Exception) {
+            logger.error("Exception during API request.", exception)
             return null
         }
     }
 
-    fun getApiRequest(uri: String): Request.Builder {
-        return getApiRequest(getApiUrl(uri).build())
+    suspend inline fun <reified T> dhApiRequest(uri: Long, noinline request: HttpRequestBuilder.() -> Unit, module: ModuleConnection? = null): T? = dhApiRequest(uri.toString(), request, module)
+
+    suspend inline fun <reified T> dhApiRequest(noinline request: HttpRequestBuilder.() -> Unit, module: ModuleConnection? = null): T? = dhApiRequest("", request, module)
+
+    open fun setupRequest(requestBuilder: HttpRequestBuilder) {
+        requestBuilder.userAgent("DHApiModule")
+        requestBuilder.contentType(ContentType.Application.Json)
     }
 
-    open fun getApiRequest(httpUrl: HttpUrl): Request.Builder {
-        val mediaType: MediaType = "multipart/form-data; boundary=---011000010111000001101001".toMediaType()
-
-        return Request.Builder()
-            .url(httpUrl)
-            .addHeader("Content-Type", mediaType.toString())
-    }
-
-    fun getApiUrl(uri: String): HttpUrl.Builder {
-        return (apiUrl + API_PREFIX + uri).toHttpUrl().newBuilder()
+    open fun getApiUrl(uri: String): Url {
+        return Url(apiUrl + API_PREFIX + uri)
     }
 
     companion object {

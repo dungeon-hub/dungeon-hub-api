@@ -1,6 +1,8 @@
 package net.dungeonhub.connection
 
-import com.squareup.moshi.adapter
+import io.ktor.client.request.parameter
+import io.ktor.client.request.setBody
+import io.ktor.http.HttpMethod
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.client.DungeonHubClient
@@ -10,109 +12,50 @@ import net.dungeonhub.model.carry_queue.CarryQueueCreationModel
 import net.dungeonhub.model.carry_queue.CarryQueueModel
 import net.dungeonhub.model.carry_queue.CarryQueueUpdateModel
 import net.dungeonhub.model.score.LoggedCarryModel
-import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
-import net.dungeonhub.structure.Connection.Companion.jsonMediaType
-import okhttp3.HttpUrl
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 
 @OptIn(ExperimentalStdlibApi::class)
 class QueueConnection(override val client: DungeonHubClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "queue"
 
-    fun addNewQueue(
+    suspend fun addNewQueue(
         carryDifficultyModel: CarryDifficultyModel,
         creationModel: CarryQueueCreationModel
-    ): CarryQueueModel? {
-        val url: HttpUrl = getApiUrl("carry-difficulty/" + carryDifficultyModel.id)
-            .build()
-
-        val requestBody = creationModel.toJson().toRequestBody(jsonMediaType)
-
-        val request: Request = getApiRequest(url)
-            .post(requestBody)
-            .build()
-
-        return executeRequest(request) { json: String -> CarryQueueModel.fromJson(json) }
+    ): CarryQueueModel? = dhApiRequest("carry-difficulty/${carryDifficultyModel.id}") {
+        method = HttpMethod.Post
+        setBody(creationModel)
     }
 
-    fun getCarryQueueByRelatedIdAndQueueStep(
+    // TODO merge this with the two methods below?
+    suspend fun getCarryQueueByRelatedIdAndQueueStep(
         relatedId: Long,
         queueStep: QueueStep
-    ): Set<CarryQueueModel>? {
-        val url: HttpUrl = getApiUrl("all")
-            .addQueryParameter("related-id", relatedId.toString())
-            .addQueryParameter("queue-step", queueStep.name)
-            .build()
-
-        val request: Request = getApiRequest(url)
-            .get()
-            .build()
-
-        return executeRequest(request, function = moshi.adapter<Set<CarryQueueModel>>()::fromJson)
+    ): Set<CarryQueueModel>? = dhApiRequest("all") {
+        parameter("related-id", relatedId)
+        parameter("queue-step", queueStep.name)
     }
 
-    fun getCarryQueueByRelatedId(id: Long): Set<CarryQueueModel>? {
-        val url: HttpUrl = getApiUrl("all")
-            .addQueryParameter("related-id", id.toString())
-            .build()
-
-        val request: Request = getApiRequest(url)
-            .get()
-            .build()
-
-        return executeRequest(request, function = moshi.adapter<Set<CarryQueueModel>>()::fromJson)
+    suspend fun getCarryQueueByRelatedId(id: Long): Set<CarryQueueModel>? = dhApiRequest("all") {
+        parameter("related-id", id)
     }
 
-    fun getCarryQueuesByQueueStep(step: QueueStep): Set<CarryQueueModel>? {
-        val url: HttpUrl = getApiUrl("all")
-            .addQueryParameter("queue-step", step.name)
-            .build()
-
-        val request: Request = getApiRequest(url)
-            .get()
-            .build()
-
-        return executeRequest(request, function = moshi.adapter<Set<CarryQueueModel>>()::fromJson)
+    suspend fun getCarryQueuesByQueueStep(queueStep: QueueStep): Set<CarryQueueModel>? = dhApiRequest("all") {
+        parameter("queue-step", queueStep.name)
     }
 
-    fun updateQueue(id: Long, updateModel: CarryQueueUpdateModel): CarryQueueModel? {
-        val url: HttpUrl = getApiUrl(id)
-            .build()
-
-        val requestBody = updateModel.toJson().toRequestBody(jsonMediaType)
-
-        val request: Request = getApiRequest(url)
-            .put(requestBody)
-            .build()
-
-        return executeRequest(request) { json: String -> CarryQueueModel.fromJson(json) }
+    suspend fun updateQueue(id: Long, updateModel: CarryQueueUpdateModel): CarryQueueModel? = dhApiRequest(id) {
+        method = HttpMethod.Put
+        setBody(updateModel)
     }
 
-    fun deleteQueue(id: Long): Boolean {
-        val url: HttpUrl = getApiUrl(id)
-            .build()
+    suspend fun deleteQueue(id: Long): Boolean = dhApiRequest<CarryQueueModel>(id) {
+        method = HttpMethod.Delete
+    } != null
 
-        val request: Request = getApiRequest(url)
-            .delete()
-            .build()
-
-        return executeRequest(request) != null
-    }
-
-    fun logQueue(id: Long, updateModel: CarryQueueUpdateModel): LoggedCarryModel? {
-        val url: HttpUrl = getApiUrl("log/$id")
-            .build()
-
-        val requestBody = updateModel.toJson().toRequestBody(jsonMediaType)
-
-        val request: Request = getApiRequest(url)
-            .post(requestBody)
-            .build()
-
-        return executeRequest(request) { json: String -> LoggedCarryModel.fromJson(json) }
+    suspend fun logQueue(id: Long, updateModel: CarryQueueUpdateModel): LoggedCarryModel? = dhApiRequest("log/$id") {
+        method = HttpMethod.Post
+        setBody(updateModel)
     }
 
     companion object : ClientlessConnection<QueueConnection> {

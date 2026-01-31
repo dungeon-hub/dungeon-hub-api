@@ -1,6 +1,7 @@
 package net.dungeonhub.connection
 
-import com.squareup.moshi.adapter
+import io.ktor.client.request.setBody
+import io.ktor.http.HttpMethod
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.discord_server.DiscordServerModel
@@ -8,62 +9,27 @@ import net.dungeonhub.model.ticket.TicketCreationModel
 import net.dungeonhub.model.ticket.TicketModel
 import net.dungeonhub.model.ticket.TicketUpdateModel
 import net.dungeonhub.model.ticket_panel.TicketPanelModel
-import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
-import net.dungeonhub.structure.Connection.Companion.jsonMediaType
-import okhttp3.HttpUrl
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.HashMap
 
 @OptIn(ExperimentalStdlibApi::class)
 class TicketConnection(private val server: Long, private val ticketPanel: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/$server/ticket-panel/$ticketPanel/ticket"
 
-    fun getById(id: Long): TicketModel? {
-        val url: HttpUrl = getApiUrl(id).build()
+    suspend fun getById(id: Long): TicketModel? = dhApiRequest(id) {}
 
-        val request: Request = getApiRequest(url)
-            .get()
-            .build()
-
-        return executeRequest(request) { json: String -> TicketModel.fromJson(json) }
+    suspend fun addNewTicket(creationModel: TicketCreationModel): TicketModel? = dhApiRequest {
+        method = HttpMethod.Post
+        setBody(creationModel)
     }
 
-    fun addNewTicket(creationModel: TicketCreationModel): TicketModel? {
-        val url: HttpUrl = getApiUrl().build()
-
-        val requestBody: RequestBody = creationModel.toJson().toRequestBody(jsonMediaType)
-
-        val request: Request = getApiRequest(url)
-            .post(requestBody)
-            .build()
-
-        return executeRequest(request) { json: String -> TicketModel.fromJson(json) }
+    suspend fun updateTicket(id: Long, updateModel: TicketUpdateModel): TicketModel? = dhApiRequest(id) {
+        method = HttpMethod.Put
+        setBody(updateModel)
     }
 
-    fun updateTicket(id: Long, updateModel: TicketUpdateModel): TicketModel? {
-        val url: HttpUrl = getApiUrl(id).build()
-
-        val requestBody = updateModel.toJson().toRequestBody(jsonMediaType)
-
-        val request: Request = getApiRequest(url)
-            .put(requestBody)
-            .build()
-
-        return executeRequest(request) { json: String -> TicketModel.fromJson(json) }
-    }
-
-    val allTickets: List<TicketModel>?
-        get() {
-            val url: HttpUrl = getApiUrl("all").build()
-
-            val request: Request = getApiRequest(url).get().build()
-
-            return executeRequest(request, function = moshi.adapter<List<TicketModel>>()::fromJson)
-        }
+    suspend fun getAllTickets(): List<TicketModel>? = dhApiRequest("all") {  }
 
     companion object {
         private val instances: MutableMap<Long, MutableMap<Long, ClientlessTicketConnection>> = HashMap()
