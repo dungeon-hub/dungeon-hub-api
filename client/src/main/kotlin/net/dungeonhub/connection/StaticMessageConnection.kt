@@ -1,77 +1,48 @@
 package net.dungeonhub.connection
 
-import com.squareup.moshi.adapter
+import io.ktor.client.request.parameter
+import io.ktor.client.request.setBody
+import io.ktor.http.HttpMethod
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.static_message.StaticMessageModel
 import net.dungeonhub.enums.StaticMessageType
+import net.dungeonhub.model.static_message.StaticMessageCreationModel
 import net.dungeonhub.model.static_message.StaticMessageUpdateModel
-import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
-import net.dungeonhub.structure.Connection.Companion.jsonMediaType
-import okhttp3.HttpUrl
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
 
 @OptIn(ExperimentalStdlibApi::class)
 class StaticMessageConnection(private val server: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix: String = "server/$server/static-message"
 
-    fun getById(id: Long): StaticMessageModel? {
-        val url: HttpUrl = getApiUrl(id).build()
+    suspend fun getById(id: Long): StaticMessageModel? = dhApiRequest(id) {}
 
-        val request: Request = getApiRequest(url).get().build()
-
-        return executeRequest(request, function = moshi.adapter<StaticMessageModel>()::fromJson)
-    }
-
-    fun findStaticMessages(staticMessageType: StaticMessageType? = null, channelId: Long? = null, messageId: Long? = null): List<StaticMessageModel>? {
-        var url = getApiUrl("find")
-
-        if (staticMessageType != null) {
-            url = url.addQueryParameter("staticMessageType", staticMessageType.name)
+    suspend fun findStaticMessages(staticMessageType: StaticMessageType? = null, channelId: Long? = null, messageId: Long? = null): List<StaticMessageModel>? =
+        dhApiRequest("find") {
+            if (staticMessageType != null) {
+                parameter("staticMessageType", staticMessageType.name)
+            }
+            if (channelId != null) {
+                parameter("channelId", channelId)
+            }
+            if (messageId != null) {
+                parameter("messageId", messageId)
+            }
         }
 
-        if (channelId != null) {
-            url = url.addQueryParameter("channelId", channelId.toString())
-        }
-
-        if (messageId != null) {
-            url = url.addQueryParameter("messageId", messageId.toString())
-        }
-
-        val request: Request = getApiRequest(url.build()).get().build()
-
-        return executeRequest(request, function = moshi.adapter<List<StaticMessageModel>>()::fromJson)
+    suspend fun createStaticMessage(creationModel: StaticMessageCreationModel): StaticMessageModel? = dhApiRequest {
+        method = HttpMethod.Post
+        setBody(creationModel)
     }
 
-    fun createStaticMessage(creationModel: net.dungeonhub.model.static_message.StaticMessageCreationModel): StaticMessageModel? {
-        val url: HttpUrl = getApiUrl().build()
-
-        val request = getApiRequest(url)
-            .post(creationModel.toJson().toRequestBody(jsonMediaType))
-            .build()
-
-        return executeRequest(request, function = moshi.adapter<StaticMessageModel>()::fromJson)
+    suspend fun updateStaticMessage(id: Long, updateModel: StaticMessageUpdateModel): StaticMessageModel? = dhApiRequest(id) {
+        method = HttpMethod.Put
+        setBody(updateModel)
     }
 
-    fun updateStaticMessage(id: Long, updateModel: StaticMessageUpdateModel): StaticMessageModel? {
-        val url: HttpUrl = getApiUrl(id).build()
-
-        val request = getApiRequest(url)
-            .put(updateModel.toJson().toRequestBody(jsonMediaType))
-            .build()
-
-        return executeRequest(request, function = moshi.adapter<StaticMessageModel>()::fromJson)
-    }
-
-    fun deleteStaticMessage(id: Long): StaticMessageModel? {
-        val url: HttpUrl = getApiUrl("$id").build()
-
-        val request: Request = getApiRequest(url).delete().build()
-
-        return executeRequest(request, function = moshi.adapter<StaticMessageModel>()::fromJson)
+    suspend fun deleteStaticMessage(id: Long): StaticMessageModel? = dhApiRequest(id) {
+        method = HttpMethod.Delete
     }
 
     companion object {

@@ -28,6 +28,7 @@ dependencies {
 
     //HTTP Client
     api(libs.okhttp)
+    api(libs.ktor.moshi)
 
     //Tests
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

@@ -1,14 +1,31 @@
 package net.dungeonhub.providers
 
-import okhttp3.OkHttpClient
-import java.time.Duration
+import com.hypercubetools.ktor.moshi.moshi
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.plugins.HttpRequestRetry
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.http.isSuccess
+import net.dungeonhub.service.MoshiService
 
 object HttpClientProvider {
-    val httpClient: OkHttpClient = OkHttpClient.Builder()
-        .retryOnConnectionFailure(true)
-        .connectTimeout(Duration.ofSeconds(30))
-        .readTimeout(Duration.ofSeconds(30))
-        .callTimeout(Duration.ofSeconds(30))
-        .writeTimeout(Duration.ofSeconds(30))
-        .build()
+    val httpClient = HttpClient(OkHttp) {
+        install(ContentNegotiation) {
+            moshi(MoshiService.moshi)
+        }
+
+        install(HttpTimeout) {
+            requestTimeoutMillis = 30_000
+            connectTimeoutMillis = 30_000
+            socketTimeoutMillis = 30_000
+        }
+
+        install(HttpRequestRetry) {
+            maxRetries = 3
+            retryIf { _, response -> !response.status.isSuccess() }
+            retryOnExceptionIf { _, cause -> cause is Exception }
+            exponentialDelay()
+        }
+    }
 }

@@ -1,20 +1,15 @@
 package net.dungeonhub.connection
 
-import com.squareup.moshi.adapter
+import io.ktor.client.request.setBody
+import io.ktor.http.HttpMethod
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyCreationModel
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyUpdateModel
 import net.dungeonhub.model.carry_tier.CarryTierModel
-import net.dungeonhub.service.MoshiService.moshi
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
-import net.dungeonhub.structure.Connection.Companion.jsonMediaType
-import okhttp3.HttpUrl
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
 
 @OptIn(ExperimentalStdlibApi::class)
 class CarryDifficultyConnection(carryTierModel: CarryTierModel, override val client: AuthenticatedClient) :
@@ -27,25 +22,14 @@ class CarryDifficultyConnection(carryTierModel: CarryTierModel, override val cli
             + carryTierModel.id
             + "/carry-difficulty")
 
-    fun getCarryDifficulty(id: Long): CarryDifficultyModel? {
-        val url: HttpUrl = getApiUrl(id).build()
-
-        val request: Request = getApiRequest(url).get().build()
-
-        return executeRequest(request) { json: String -> CarryDifficultyModel.fromJson(json) }
+    suspend fun getCarryDifficulty(id: Long): CarryDifficultyModel? {
+        return dhApiRequest(id) {}
     }
 
-    val allCarryDifficulties: List<CarryDifficultyModel>?
-        get() {
-            val url: HttpUrl = getApiUrl("all").build()
+    suspend fun getAllCarryDifficulties(): List<CarryDifficultyModel>? = dhApiRequest("all") {}
 
-            val request: Request = getApiRequest(url).get().build()
-
-            return executeRequest(request, function = moshi.adapter<List<CarryDifficultyModel>>()::fromJson)
-        }
-
-    fun getByIdentifier(identifier: String?): CarryDifficultyModel? {
-        return allCarryDifficulties?.firstOrNull {
+    suspend fun getByIdentifier(identifier: String?): CarryDifficultyModel? {
+        return getAllCarryDifficulties()?.firstOrNull {
             it.identifier.equals(
                 identifier,
                 ignoreCase = true
@@ -53,8 +37,8 @@ class CarryDifficultyConnection(carryTierModel: CarryTierModel, override val cli
         }
     }
 
-    fun findCarryDifficultyByString(input: String): CarryDifficultyModel? {
-        val allCarryDifficulties = allCarryDifficulties ?: return null
+    suspend fun findCarryDifficultyByString(input: String): CarryDifficultyModel? {
+        val allCarryDifficulties = getAllCarryDifficulties() ?: return null
 
         return allCarryDifficulties.singleOrNull { it.displayName.equals(input, true) }
             ?: allCarryDifficulties.singleOrNull { it.identifier.equals(input, true) }
@@ -62,32 +46,24 @@ class CarryDifficultyConnection(carryTierModel: CarryTierModel, override val cli
             ?: allCarryDifficulties.singleOrNull { it.identifier.startsWith(input) }
     }
 
-    fun createCarryDifficulty(creationModel: CarryDifficultyCreationModel): CarryDifficultyModel? {
-        val url: HttpUrl = getApiUrl().build()
-
-        val requestBody = creationModel.toJson().toRequestBody(jsonMediaType)
-
-        val request: Request = getApiRequest(url).post(requestBody).build()
-
-        return executeRequest(request) { CarryDifficultyModel.fromJson(it) }
+    suspend fun createCarryDifficulty(creationModel: CarryDifficultyCreationModel): CarryDifficultyModel? {
+        return dhApiRequest {
+            method = HttpMethod.Post
+            setBody(creationModel)
+        }
     }
 
-    fun updateCarryDifficulty(id: Long, updateModel: CarryDifficultyUpdateModel): CarryDifficultyModel? {
-        val url: HttpUrl = getApiUrl(id).build()
-
-        val requestBody: RequestBody = updateModel.toJson().toRequestBody(jsonMediaType)
-
-        val request: Request = getApiRequest(url).put(requestBody).build()
-
-        return executeRequest(request) { json: String -> CarryDifficultyModel.fromJson(json) }
+    suspend fun updateCarryDifficulty(id: Long, updateModel: CarryDifficultyUpdateModel): CarryDifficultyModel? {
+        return dhApiRequest(id) {
+            method = HttpMethod.Put
+            setBody(updateModel)
+        }
     }
 
-    fun deleteCarryDifficulty(id: Long): CarryDifficultyModel? {
-        val url: HttpUrl = getApiUrl(id).build()
-
-        val request: Request = getApiRequest(url).delete().build()
-
-        return executeRequest(request) { CarryDifficultyModel.fromJson(it) }
+    suspend fun deleteCarryDifficulty(id: Long): CarryDifficultyModel? {
+        return dhApiRequest(id) {
+            method = HttpMethod.Delete
+        }
     }
 
     companion object {
