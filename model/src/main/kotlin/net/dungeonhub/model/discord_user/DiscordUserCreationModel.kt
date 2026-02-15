@@ -7,7 +7,7 @@ import java.util.*
 class DiscordUserCreationModel(
     var id: Long,
     var minecraftId: UUID? = null,
-    val primarySkyblockProfile: UUID? = null
+    var primarySkyblockProfile: UUID? = null
 ) : CreationModel {
     fun toJson(): String {
         return MoshiService.moshi.adapter(DiscordUserCreationModel::class.java).toJson(this)
