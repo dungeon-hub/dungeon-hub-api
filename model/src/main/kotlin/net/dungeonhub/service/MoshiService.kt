@@ -128,9 +128,9 @@ object MoshiService {
         explicitNulls = false
     }
 
-    private fun toJsonElement(discordBitSet: DiscordBitSet): kotlinx.serialization.json.JsonElement =
+    internal fun toJsonElement(discordBitSet: DiscordBitSet): kotlinx.serialization.json.JsonElement =
         json.encodeToJsonElement(DiscordBitSet.serializer(), discordBitSet)
 
-    private fun discordBitSetFromJsonElement(element: kotlinx.serialization.json.JsonElement): DiscordBitSet =
+    internal fun discordBitSetFromJsonElement(element: kotlinx.serialization.json.JsonElement): DiscordBitSet =
         json.decodeFromJsonElement(DiscordBitSet.serializer(), element)
 }
