@@ -7,6 +7,8 @@ import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import io.ktor.http.parameters
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import net.dungeonhub.auth.AuthenticationCredentials.authLoginUrl
 import net.dungeonhub.auth.AuthenticationCredentials.clientId
 import net.dungeonhub.auth.AuthenticationCredentials.clientSecret
@@ -21,15 +23,17 @@ object AuthenticationConnection : AuthenticationProvider {
     val logger: Logger = LoggerFactory.getLogger(AuthenticationConnection::class.java)
 
     private var jwtToken: JwtTokenModel = runBlocking { loadToken() }
+    private val tokenMutex = Mutex()
 
-    override val apiToken: String
-        @Synchronized
-        get() {
-            if (jwtToken.validUntil.isBefore(Instant.now())) {
-                jwtToken = runBlocking { loadToken() }
+    override suspend fun getApiToken(): String {
+        return tokenMutex.withLock {
+            val current = jwtToken
+            if (current.validUntil.isBefore(Instant.now())) {
+                jwtToken = loadToken()
             }
-            return jwtToken.token
+            jwtToken.token
         }
+    }
 
     suspend fun loadToken(): JwtTokenModel {
         val response = try {

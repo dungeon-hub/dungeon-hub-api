@@ -5,9 +5,9 @@ import io.ktor.client.request.header
 import net.dungeonhub.auth.AuthenticationProvider
 
 open class AuthenticatedClient(val authenticationProvider: AuthenticationProvider) : DungeonHubClient() {
-    override fun setupRequest(requestBuilder: HttpRequestBuilder) {
+    override suspend fun setupRequest(requestBuilder: HttpRequestBuilder) {
         super.setupRequest(requestBuilder)
-        requestBuilder.header(AUTHORIZATION, "Bearer " + authenticationProvider.apiToken)
+        requestBuilder.header(AUTHORIZATION, "Bearer " + authenticationProvider.getApiToken())
     }
 
     companion object {

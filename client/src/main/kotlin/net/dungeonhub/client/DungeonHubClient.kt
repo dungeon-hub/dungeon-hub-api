@@ -23,21 +23,23 @@ import java.io.IOException
 open class DungeonHubClient {
     val logger: Logger = LoggerFactory.getLogger(DungeonHubClient::class.java)
 
-    suspend fun executeRawRequest(request: HttpRequestBuilder.() -> Unit): HttpResponse? {
+    suspend fun executeRawRequest(request: suspend HttpRequestBuilder.() -> Unit): HttpResponse? {
         try {
-            httpClient.request(request).let { response ->
-                val bodyText = if(response.contentLength() == 0L || response.contentLength() == null) {
-                    null
-                } else {
-                    response.bodyAsText()
-                }
+            val builder = HttpRequestBuilder()
+            request(builder)
 
+            httpClient.request(builder).let { response ->
                 if(response.status.isSuccess()) {
                     logger.debug("Executed request to '{}' successfully.", response.request.url)
                 } else if(response.status == HttpStatusCode.NotFound) {
                     logger.debug("Executed request to '{}' returned a 404.", response.request.url)
                 } else {
                     val body = response.request.content
+                    val bodyText = if(response.contentLength() == 0L || response.contentLength() == null) {
+                        null
+                    } else {
+                        response.bodyAsText()
+                    }
 
                     logger.error(
                         "Request to '{}' wasn't successful. Body:\n{}\nResponse: {} ({})\n{}",
@@ -59,11 +61,13 @@ open class DungeonHubClient {
 
     suspend inline fun <reified T> dhApiRequest(uri: String, noinline request: HttpRequestBuilder.() -> Unit, module: ModuleConnection? = null): T? {
         try {
-            return executeRawRequest {
+            val response = executeRawRequest {
                 url(module?.getApiUrl(uri) ?: getApiUrl(uri))
                 setupRequest(this)
                 request()
-            }?.body<T>()
+            }
+            if(response?.status?.isSuccess() != true) return null
+            return response.body<T>()
         } catch (exception: Exception) {
             logger.error("Exception during API request.", exception)
             return null
@@ -74,7 +78,7 @@ open class DungeonHubClient {
 
     suspend inline fun <reified T> dhApiRequest(noinline request: HttpRequestBuilder.() -> Unit, module: ModuleConnection? = null): T? = dhApiRequest("", request, module)
 
-    open fun setupRequest(requestBuilder: HttpRequestBuilder) {
+    open suspend fun setupRequest(requestBuilder: HttpRequestBuilder) {
         requestBuilder.userAgent("DHApiModule")
         requestBuilder.contentType(ContentType.Application.Json)
     }

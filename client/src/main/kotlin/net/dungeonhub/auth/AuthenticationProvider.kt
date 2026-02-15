@@ -1,5 +1,5 @@
 package net.dungeonhub.auth
 
 interface AuthenticationProvider {
-    val apiToken: String
+    suspend fun getApiToken(): String
 }
