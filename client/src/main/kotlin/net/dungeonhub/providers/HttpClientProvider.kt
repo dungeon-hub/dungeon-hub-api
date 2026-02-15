@@ -6,7 +6,9 @@ import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
-import io.ktor.http.isSuccess
+import io.ktor.http.HttpMethod
+import io.ktor.utils.io.CancellationException
+import kotlinx.io.IOException
 import net.dungeonhub.service.MoshiService
 
 object HttpClientProvider {
@@ -23,8 +25,11 @@ object HttpClientProvider {
 
         install(HttpRequestRetry) {
             maxRetries = 3
-            retryIf { _, response -> !response.status.isSuccess() }
-            retryOnExceptionIf { _, cause -> cause is Exception }
+            retryOnExceptionIf { request, cause ->
+                request.method in setOf(HttpMethod.Get, HttpMethod.Head, HttpMethod.Put, HttpMethod.Post, HttpMethod.Delete) &&
+                        cause !is CancellationException &&
+                        cause is IOException
+            }
             exponentialDelay()
         }
     }
