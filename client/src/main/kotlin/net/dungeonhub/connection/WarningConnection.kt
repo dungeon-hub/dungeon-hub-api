@@ -19,13 +19,13 @@ class WarningConnection(private val serverId: Long, override val client: Authent
 
     suspend fun getAllWarns(userId: Long): List<DetailedWarningModel>? {
         return dhApiRequest("all") {
-            parameter("user", userId.toString())
+            parameter("user", userId)
         }
     }
 
     suspend fun getActiveWarns(userId: Long): List<DetailedWarningModel>? {
         return dhApiRequest("active") {
-            parameter("user", userId.toString())
+            parameter("user", userId)
         }
     }
 

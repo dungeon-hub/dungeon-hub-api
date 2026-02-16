@@ -80,29 +80,29 @@ class DiscordServerConnection(override val client: DungeonHubClient) : Authentic
         since: Instant? = null
     ): Long? = dhApiRequest("$serverId/total-money-spent") {
         if (userId != null) {
-            parameter("user", userId.toString())
+            parameter("user", userId)
         }
 
         if (carrierId != null) {
-            parameter("carrier", carrierId.toString())
+            parameter("carrier", carrierId)
         }
 
         if (carryTypeId != null) {
-            parameter("carry-type", carryTypeId.toString())
+            parameter("carry-type", carryTypeId)
         }
 
         if (carryTierId != null) {
-            parameter("carry-tier", carryTierId.toString())
+            parameter("carry-tier", carryTierId)
         }
 
         if (since != null) {
-            parameter("since", since.toEpochMilli().toString())
+            parameter("since", since.toEpochMilli())
         }
     }
 
     suspend fun getCarryAmount(serverId: Long, since: Instant? = null): Long? = dhApiRequest("$serverId/count-carries") {
         if (since != null) {
-            parameter("since", since.toEpochMilli().toString())
+            parameter("since", since.toEpochMilli())
         }
     }
 
@@ -110,7 +110,7 @@ class DiscordServerConnection(override val client: DungeonHubClient) : Authentic
 
     suspend fun findTickets(serverId: Long, channelId: Long? = null): List<TicketModel>? = dhApiRequest("$serverId/ticket/find") {
         if (channelId != null) {
-            parameter("channel", channelId.toString())
+            parameter("channel", channelId)
         }
     }
 
