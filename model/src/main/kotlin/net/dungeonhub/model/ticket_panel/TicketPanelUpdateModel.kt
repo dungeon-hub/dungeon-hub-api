@@ -45,6 +45,7 @@ class TicketPanelUpdateModel(
             field = value
         }
     var resetEmoji = false
+        private set
 
     var openChannelName = openChannelName
         set(value) {
@@ -60,6 +61,7 @@ class TicketPanelUpdateModel(
             field = value
         }
     var resetClaimedChannelName = false
+        private set
 
     var closedChannelName = closedChannelName
         set(value) {
@@ -91,6 +93,7 @@ class TicketPanelUpdateModel(
             field = value
         }
     var resetUserTranscriptDm = false
+        private set
 
     fun toJson(): String {
         return MoshiService.moshi.adapter(TicketPanelUpdateModel::class.java).toJson(this)
