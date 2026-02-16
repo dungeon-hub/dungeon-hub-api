@@ -30,8 +30,8 @@ class CarryTierConnection(carryTypeModel: CarryTypeModel, override val client: A
 
         return allCarryTiers.singleOrNull { it.displayName.equals(input, true) }
             ?: allCarryTiers.singleOrNull { it.identifier.equals(input, true) }
-            ?: allCarryTiers.singleOrNull { it.displayName.startsWith(input) }
-            ?: allCarryTiers.singleOrNull { it.identifier.startsWith(input) }
+            ?: allCarryTiers.singleOrNull { it.displayName.startsWith(input, true) }
+            ?: allCarryTiers.singleOrNull { it.identifier.startsWith(input, true) }
     }
 
     /**

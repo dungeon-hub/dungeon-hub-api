@@ -42,8 +42,8 @@ class CarryDifficultyConnection(carryTierModel: CarryTierModel, override val cli
 
         return allCarryDifficulties.singleOrNull { it.displayName.equals(input, true) }
             ?: allCarryDifficulties.singleOrNull { it.identifier.equals(input, true) }
-            ?: allCarryDifficulties.singleOrNull { it.displayName.startsWith(input) }
-            ?: allCarryDifficulties.singleOrNull { it.identifier.startsWith(input) }
+            ?: allCarryDifficulties.singleOrNull { it.displayName.startsWith(input, true) }
+            ?: allCarryDifficulties.singleOrNull { it.identifier.startsWith(input, true) }
     }
 
     suspend fun createCarryDifficulty(creationModel: CarryDifficultyCreationModel): CarryDifficultyModel? {

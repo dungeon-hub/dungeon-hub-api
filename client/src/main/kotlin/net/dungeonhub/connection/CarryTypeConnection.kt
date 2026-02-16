@@ -35,8 +35,8 @@ class CarryTypeConnection(server: Long, override val client: AuthenticatedClient
 
         return allCarryTypes.singleOrNull { it.displayName.equals(input, true) }
             ?: allCarryTypes.singleOrNull { it.identifier.equals(input, true) }
-            ?: allCarryTypes.singleOrNull { it.displayName.startsWith(input) }
-            ?: allCarryTypes.singleOrNull { it.identifier.startsWith(input) }
+            ?: allCarryTypes.singleOrNull { it.displayName.startsWith(input, true) }
+            ?: allCarryTypes.singleOrNull { it.identifier.startsWith(input, true) }
     }
 
     suspend fun addNewCarryType(creationModel: CarryTypeCreationModel): CarryTypeModel? {
