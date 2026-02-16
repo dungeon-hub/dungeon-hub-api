@@ -32,7 +32,7 @@ dependencies {
     api("com.google.code.gson:gson:2.11.0")
 
     //Used frameworks for compatible classes
-    implementation("org.springframework:spring-web:6.2.8")
+    implementation("org.springframework:spring-web:7.0.4")
 
     //Tests
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
