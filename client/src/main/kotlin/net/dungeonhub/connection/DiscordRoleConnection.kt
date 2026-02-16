@@ -9,7 +9,7 @@ import net.dungeonhub.model.discord_role.DiscordRoleModel
 import net.dungeonhub.model.discord_role.DiscordRoleUpdateModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
-import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalStdlibApi::class)
 class DiscordRoleConnection(private val server: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
@@ -36,7 +36,7 @@ class DiscordRoleConnection(private val server: Long, override val client: Authe
     suspend fun getAllRoles(): List<DiscordRoleModel>? = dhApiRequest("all") {}
 
     companion object {
-        private val instances: MutableMap<Long, ClientlessDiscordRoleConnection> = HashMap()
+        private val instances: MutableMap<Long, ClientlessDiscordRoleConnection> = ConcurrentHashMap()
 
         operator fun get(server: Long): ClientlessDiscordRoleConnection {
             return instances.computeIfAbsent(server) { ClientlessDiscordRoleConnection(it) }

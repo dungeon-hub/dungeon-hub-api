@@ -6,6 +6,7 @@ import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.model.purge_type.PurgeTypeModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
+import java.util.concurrent.ConcurrentHashMap
 
 class PurgeTypeConnection(carryTypeModel: CarryTypeModel, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/${carryTypeModel.server.id}/carry-type/${carryTypeModel.id}/purge-type"
@@ -23,7 +24,7 @@ class PurgeTypeConnection(carryTypeModel: CarryTypeModel, override val client: A
     suspend fun getAllPurgeTypes(): List<PurgeTypeModel>? = dhApiRequest("all") {}
 
     companion object {
-        private val instances: MutableMap<CarryTypeModel, ClientlessPurgeTypeConnection> = HashMap()
+        private val instances: MutableMap<CarryTypeModel, ClientlessPurgeTypeConnection> = ConcurrentHashMap()
 
         operator fun get(carryTypeModel: CarryTypeModel): ClientlessPurgeTypeConnection {
             return instances.computeIfAbsent(carryTypeModel) { ClientlessPurgeTypeConnection(it) }

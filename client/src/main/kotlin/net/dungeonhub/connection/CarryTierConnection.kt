@@ -10,7 +10,7 @@ import net.dungeonhub.model.carry_tier.CarryTierUpdateModel
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
-import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalStdlibApi::class)
 class CarryTierConnection(carryTypeModel: CarryTypeModel, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
@@ -61,7 +61,7 @@ class CarryTierConnection(carryTypeModel: CarryTypeModel, override val client: A
     suspend fun deleteCarryTier(id: Long): CarryTierModel? = dhApiRequest(id) { method = HttpMethod.Delete }
 
     companion object {
-        private val instances: MutableMap<CarryTypeModel, ClientlessCarryTierConnection> = HashMap()
+        private val instances: MutableMap<CarryTypeModel, ClientlessCarryTierConnection> = ConcurrentHashMap()
 
         operator fun get(carryTypeModel: CarryTypeModel): ClientlessCarryTierConnection {
             return instances.computeIfAbsent(carryTypeModel) { ClientlessCarryTierConnection(it) }

@@ -10,7 +10,7 @@ import net.dungeonhub.model.carry_type.CarryTypeUpdateModel
 import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
-import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalStdlibApi::class)
 class CarryTypeConnection(server: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
@@ -62,7 +62,7 @@ class CarryTypeConnection(server: Long, override val client: AuthenticatedClient
     suspend fun getAllCarryTypes(): List<CarryTypeModel>? = dhApiRequest("all") {}
 
     companion object {
-        private val instances: MutableMap<Long, ClientlessCarryTypeConnection> = HashMap()
+        private val instances: MutableMap<Long, ClientlessCarryTypeConnection> = ConcurrentHashMap()
 
         operator fun get(server: Long): ClientlessCarryTypeConnection {
             return instances.computeIfAbsent(server) { ClientlessCarryTypeConnection(it) }

@@ -10,6 +10,7 @@ import net.dungeonhub.model.cnt_request.CntRequestModel
 import net.dungeonhub.model.cnt_request.CntRequestUpdateModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalStdlibApi::class)
 class CntRequestConnection(private val server: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
@@ -42,7 +43,7 @@ class CntRequestConnection(private val server: Long, override val client: Authen
     }
 
     companion object {
-        private val instances: MutableMap<Long, ClientlessCntRequestConnection> = HashMap()
+        private val instances: MutableMap<Long, ClientlessCntRequestConnection> = ConcurrentHashMap()
 
         operator fun get(server: Long): ClientlessCntRequestConnection {
             return instances.computeIfAbsent(server) { ClientlessCntRequestConnection(it) }

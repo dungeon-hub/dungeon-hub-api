@@ -12,6 +12,7 @@ import net.dungeonhub.model.reputation.ReputationModel
 import net.dungeonhub.model.reputation.ReputationUpdateModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
+import java.util.concurrent.ConcurrentHashMap
 
 class ReputationConnection(server: Long, discordUser: Long, override val client: AuthenticatedClient) :
     AuthenticatedModuleConnection(client) {
@@ -32,7 +33,7 @@ class ReputationConnection(server: Long, discordUser: Long, override val client:
     suspend fun getReputations(): List<ReputationModel>? = dhApiRequest("all") {}
 
     companion object {
-        private val instances: MutableMap<Long, MutableMap<Long, ClientlessReputationConnection>> = HashMap()
+        private val instances: MutableMap<Long, MutableMap<Long, ClientlessReputationConnection>> = ConcurrentHashMap()
 
         operator fun get(server: Long, discordUser: Long): ClientlessReputationConnection {
             return instances.computeIfAbsent(server) {

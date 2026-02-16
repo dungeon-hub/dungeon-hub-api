@@ -10,6 +10,7 @@ import net.dungeonhub.model.role_requirement.RoleRequirementModel
 import net.dungeonhub.model.role_requirement.RoleRequirementUpdateModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
+import java.util.concurrent.ConcurrentHashMap
 
 class RoleRequirementConnection(server: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/$server/role-requirement"
@@ -41,7 +42,7 @@ class RoleRequirementConnection(server: Long, override val client: Authenticated
     }
 
     companion object {
-        private val instances: MutableMap<Long, ClientlessRoleRequirementConnection> = HashMap()
+        private val instances: MutableMap<Long, ClientlessRoleRequirementConnection> = ConcurrentHashMap()
 
         operator fun get(server: Long): ClientlessRoleRequirementConnection {
             return instances.computeIfAbsent(server) { ClientlessRoleRequirementConnection(it) }

@@ -11,6 +11,7 @@ import net.dungeonhub.model.static_message.StaticMessageCreationModel
 import net.dungeonhub.model.static_message.StaticMessageUpdateModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalStdlibApi::class)
 class StaticMessageConnection(private val server: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
@@ -46,7 +47,7 @@ class StaticMessageConnection(private val server: Long, override val client: Aut
     }
 
     companion object {
-        private val instances: MutableMap<Long, ClientlessStaticMessageConnection> = HashMap()
+        private val instances: MutableMap<Long, ClientlessStaticMessageConnection> = ConcurrentHashMap()
 
         operator fun get(server: Long): ClientlessStaticMessageConnection {
             return instances.computeIfAbsent(server) { ClientlessStaticMessageConnection(it) }

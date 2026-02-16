@@ -5,7 +5,7 @@ import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.discord_role_group.DiscordRoleGroupModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
-import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalStdlibApi::class)
 class DiscordRoleGroupConnection(server: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
@@ -14,7 +14,7 @@ class DiscordRoleGroupConnection(server: Long, override val client: Authenticate
     suspend fun getAll(): List<DiscordRoleGroupModel>? = dhApiRequest("all") {}
 
     companion object {
-        private val instances: MutableMap<Long, ClientlessDiscordRoleGroupConnection> = HashMap()
+        private val instances: MutableMap<Long, ClientlessDiscordRoleGroupConnection> = ConcurrentHashMap()
 
         operator fun get(server: Long): ClientlessDiscordRoleGroupConnection {
             return instances.computeIfAbsent(server) { ClientlessDiscordRoleGroupConnection(it) }

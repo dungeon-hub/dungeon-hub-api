@@ -9,7 +9,7 @@ import net.dungeonhub.model.discord_channel.DiscordChannelModel
 import net.dungeonhub.model.discord_channel.DiscordChannelUpdateModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
-import java.util.HashMap
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalStdlibApi::class)
 class DiscordChannelConnection(private val server: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
@@ -38,7 +38,7 @@ class DiscordChannelConnection(private val server: Long, override val client: Au
     suspend fun getAllChannels(): List<DiscordChannelModel>? = dhApiRequest("all") {}
 
     companion object {
-        private val instances: MutableMap<Long, ClientlessDiscordChannelConnection> = HashMap()
+        private val instances: MutableMap<Long, ClientlessDiscordChannelConnection> = ConcurrentHashMap()
 
         operator fun get(server: Long): ClientlessDiscordChannelConnection {
             return instances.computeIfAbsent(server) { ClientlessDiscordChannelConnection(it) }

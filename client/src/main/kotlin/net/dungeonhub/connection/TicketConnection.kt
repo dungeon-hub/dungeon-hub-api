@@ -11,7 +11,7 @@ import net.dungeonhub.model.ticket.TicketUpdateModel
 import net.dungeonhub.model.ticket_panel.TicketPanelModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
-import java.util.HashMap
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalStdlibApi::class)
 class TicketConnection(private val server: Long, private val ticketPanel: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
@@ -32,7 +32,7 @@ class TicketConnection(private val server: Long, private val ticketPanel: Long, 
     suspend fun getAllTickets(): List<TicketModel>? = dhApiRequest("all") {  }
 
     companion object {
-        private val instances: MutableMap<Long, MutableMap<Long, ClientlessTicketConnection>> = HashMap()
+        private val instances: MutableMap<Long, MutableMap<Long, ClientlessTicketConnection>> = ConcurrentHashMap()
 
         operator fun get(server: Long, ticketPanel: TicketPanelModel): ClientlessTicketConnection {
             return instances.computeIfAbsent(server) {

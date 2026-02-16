@@ -11,6 +11,7 @@ import net.dungeonhub.model.warning.WarningCreationModel
 import net.dungeonhub.model.warning.WarningEvidenceCreationModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalStdlibApi::class)
 class WarningConnection(private val serverId: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
@@ -52,7 +53,7 @@ class WarningConnection(private val serverId: Long, override val client: Authent
     }
 
     companion object {
-        private val instances: MutableMap<Long, ClientlessWarningConnection> = HashMap()
+        private val instances: MutableMap<Long, ClientlessWarningConnection> = ConcurrentHashMap()
 
         operator fun get(serverId: Long): ClientlessWarningConnection {
             return instances.computeIfAbsent(serverId) { ClientlessWarningConnection(it) }

@@ -10,6 +10,7 @@ import net.dungeonhub.model.carry_difficulty.CarryDifficultyUpdateModel
 import net.dungeonhub.model.carry_tier.CarryTierModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalStdlibApi::class)
 class CarryDifficultyConnection(carryTierModel: CarryTierModel, override val client: AuthenticatedClient) :
@@ -67,7 +68,7 @@ class CarryDifficultyConnection(carryTierModel: CarryTierModel, override val cli
     }
 
     companion object {
-        private val instances: MutableMap<CarryTierModel, ClientlessCarryDifficultyConnection> = HashMap()
+        private val instances: MutableMap<CarryTierModel, ClientlessCarryDifficultyConnection> = ConcurrentHashMap()
 
         operator fun get(carryTierModel: CarryTierModel): ClientlessCarryDifficultyConnection {
             return instances.computeIfAbsent(carryTierModel) { ClientlessCarryDifficultyConnection(it) }

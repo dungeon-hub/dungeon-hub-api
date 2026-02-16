@@ -15,6 +15,7 @@ import net.dungeonhub.model.score.ScoreUpdateModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
 import org.jetbrains.annotations.Range
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalStdlibApi::class)
 class ScoreConnection(carryTypeModel: CarryTypeModel, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
@@ -59,7 +60,7 @@ class ScoreConnection(carryTypeModel: CarryTypeModel, override val client: Authe
     }
 
     companion object {
-        private val instances: MutableMap<CarryTypeModel, ClientlessScoreConnection> = HashMap()
+        private val instances: MutableMap<CarryTypeModel, ClientlessScoreConnection> = ConcurrentHashMap()
 
         operator fun get(carryTypeModel: CarryTypeModel): ClientlessScoreConnection {
             return instances.computeIfAbsent(carryTypeModel) { ClientlessScoreConnection(it) }
