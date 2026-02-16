@@ -13,8 +13,8 @@ class PurgeTypeConnection(carryTypeModel: CarryTypeModel, override val client: A
 
     //TODO own endpoint
     suspend fun getByIdentifier(identifier: String?): PurgeTypeModel? {
-        return getAllPurgeTypes()?.firstOrNull { carryTypeModel: PurgeTypeModel ->
-            carryTypeModel.identifier.equals(
+        return getAllPurgeTypes()?.firstOrNull { purgeTypeModel: PurgeTypeModel ->
+            purgeTypeModel.identifier.equals(
                 identifier,
                 ignoreCase = true
             )
