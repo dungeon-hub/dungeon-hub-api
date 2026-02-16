@@ -35,9 +35,9 @@ class TicketConnection(private val server: Long, private val ticketPanel: Long, 
         private val instances: MutableMap<Long, MutableMap<Long, ClientlessTicketConnection>> = ConcurrentHashMap()
 
         operator fun get(server: Long, ticketPanel: TicketPanelModel): ClientlessTicketConnection {
-            return instances.computeIfAbsent(server) {
-                mutableMapOf(ticketPanel.id to ClientlessTicketConnection(it, ticketPanel.id))
-            }.computeIfAbsent(ticketPanel.id) { ClientlessTicketConnection(server, it) }
+            return instances
+                .computeIfAbsent(server) { ConcurrentHashMap() }
+                .computeIfAbsent(ticketPanel.id) { ClientlessTicketConnection(server, it) }
         }
 
         operator fun get(server: DiscordServerModel, ticketPanel: TicketPanelModel): ClientlessTicketConnection {
