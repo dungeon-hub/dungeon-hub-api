@@ -32,8 +32,8 @@ class DiscordServerConnection(override val client: DungeonHubClient) : Authentic
 
         return allCarryTiers.singleOrNull { it.displayName.equals(input, true) }
             ?: allCarryTiers.singleOrNull { it.identifier.equals(input, true) }
-            ?: allCarryTiers.singleOrNull { it.displayName.startsWith(input) }
-            ?: allCarryTiers.singleOrNull { it.identifier.startsWith(input) }
+            ?: allCarryTiers.singleOrNull { it.displayName.startsWith(input, true) }
+            ?: allCarryTiers.singleOrNull { it.identifier.startsWith(input, true) }
     }
 
     suspend fun getAllCarryDifficulties(serverId: Long): List<CarryDifficultyModel>? = dhApiRequest("$serverId/carry-difficulties") {}
