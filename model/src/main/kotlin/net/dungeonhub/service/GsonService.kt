@@ -19,7 +19,10 @@ import java.time.Instant
  * For new services, prefer using Moshi.
  */
 object GsonService {
-    @Deprecated("Use MoshiService.moshi instead", replaceWith = ReplaceWith("net.dungeonhub.service.MoshiService.moshi"))
+    @Deprecated(
+        "Use MoshiService.moshi instead",
+        replaceWith = ReplaceWith("net.dungeonhub.service.MoshiService.moshi")
+    )
     val gson: Gson = GsonBuilder()
         .registerTypeAdapter(Instant::class.java, InstantTypeAdapter())
         .registerTypeAdapter(Color::class.java, ColorTypeAdapter())
@@ -71,23 +74,25 @@ object GsonService {
     }
 
     private class PermissionsTypeAdapter : TypeAdapter<Permissions>() {
-        override fun write(writer: JsonWriter, value: Permissions?) {
-            if (value == null) {
-                writer.nullValue()
+        @Throws(IOException::class)
+        override fun write(jsonWriter: JsonWriter, permissions: Permissions?) {
+            if (permissions == null) {
+                jsonWriter.nullValue()
                 return
             }
 
-            val jsonElement = MoshiService.toJsonElement(value.code).jsonPrimitive
-            writer.value(jsonElement.long)
+            val jsonElement = MoshiService.toJsonElement(permissions.code).jsonPrimitive
+            jsonWriter.value(jsonElement.long)
         }
 
-        override fun read(reader: JsonReader): Permissions? {
-            if(reader.peek() == JsonToken.NULL) {
-                reader.nextNull()
+        @Throws(IOException::class)
+        override fun read(jsonReader: JsonReader): Permissions? {
+            if (jsonReader.peek() == JsonToken.NULL) {
+                jsonReader.nextNull()
                 return null
             }
 
-            val content = kotlinx.serialization.json.JsonPrimitive(reader.nextLong())
+            val content = kotlinx.serialization.json.JsonPrimitive(jsonReader.nextLong())
             val result = MoshiService.discordBitSetFromJsonElement(content)
             return Permissions.Builder(result).build()
         }
