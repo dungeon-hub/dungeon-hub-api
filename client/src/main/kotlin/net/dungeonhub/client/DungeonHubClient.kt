@@ -59,13 +59,22 @@ open class DungeonHubClient {
         }
     }
 
-    suspend inline fun <reified T> dhApiRequest(uri: String, noinline request: HttpRequestBuilder.() -> Unit, module: ModuleConnection? = null): T? {
+    suspend fun executeModuleRequest(uri: String, request: HttpRequestBuilder.() -> Unit, module: ModuleConnection? = null): HttpResponse? {
         try {
-            val response = executeRawRequest {
+            return executeRawRequest {
                 url(module?.getApiUrl(uri) ?: getApiUrl(uri))
                 setupRequest(this)
                 request()
             }
+        } catch (exception: Exception) {
+            logger.error("Exception during API request.", exception)
+            return null
+        }
+    }
+
+    suspend inline fun <reified T> dhApiRequest(uri: String, noinline request: HttpRequestBuilder.() -> Unit, module: ModuleConnection? = null): T? {
+        try {
+            val response = executeModuleRequest(uri, request, module)
             if(response?.status?.isSuccess() != true) return null
             return response.body<T>()
         } catch (exception: Exception) {

@@ -3,6 +3,7 @@ package net.dungeonhub.connection
 import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpMethod
+import io.ktor.http.isSuccess
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.client.DungeonHubClient
@@ -49,9 +50,9 @@ class QueueConnection(override val client: DungeonHubClient) : AuthenticatedModu
         setBody(updateModel)
     }
 
-    suspend fun deleteQueue(id: Long): Boolean = dhApiRequest<CarryQueueModel>(id) {
+    suspend fun deleteQueue(id: Long): Boolean = executeModuleRequest(id.toString()) {
         method = HttpMethod.Delete
-    } != null
+    }?.takeIf { it.status.isSuccess() } != null
 
     suspend fun logQueue(id: Long, updateModel: CarryQueueUpdateModel): LoggedCarryModel? = dhApiRequest("log/$id") {
         method = HttpMethod.Post
