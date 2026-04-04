@@ -93,7 +93,7 @@ open class DungeonHubClient {
     }
 
     open fun getApiUrl(uri: String): Url {
-        return Url(apiUrl + API_PREFIX + uri)
+        return Url(apiUrl + API_PREFIX + uri) // TODO add checks and exceptions in case apiUrl is not set
     }
 
     companion object {
