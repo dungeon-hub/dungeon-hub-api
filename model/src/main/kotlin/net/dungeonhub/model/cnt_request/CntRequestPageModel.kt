@@ -3,7 +3,7 @@ package net.dungeonhub.model.cnt_request
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.Model
 
-class CntRequestLeaderboardModel(
+class CntRequestPageModel(
     val page: Int,
     val totalPages: Int,
     val requests: List<CntRequestModel>
@@ -17,8 +17,8 @@ class CntRequestLeaderboardModel(
     }
 
     companion object {
-        fun fromJson(json: String): CntRequestLeaderboardModel {
-            return MoshiService.moshi.adapter(CntRequestLeaderboardModel::class.java).fromJson(json)!!
+        fun fromJson(json: String): CntRequestPageModel {
+            return MoshiService.moshi.adapter(CntRequestPageModel::class.java).fromJson(json)!!
         }
     }
 }

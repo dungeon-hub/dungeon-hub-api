@@ -4,7 +4,7 @@ import com.squareup.moshi.adapter
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.cnt_request.CntRequestCreationModel
-import net.dungeonhub.model.cnt_request.CntRequestLeaderboardModel
+import net.dungeonhub.model.cnt_request.CntRequestPageModel
 import net.dungeonhub.model.cnt_request.CntRequestModel
 import net.dungeonhub.model.cnt_request.CntRequestUpdateModel
 import net.dungeonhub.service.MoshiService.moshi
@@ -43,14 +43,14 @@ class CntRequestConnection(private val server: Long, override val client: Authen
         return executeRequest(request, function = moshi.adapter<List<CntRequestModel>>()::fromJson)
     }
 
-    fun loadLeaderboard(page: Int = 0): CntRequestLeaderboardModel? {
+    fun getCntRequests(page: Int = 0): CntRequestPageModel? {
         val request: Request = getApiRequest(
-            getApiUrl("leaderboard")
+            getApiUrl("all")
                 .addQueryParameter("page", page.toString())
                 .build()
         ).get().build()
 
-        return executeRequest(request) { json: String -> CntRequestLeaderboardModel.fromJson(json) }
+        return executeRequest(request) { json: String -> CntRequestPageModel.fromJson(json) }
     }
 
     fun createCntRequest(creationModel: CntRequestCreationModel): CntRequestModel? {
