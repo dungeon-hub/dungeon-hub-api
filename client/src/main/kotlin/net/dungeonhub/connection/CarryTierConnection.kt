@@ -1,88 +1,67 @@
 package net.dungeonhub.connection
 
-import com.squareup.moshi.adapter
+import io.ktor.client.request.setBody
+import io.ktor.http.HttpMethod
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.carry_tier.CarryTierCreationModel
 import net.dungeonhub.model.carry_tier.CarryTierModel
 import net.dungeonhub.model.carry_tier.CarryTierUpdateModel
 import net.dungeonhub.model.carry_type.CarryTypeModel
-import net.dungeonhub.service.MoshiService.moshi
+import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
-import net.dungeonhub.structure.ModuleConnection
-import okhttp3.HttpUrl
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalStdlibApi::class)
-class CarryTierConnection(carryTypeModel: CarryTypeModel, override val client: AuthenticatedClient) : ModuleConnection {
+class CarryTierConnection(carryTypeModel: CarryTypeModel, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/${carryTypeModel.server.id}/carry-type/${carryTypeModel.id}/carry-tier"
 
-    fun getByIdentifier(identifier: String?): CarryTierModel? {
-        return allCarryTiers?.firstOrNull { carryTierModel: CarryTierModel ->
+    suspend fun getByIdentifier(identifier: String?): CarryTierModel? {
+        return getAllCarryTiers()?.firstOrNull { carryTierModel: CarryTierModel ->
             carryTierModel.identifier.equals(
                 identifier,
                 ignoreCase = true
             )
-
         }
     }
 
-    val allCarryTiers: List<CarryTierModel>?
-        /**
-         * Loads all available carry tiers for the given carry type.
-         * This represents the tiers of carry, so for example floor 1, master mode floor 1, tier 4, kuudra, ...
-         *
-         * @return The list of carry tiers that were loaded from the database.
-         */
-        get() {
-            val url: HttpUrl = getApiUrl("all").build()
+    suspend fun findCarryTierByString(input: String): CarryTierModel? {
+        val allCarryTiers = getAllCarryTiers() ?: return null
 
-            val request: Request = getApiRequest(url)
-                .get()
-                .build()
+        return allCarryTiers.singleOrNull { it.displayName.equals(input, true) }
+            ?: allCarryTiers.singleOrNull { it.identifier.equals(input, true) }
+            ?: allCarryTiers.singleOrNull { it.displayName.startsWith(input, true) }
+            ?: allCarryTiers.singleOrNull { it.identifier.startsWith(input, true) }
+    }
 
-            return executeRequest(request, function = moshi.adapter<List<CarryTierModel>>()::fromJson)
+    /**
+     * Loads all available carry tiers for the given carry type.
+     * This represents the tiers of carry, so for example; floor 1, master mode floor 1, tier 4, kuudra, ...
+     *
+     * @return The list of carry tiers that were loaded from the database.
+     */
+    suspend fun getAllCarryTiers(): List<CarryTierModel>? {
+        return dhApiRequest("all") {}
+    }
+
+    suspend fun createCarryTier(creationModel: CarryTierCreationModel): CarryTierModel? {
+        return dhApiRequest {
+            method = HttpMethod.Post
+            setBody(creationModel)
         }
-
-    fun createCarryTier(creationModel: CarryTierCreationModel): CarryTierModel? {
-        val url: HttpUrl = getApiUrl().build()
-
-        val requestBody: RequestBody = creationModel.toJson().toRequestBody(jsonMediaType)
-
-        val request: Request = getApiRequest(url)
-            .post(requestBody)
-            .build()
-
-        return executeRequest(request) { json: String -> CarryTierModel.fromJson(json) }
     }
 
-    fun updateCarryTier(id: Long, updateModel: CarryTierUpdateModel): CarryTierModel? {
-        val url: HttpUrl = getApiUrl(id).build()
-
-        val requestBody: RequestBody = updateModel.toJson().toRequestBody(jsonMediaType)
-
-        val request: Request = getApiRequest(url)
-            .put(requestBody)
-            .build()
-
-        return executeRequest(request) { json: String -> CarryTierModel.fromJson(json) }
+    suspend fun updateCarryTier(id: Long, updateModel: CarryTierUpdateModel): CarryTierModel? {
+        return dhApiRequest(id) {
+            method = HttpMethod.Put
+            setBody(updateModel)
+        }
     }
 
-    fun deleteCarryTier(id: Long): CarryTierModel? {
-        val url: HttpUrl = getApiUrl(id).build()
-
-        val request: Request = getApiRequest(url)
-            .delete()
-            .build()
-
-        return executeRequest(request) { json: String -> CarryTierModel.fromJson(json) }
-    }
+    suspend fun deleteCarryTier(id: Long): CarryTierModel? = dhApiRequest(id) { method = HttpMethod.Delete }
 
     companion object {
-        private val instances: MutableMap<CarryTypeModel, ClientlessCarryTierConnection> = HashMap()
+        private val instances: MutableMap<CarryTypeModel, ClientlessCarryTierConnection> = ConcurrentHashMap()
 
         operator fun get(carryTypeModel: CarryTypeModel): ClientlessCarryTierConnection {
             return instances.computeIfAbsent(carryTypeModel) { ClientlessCarryTierConnection(it) }

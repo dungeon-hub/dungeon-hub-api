@@ -8,7 +8,8 @@ class StaticMessageCreationModel(
     val channelId: Long,
     val messageId: Long?,
     val staticMessageType: StaticMessageType,
-    val objectIds: List<Long>
+    val objectIds: List<Long>,
+    val embedOverride: String?
 ) : CreationModel {
     fun toJson(): String {
         return MoshiService.moshi.adapter(StaticMessageCreationModel::class.java).toJson(this)
