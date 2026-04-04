@@ -37,6 +37,7 @@ class RoleRequirementConnection(server: Long, override val client: Authenticated
             setBody(updateModel)
         }
 
+    // TODO add id as parameter instead of the full model
     suspend fun deleteRoleRequirement(roleRequirement: RoleRequirementModel): RoleRequirementModel? = dhApiRequest(roleRequirement.id) {
         method = HttpMethod.Delete
     }

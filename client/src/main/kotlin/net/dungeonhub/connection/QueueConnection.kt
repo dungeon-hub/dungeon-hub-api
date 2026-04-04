@@ -52,7 +52,7 @@ class QueueConnection(override val client: DungeonHubClient) : AuthenticatedModu
 
     suspend fun deleteQueue(id: Long): Boolean = executeModuleRequest(id.toString()) {
         method = HttpMethod.Delete
-    }?.takeIf { it.status.isSuccess() } != null
+    }?.takeIf { it.status.isSuccess() } != null // TODO return the actual response, not just a boolean
 
     suspend fun logQueue(id: Long, updateModel: CarryQueueUpdateModel): LoggedCarryModel? = dhApiRequest("log/$id") {
         method = HttpMethod.Post
