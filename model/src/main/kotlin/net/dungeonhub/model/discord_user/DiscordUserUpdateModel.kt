@@ -5,15 +5,23 @@ import net.dungeonhub.structure.model.UpdateModel
 import java.util.*
 
 class DiscordUserUpdateModel(
-    minecraftId: UUID?
+    minecraftId: UUID?,
+    primarySkyblockProfile: UUID?
 ) : UpdateModel<DiscordUserModel> {
     var minecraftId = minecraftId
         set(value) {
             field = value
             removeMinecraftId = value == null
         }
+    var primarySkyblockProfile = primarySkyblockProfile
+        set(value) {
+            field = value
+            removePrimarySkyblockProfile = value == null
+        }
 
     var removeMinecraftId = false
+        private set
+    var removePrimarySkyblockProfile = false
         private set
 
     fun toJson(): String {

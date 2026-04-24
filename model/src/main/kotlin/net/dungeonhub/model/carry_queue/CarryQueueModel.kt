@@ -12,7 +12,7 @@ class CarryQueueModel(
     val queueStep: QueueStep,
     val carrier: DiscordUserModel,
     val player: DiscordUserModel,
-    val amount: Long,
+    val amount: Int,
     val carryDifficulty: CarryDifficultyModel,
     val relationId: Long?,
     val attachmentLink: String?,
@@ -23,7 +23,7 @@ class CarryQueueModel(
     val carryType = carryTier.carryType
 
     fun calculateScore(): Long {
-        return scoreMultiplier * amount
+        return scoreMultiplier.toLong() * amount
     }
 
     private val scoreMultiplier = carryDifficulty.score

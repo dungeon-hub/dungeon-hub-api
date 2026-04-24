@@ -6,7 +6,9 @@ import dev.kordex.core.i18n.toKey
 enum class StaticMessageType : ChoiceEnum {
     ScoreLeaderboard,
     TotalLeaderboard,
-    ReputationLeaderboard;
+    ReputationLeaderboard,
+    TicketPanel,
+    PriceMessage;
 
     override val readableName = name.replace(Regex("([A-Z])"), " $1").trim().toKey()
 }

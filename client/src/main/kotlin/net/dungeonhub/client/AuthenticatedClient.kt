@@ -1,19 +1,13 @@
 package net.dungeonhub.client
 
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.header
 import net.dungeonhub.auth.AuthenticationProvider
-import okhttp3.HttpUrl
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.Request
 
-class AuthenticatedClient(val authenticationProvider: AuthenticationProvider) : DungeonHubClient() {
-    override fun getApiRequest(httpUrl: HttpUrl): Request.Builder {
-        val mediaType: MediaType = "multipart/form-data; boundary=---011000010111000001101001".toMediaType()
-
-        return Request.Builder()
-            .url(httpUrl)
-            .addHeader("Content-Type", mediaType.toString())
-            .addHeader(AUTHORIZATION, "Bearer " + authenticationProvider.apiToken)
+open class AuthenticatedClient(val authenticationProvider: AuthenticationProvider) : DungeonHubClient() {
+    override suspend fun setupRequest(requestBuilder: HttpRequestBuilder) {
+        super.setupRequest(requestBuilder)
+        requestBuilder.header(AUTHORIZATION, "Bearer " + authenticationProvider.getApiToken())
     }
 
     companion object {

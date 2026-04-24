@@ -10,7 +10,7 @@ plugins {
 
 group = "net.dungeon-hub.api"
 val artifactId = "client"
-version = "0.6.2"
+version = "0.7.0"
 description = "A client library written in Kotlin to simplify the integration of the Dungeon Hub API."
 
 kordEx {
@@ -28,6 +28,7 @@ dependencies {
 
     //HTTP Client
     api(libs.okhttp)
+    api(libs.ktor.moshi)
 
     //Tests
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

@@ -55,7 +55,7 @@ class CarryDifficultyUpdateModelTest {
                     0,
                     false
                 ),
-                0,
+                null,
                 0,
                 "descriptiveName",
                 "thumbnailUrl",
