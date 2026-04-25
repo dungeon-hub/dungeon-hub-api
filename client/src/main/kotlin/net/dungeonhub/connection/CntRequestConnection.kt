@@ -29,6 +29,11 @@ class CntRequestConnection(private val server: Long, override val client: Authen
         }
     }
 
+    /**
+     * @param page By default, the server applies the page "0" if nothing else is set here.
+     * @param size By default, the server applies the size "20" if nothing else is set here.
+     * @param sort The sort parameter follows the format "<field>,<asc|desc>". By default, the server applies the sort "id,desc" if nothing else is set here.
+     */
     suspend fun getCntRequests(page: Int = 0, size: Int? = null, sort: String? = null): CntRequestPageModel? {
         return dhApiRequest("all") {
             parameter("page", page.toString())
@@ -38,7 +43,7 @@ class CntRequestConnection(private val server: Long, override val client: Authen
     }
 
     suspend fun getCntRequest(id: Long): CntRequestModel? {
-        return dhApiRequest(id)
+        return dhApiRequest(id) {}
     }
 
     suspend fun createCntRequest(creationModel: CntRequestCreationModel): CntRequestModel? {
