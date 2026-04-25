@@ -37,6 +37,10 @@ class CntRequestConnection(private val server: Long, override val client: Authen
         }
     }
 
+    suspend fun getCntRequest(id: Long): CntRequestModel? {
+        return dhApiRequest(id)
+    }
+
     suspend fun createCntRequest(creationModel: CntRequestCreationModel): CntRequestModel? {
         return dhApiRequest {
             method = HttpMethod.Post
