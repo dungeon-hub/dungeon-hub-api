@@ -6,6 +6,7 @@ import net.dungeonhub.structure.model.Model
 class CntRequestPageModel(
     val page: Int,
     val totalPages: Int,
+    val totalElements: Long,
     val requests: List<CntRequestModel>
 ) : Model {
     fun hasNextPage(): Boolean {
