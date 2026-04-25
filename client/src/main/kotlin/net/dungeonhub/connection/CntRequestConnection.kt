@@ -29,9 +29,11 @@ class CntRequestConnection(private val server: Long, override val client: Authen
         }
     }
 
-    suspend fun getCntRequests(page: Int = 0): CntRequestPageModel? {
+    suspend fun getCntRequests(page: Int = 0, size: Int? = null, sort: String? = null): CntRequestPageModel? {
         return dhApiRequest("all") {
             parameter("page", page.toString())
+            size?.let { parameter("size", it.toString()) }
+            sort?.let { parameter("sort", it) }
         }
     }
 
