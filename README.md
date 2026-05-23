@@ -10,6 +10,34 @@ They can be found under `/model`. \
 ![Maven Central Version](https://img.shields.io/maven-central/v/net.dungeon-hub.api/model) \
 ![Translation Status](https://weblate.dungeon-hub.net/widget/dungeon-hub/dungeon-hub-api-model/287x66-grey.png)
 
-### Client
-Under `/client` you can find some already finished implementations that can be used to directly interact with the API. \
+### Clients
+
+#### Kotlin Client (JVM)
+Under `/client` you can find the Kotlin/JVM client implementation that can be used to directly interact with the API. \
 ![Maven Central Version](https://img.shields.io/maven-central/v/net.dungeon-hub.api/client)
+
+**Installation:**
+```kotlin
+dependencies {
+    implementation("net.dungeon-hub.api:client:0.7.0")
+}
+```
+
+#### TypeScript Client (Angular)
+Under `/typescript-client` you can find the TypeScript/Angular client auto-generated from the OpenAPI specification. \
+![npm version](https://img.shields.io/npm/v/@dungeon-hub/api-client)
+
+**Installation:**
+```bash
+npm install @dungeon-hub/api-client
+```
+
+**Usage:**
+```typescript
+import { TicketPanelService } from '@dungeon-hub/api-client';
+
+// Inject and use in your components
+constructor(private ticketPanelApi: TicketPanelService) {}
+```
+
+See the [TypeScript client README](./typescript-client/README.md) for full documentation.

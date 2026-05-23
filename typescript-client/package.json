@@ -1,0 +1,47 @@
+{
+  "name": "@dungeon-hub/api-client",
+  "version": "0.7.0",
+  "description": "Angular client for the Dungeon Hub API",
+  "author": "Taubsie <taubsie@dungeon-hub.net>",
+  "license": "GPL-3.0",
+  "homepage": "https://dungeon-hub.net",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dungeon-hub/dungeon-hub-api.git",
+    "directory": "typescript-client"
+  },
+  "keywords": [
+    "dungeon-hub",
+    "api",
+    "client",
+    "typescript",
+    "angular"
+  ],
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "generate": "npm run generate:fetch && npm run generate:client",
+    "generate:fetch": "node fetch-spec.js",
+    "generate:client": "npx --yes @openapitools/openapi-generator-cli@2.34.0 generate --input-spec openapi.json --generator-name typescript-angular --output . --additional-properties=\"ngVersion=21,npmName=@dungeon-hub/api-client,snapshot=false,withInterfaces=true,stringEnums=false,enumPropertyNaming=original,supportsES6=true,providedInRoot=true\" --type-mappings=integer+int64=string --global-property=modelDocs=false,apiDocs=false",
+    "build": "ng-packagr -p ng-package.json",
+    "pack": "cd dist && npm pack",
+    "link": "cd dist && npm link",
+    "prepublishOnly": "npm run generate && npm run build"
+  },
+  "peerDependencies": {
+    "@angular/common": ">=16.0.0",
+    "@angular/core": ">=16.0.0",
+    "@angular/platform-browser": ">=16.0.0",
+    "rxjs": "^7.0.0"
+  },
+  "devDependencies": {
+    "@angular/compiler-cli": "^21.2.14",
+    "@openapitools/openapi-generator-cli": "^2.34.0",
+    "ng-packagr": "^21.2.3",
+    "typescript": "5.9"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

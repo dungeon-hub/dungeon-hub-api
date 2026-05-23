@@ -1,0 +1,35 @@
+# Don't include these in the published npm package
+
+# Source files
+openapi.json
+generate.sh
+generate.bat
+
+# Documentation (except README)
+INTEGRATION_GUIDE.md
+
+# OpenAPI Generator files
+.openapi-generator/
+.openapi-generator-ignore
+
+# Development files
+tsconfig.json
+node_modules/
+package-lock.json
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Keep these in the published package:
+# - model/
+# - api/
+# - *.ts (index, api.module, configuration, etc.)
+# - package.json
+# - README.md

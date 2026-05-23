@@ -1,0 +1,31 @@
+# Generated files (regenerated on build)
+model/
+api/
+*.ts
+!generate.sh
+
+# Keep configuration
+!package.json
+!tsconfig.json
+!README.md
+!.openapi-generator-ignore
+
+# OpenAPI spec (downloaded during generation)
+openapi.json
+
+# OpenAPI Generator metadata
+.openapi-generator/
+
+# Node modules
+node_modules/
+package-lock.json
+
+# Build output
+dist/
+*.tgz
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
