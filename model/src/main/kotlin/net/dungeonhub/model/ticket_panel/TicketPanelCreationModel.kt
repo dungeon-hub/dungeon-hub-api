@@ -27,6 +27,9 @@ class TicketPanelCreationModel(
     val userTranscriptDm: String?,
     val formQuestions: List<TicketPanelFormModel>?,
 
+    val relatedCarryTier: Long?,
+    val relatedCarryDifficulty: Long?,
+
     // role and permission stuff
     val supportRoles: List<Long>?,
     val additionalRoles: List<Long>?,

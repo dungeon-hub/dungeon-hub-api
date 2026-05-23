@@ -25,6 +25,9 @@ class TicketPanelUpdateModel(
     userTranscriptDm: String?,
     var formQuestions: List<TicketPanelFormModel>?,
 
+    relatedCarryTier: Long?,
+    relatedCarryDifficulty: Long?,
+
     var supportRoles: List<Long>?,
     var additionalRoles: List<Long>?,
     var openCategories: List<Long>?,
@@ -94,6 +97,20 @@ class TicketPanelUpdateModel(
         }
     var resetUserTranscriptDm = false
         private set
+
+    var relatedCarryTier = relatedCarryTier
+        set(value) {
+            resetRelatedCarryTier = value == null
+            field = value
+        }
+    var resetRelatedCarryTier = false
+
+    var relatedCarryDifficulty = relatedCarryDifficulty
+        set(value) {
+            resetRelatedCarryDifficulty = value == null
+            field = value
+        }
+    var resetRelatedCarryDifficulty = false
 
     fun toJson(): String {
         return MoshiService.moshi.adapter(TicketPanelUpdateModel::class.java).toJson(this)
