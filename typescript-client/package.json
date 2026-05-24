@@ -1,6 +1,6 @@
 {
   "name": "@dungeon-hub/api-client",
-  "version": "0.7.2",
+  "version": "0.7.3",
   "description": "Angular client for the Dungeon Hub API",
   "author": "Taubsie <taubsie@dungeon-hub.net>",
   "license": "GPL-3.0",
