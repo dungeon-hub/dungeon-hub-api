@@ -1,6 +1,6 @@
 {
   "name": "@dungeon-hub/api-client",
-  "version": "0.7.0",
+  "version": "0.7.2",
   "description": "Angular client for the Dungeon Hub API",
   "author": "Taubsie <taubsie@dungeon-hub.net>",
   "license": "GPL-3.0",
@@ -27,7 +27,7 @@
     "build": "ng-packagr -p ng-package.json",
     "pack": "cd dist && npm pack",
     "link": "cd dist && npm link",
-    "prepublishOnly": "npm run generate && npm run build"
+    "publish:npm": "npm run build && cd dist && npm publish"
   },
   "peerDependencies": {
     "@angular/common": ">=16.0.0",
