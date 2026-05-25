@@ -12,7 +12,7 @@ npm install @dungeon-hub/api-client
 ### Local development (npm link)
 ```bash
 # In api-client directory
-npm run generate  # or generate.bat on Windows
+npm run generate
 npm run build
 npm run link
 
@@ -62,7 +62,7 @@ export class TicketPanelComponent implements OnInit {
   panel?: TicketPanelModel;
 
   ngOnInit() {
-    this.ticketPanelService.getById1(123456789, 1).subscribe({
+    this.ticketPanelService.getById1("123456789", "1").subscribe({
       next: (panel) => this.panel = panel,
       error: (err) => console.error('Failed to load panel', err)
     });
@@ -98,22 +98,6 @@ export const appConfig: ApplicationConfig = {
 };
 ```
 
-## Available Services
-
-All Spring Boot controllers are available as Angular services:
-
-- `TicketPanelControllerService` - Ticket panel management
-- `TicketControllerService` - Ticket operations
-- `CntRequestControllerService` - CNT request management
-- `DiscordServerControllerService` - Discord server operations
-- `DiscordUserControllerService` - Discord user operations
-- `DiscordRoleControllerService` - Discord role management
-- `DiscordChannelControllerService` - Discord channel management
-- `WarnsService` - Warning system
-- `ReputationControllerService` - Reputation management
-- `CarryQueueService` - Queue operations
-- `StaticMessageControllerService` - Static message management
-
 ## Important Notes
 
 ### Discord Snowflake IDs
@@ -126,8 +110,6 @@ const serverId: string = "1023684107877761200";
 // ❌ Wrong - will lose precision
 const serverId: number = 1023684107877761200;
 ```
-- `ContentService` - Content operations
-- And more...
 
 ## Models
 
@@ -178,20 +160,12 @@ The `Configuration` class accepts these options:
 new Configuration({
   basePath: 'https://api.dungeon-hub.net',  // API base URL
   apiKeys: { /* API key auth if needed */ },
-  username: 'user',                          // Basic auth username
-  password: 'pass',                          // Basic auth password
   accessToken: 'token',                      // Bearer token (or function)
   withCredentials: true,                     // Include cookies
 })
 ```
 
 For dynamic token handling, use an interceptor (see Authentication section above).
-
-## Version Compatibility
-
-| @dungeon-hub/api-client | Angular | Dungeon Hub API |
-|------------------------|---------|-----------------|
-| 0.7.x                  | >=16.0  | 1.0.x          |
 
 ## Support
 
@@ -205,5 +179,6 @@ GPL-3.0 - See [LICENSE](../LICENSE) for details.
 
 ## Related Projects
 
+- [dungeon-hub-application](https://github.com/dungeon-hub/dungeon-hub-application) - Kotlin Discord bot
 - [dungeon-hub-api](https://github.com/dungeon-hub/dungeon-hub-api) - Kotlin API client
 - [dungeon-hub-server](https://github.com/dungeon-hub/dungeon-hub-server) - Spring Boot server
