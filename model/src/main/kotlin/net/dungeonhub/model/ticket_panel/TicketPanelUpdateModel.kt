@@ -104,6 +104,7 @@ class TicketPanelUpdateModel(
             field = value
         }
     var resetRelatedCarryTier = false
+        private set
 
     var relatedCarryDifficulty = relatedCarryDifficulty
         set(value) {
@@ -111,6 +112,7 @@ class TicketPanelUpdateModel(
             field = value
         }
     var resetRelatedCarryDifficulty = false
+        private set
 
     fun toJson(): String {
         return MoshiService.moshi.adapter(TicketPanelUpdateModel::class.java).toJson(this)
