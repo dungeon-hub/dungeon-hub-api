@@ -4,8 +4,6 @@
 # Keep our custom configurations
 package.json
 README.md
-generate.sh
-generate.bat
 .gitignore
 .openapi-generator-ignore
 tsconfig.json

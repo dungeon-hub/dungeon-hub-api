@@ -39,7 +39,7 @@
     "@angular/compiler-cli": "^21.2.14",
     "@openapitools/openapi-generator-cli": "^2.34.0",
     "ng-packagr": "^21.2.3",
-    "typescript": "5.9"
+    "typescript": "~5.9.0"
   },
   "publishConfig": {
     "access": "public"

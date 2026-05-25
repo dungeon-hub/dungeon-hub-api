@@ -6,6 +6,7 @@ api/
 
 # Keep configuration
 !package.json
+!package-lock.json
 !tsconfig.json
 !README.md
 !.openapi-generator-ignore
@@ -18,7 +19,6 @@ openapi.json
 
 # Node modules
 node_modules/
-package-lock.json
 
 # Build output
 dist/

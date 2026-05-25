@@ -189,8 +189,8 @@ export class TicketPanelEditComponent implements OnInit {
   saving = false;
 
   ngOnInit() {
-    const serverId = Number(this.route.snapshot.params['serverId']);
-    const panelId = Number(this.route.snapshot.params['panelId']);
+    const serverId = this.route.snapshot.params['serverId'];
+    const panelId = this.route.snapshot.params['panelId'];
 
     this.form = this.fb.group({
       name: [''],
@@ -202,7 +202,7 @@ export class TicketPanelEditComponent implements OnInit {
     this.loadPanel(serverId, panelId);
   }
 
-  loadPanel(serverId: number, panelId: number) {
+  loadPanel(serverId: string, panelId: string) {
     this.ticketPanelApi.getById(serverId, panelId).subscribe({
       next: (panel) => {
         this.panel = panel;
@@ -287,7 +287,7 @@ import {
 export class CntRequestListComponent implements OnInit {
   private cntRequestApi = inject(CntRequestService);
   
-  serverId = 123456789; // Get from route or service
+  serverId = "123456789"; // Get from route or service
   requests: CntRequestModel[] = [];
   page = 0;
   hasMore = false;
