@@ -13,7 +13,7 @@ class TicketModel(
     val channel: DiscordChannelModel?,
     val ticketPanel: TicketPanelModel,
     val user: DiscordUserModel,
-    val claimer: DiscordUserModel?,
+    val claimer: DiscordUserModel?, // TODO add additionalClaimers property --> needed to load tickets for the mod
     val created: Instant,
     val formResponses: List<TicketFormResponseModel>
 ): UpdateableModel<TicketUpdateModel, TicketModel> {

@@ -1,14 +1,13 @@
 package net.dungeonhub.enums
 
-import dev.kordex.core.commands.application.slash.converters.ChoiceEnum
-import dev.kordex.core.i18n.toKey
+import dev.kordex.i18n.Key
 
-enum class StaticMessageType : ChoiceEnum {
+enum class StaticMessageType {
     ScoreLeaderboard,
     TotalLeaderboard,
     ReputationLeaderboard,
     TicketPanel,
     PriceMessage;
 
-    override val readableName = name.replace(Regex("([A-Z])"), " $1").trim().toKey()
+    val readableName = Key(name.replace(Regex("([A-Z])"), " $1").trim())
 }

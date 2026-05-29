@@ -5,8 +5,6 @@ import net.dungeonhub.structure.model.CreationModel
 import net.dungeonhub.structure.model.InitializeModel
 import net.dungeonhub.structure.model.Model
 import net.dungeonhub.structure.model.UpdateModel
-import org.springframework.http.HttpStatus
-import org.springframework.web.server.ResponseStatusException
 import java.util.*
 import java.util.function.Function
 import java.util.stream.Collectors
@@ -43,13 +41,7 @@ interface EntityService<E : Entity<M>, M : Model, C : CreationModel, I : Initial
     }
 
     fun update(entity: E, updateModel: U): E {
-        try {
-            return saveEntity(updateEntity(entity, updateModel))
-        } catch (exception: NumberFormatException) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST)
-        } catch (exception: UnsupportedOperationException) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST)
-        }
+        return saveEntity(updateEntity(entity, updateModel))
     }
 
     fun update(id: Long, updateModel: U): E {

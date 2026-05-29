@@ -1,9 +1,8 @@
 package net.dungeonhub.enums
 
-import dev.kordex.core.commands.application.slash.converters.ChoiceEnum
-import dev.kordex.core.i18n.toKey
+import dev.kordex.i18n.Key
 
-enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.None) : ChoiceEnum {
+enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.None) {
     SkyblockLevel,
     CatacombsLevel,
     FarmingLevel,
@@ -30,7 +29,7 @@ enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.
     ScoreLeaderboardRank(ExtraDataType.ScoreLeaderboardRank),
     ReputationLeaderboardRank;
 
-    override val readableName = name.replace(Regex("([A-Z])"), " $1").trim().toKey()
+    val readableName = Key(name.replace(Regex("([A-Z])"), " $1").trim())
 
     enum class ExtraDataType(val checkExtraData: (String?) -> Boolean) {
         None({ true }),

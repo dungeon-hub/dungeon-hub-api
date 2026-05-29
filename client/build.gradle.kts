@@ -27,7 +27,7 @@ dependencies {
     api(libs.slf4j2.api)
 
     //HTTP Client
-    api(libs.okhttp)
+    api(libs.ktor.client.java)
     api(libs.ktor.moshi)
 
     //Tests
