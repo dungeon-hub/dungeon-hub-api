@@ -1,5 +1,6 @@
 package net.dungeonhub.model.carry_difficulty
 
+import net.dungeonhub.enums.IngameCarryType
 import net.dungeonhub.model.carry_tier.CarryTierModel
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.service.MoshiService
@@ -16,7 +17,8 @@ class CarryDifficultyModel(
     bulkAmount: Int?,
     score: Int,
     thumbnailUrl: String?,
-    priceName: String?
+    priceName: String?,
+    val ingameCarryType: IngameCarryType?
 ) : UpdateableModel<CarryDifficultyUpdateModel, CarryDifficultyModel> {
     val bulkPrice = bulkPrice
         get() = if (field != null && field > 0) field else null
@@ -45,7 +47,7 @@ class CarryDifficultyModel(
     }
 
     override fun getUpdateModel(): CarryDifficultyUpdateModel {
-        return CarryDifficultyUpdateModel(null, null, null, null, null, null, null)
+        return CarryDifficultyUpdateModel(null, null, null, null, null, null, null, null)
     }
 
     override fun equals(other: Any?): Boolean {

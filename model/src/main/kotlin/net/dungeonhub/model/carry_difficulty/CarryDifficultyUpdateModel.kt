@@ -1,5 +1,6 @@
 package net.dungeonhub.model.carry_difficulty
 
+import net.dungeonhub.enums.IngameCarryType
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.UpdateModel
 
@@ -10,7 +11,8 @@ class CarryDifficultyUpdateModel(
     bulkAmount: Int?,
     priceName: String?,
     var price: Int?,
-    var score: Int?
+    var score: Int?,
+    ingameCarryType: IngameCarryType?
 ) : UpdateModel<CarryDifficultyModel> {
     var thumbnailUrl = thumbnailUrl
         set(value) {
@@ -36,6 +38,12 @@ class CarryDifficultyUpdateModel(
             resetPriceName = value == null
         }
 
+    var ingameCarryType = ingameCarryType
+        set(value) {
+            field = value
+            resetIngameCarryType = value == null
+        }
+
     var resetThumbnailUrl = false
         private set
     var resetBulkPrice = false
@@ -43,6 +51,8 @@ class CarryDifficultyUpdateModel(
     var resetBulkAmount = false
         private set
     var resetPriceName = false
+        private set
+    var resetIngameCarryType = false
         private set
 
     fun toJson(): String {

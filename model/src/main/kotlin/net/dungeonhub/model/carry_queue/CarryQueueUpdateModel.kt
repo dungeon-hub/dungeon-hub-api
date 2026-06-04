@@ -16,7 +16,8 @@ class CarryQueueUpdateModel(
     relationId: Long?,
     attachmentLink: String?,
     time: Instant?,
-    var approver: Long?
+    var approver: Long?,
+    var notified: Boolean?
 ) : UpdateModel<CarryQueueModel> {
     var relationId = relationId
         set(value) {
