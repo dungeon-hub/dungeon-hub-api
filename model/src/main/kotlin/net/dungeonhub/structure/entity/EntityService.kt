@@ -1,6 +1,7 @@
 package net.dungeonhub.structure.entity
 
 import net.dungeonhub.exceptions.EntityUnknownException
+import net.dungeonhub.exceptions.InvalidUpdateException
 import net.dungeonhub.structure.model.CreationModel
 import net.dungeonhub.structure.model.InitializeModel
 import net.dungeonhub.structure.model.Model
@@ -41,7 +42,13 @@ interface EntityService<E : Entity<M>, M : Model, C : CreationModel, I : Initial
     }
 
     fun update(entity: E, updateModel: U): E {
-        return saveEntity(updateEntity(entity, updateModel))
+        try {
+            return saveEntity(updateEntity(entity, updateModel))
+        } catch (exception: NumberFormatException) {
+            throw InvalidUpdateException("Invalid numeric value in update model", exception)
+        } catch (exception: UnsupportedOperationException) {
+            throw InvalidUpdateException("Unsupported operation in update model", exception)
+        }
     }
 
     fun update(id: Long, updateModel: U): E {
