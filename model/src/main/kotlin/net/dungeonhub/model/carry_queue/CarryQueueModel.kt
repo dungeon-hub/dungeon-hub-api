@@ -35,6 +35,6 @@ class CarryQueueModel(
     }
 
     override fun getUpdateModel(): CarryQueueUpdateModel {
-        return CarryQueueUpdateModel(null, null, null, null, null, null, null, null, null)
+        return CarryQueueUpdateModel(null, null, null, null, null, null, null, null, null, null)
     }
 }

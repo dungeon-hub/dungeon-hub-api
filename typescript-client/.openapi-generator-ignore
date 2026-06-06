@@ -1,0 +1,16 @@
+# OpenAPI Generator Ignore File
+# Files matching these patterns will not be overwritten during generation
+
+# Keep our custom configurations
+package.json
+README.md
+.gitignore
+.openapi-generator-ignore
+tsconfig.json
+
+# Keep git files
+.git
+.gitignore
+
+# Preserve any customizations
+# Add patterns here if you manually edit generated files

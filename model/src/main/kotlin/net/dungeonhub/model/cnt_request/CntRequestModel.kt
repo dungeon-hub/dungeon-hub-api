@@ -27,6 +27,6 @@ class CntRequestModel(
     }
 
     override fun getUpdateModel(): CntRequestUpdateModel {
-        return CntRequestUpdateModel(null, null, null, null, null)
+        return CntRequestUpdateModel(null, null, null, null, null, null)
     }
 }

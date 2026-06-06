@@ -4,6 +4,8 @@ import dev.kord.common.entity.Permissions
 import net.dungeonhub.enums.TicketPermissionCandidate
 import net.dungeonhub.enums.TicketPermissionType
 import net.dungeonhub.enums.TranscriptTarget
+import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
+import net.dungeonhub.model.carry_tier.CarryTierModel
 import net.dungeonhub.model.discord_channel.DiscordChannelModel
 import net.dungeonhub.model.discord_role.DiscordRoleModel
 import net.dungeonhub.model.discord_server.DiscordServerModel
@@ -32,6 +34,10 @@ class TicketPanelModel(
     val userTranscriptDm: String?,
     val formQuestions: List<TicketPanelFormModel>,
 
+    // connection with other features
+    val relatedCarryTier: CarryTierModel?,
+    val relatedCarryDifficulty: CarryDifficultyModel?,
+
     // role and permission stuff
     val supportRoles: List<DiscordRoleModel>,
     val additionalRoles: List<DiscordRoleModel>,
@@ -46,6 +52,6 @@ class TicketPanelModel(
     }
 
     override fun getUpdateModel(): TicketPanelUpdateModel {
-        return TicketPanelUpdateModel(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+        return TicketPanelUpdateModel(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
     }
 }

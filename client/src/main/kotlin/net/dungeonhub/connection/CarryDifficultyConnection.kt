@@ -12,7 +12,6 @@ import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
 import java.util.concurrent.ConcurrentHashMap
 
-@OptIn(ExperimentalStdlibApi::class)
 class CarryDifficultyConnection(carryTierModel: CarryTierModel, override val client: AuthenticatedClient) :
     AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = ("server/"

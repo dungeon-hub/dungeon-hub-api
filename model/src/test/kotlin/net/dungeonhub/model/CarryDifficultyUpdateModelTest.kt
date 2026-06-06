@@ -18,7 +18,8 @@ class CarryDifficultyUpdateModelTest {
             1,
             "priceName",
             1,
-            1
+            1,
+            null
         )
 
         assertEquals("thumbnailUrl", carryDifficultyUpdateModel.thumbnailUrl)
@@ -55,7 +56,6 @@ class CarryDifficultyUpdateModelTest {
                     0,
                     false
                 ),
-                null,
                 0,
                 "descriptiveName",
                 "thumbnailUrl",
@@ -67,7 +67,8 @@ class CarryDifficultyUpdateModelTest {
             0,
             0,
             "thumbnailUrl",
-            "priceName"
+            "priceName",
+            null
         )
 
         val updateModel = carryDifficultyModel.getUpdateModel()
@@ -79,6 +80,7 @@ class CarryDifficultyUpdateModelTest {
         assertEquals(null, updateModel.priceName)
         assertEquals(null, updateModel.price)
         assertEquals(null, updateModel.score)
+        assertEquals(null, updateModel.ingameCarryType)
 
         updateModel.thumbnailUrl = null
     }

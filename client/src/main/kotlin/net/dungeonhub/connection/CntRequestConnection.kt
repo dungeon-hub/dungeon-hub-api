@@ -6,6 +6,7 @@ import io.ktor.http.HttpMethod
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.cnt_request.CntRequestCreationModel
+import net.dungeonhub.model.cnt_request.CntRequestPageModel
 import net.dungeonhub.model.cnt_request.CntRequestModel
 import net.dungeonhub.model.cnt_request.CntRequestUpdateModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
@@ -26,6 +27,23 @@ class CntRequestConnection(private val server: Long, override val client: Authen
         return dhApiRequest("find") {
             parameter("user", userId)
         }
+    }
+
+    /**
+     * @param page By default, the server applies the page "0" if nothing else is set here.
+     * @param size By default, the server applies the size "20" if nothing else is set here.
+     * @param sort The sort parameter follows the format "<field>,<asc|desc>". By default, the server applies the sort "id,desc" if nothing else is set here.
+     */
+    suspend fun getCntRequests(page: Int = 0, size: Int? = null, sort: String? = null): CntRequestPageModel? {
+        return dhApiRequest("all") {
+            parameter("page", page.toString())
+            size?.let { parameter("size", it.toString()) }
+            sort?.let { parameter("sort", it) }
+        }
+    }
+
+    suspend fun getCntRequest(id: Long): CntRequestModel? {
+        return dhApiRequest(id) {}
     }
 
     suspend fun createCntRequest(creationModel: CntRequestCreationModel): CntRequestModel? {

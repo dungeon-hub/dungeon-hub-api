@@ -12,11 +12,11 @@ import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
 import net.dungeonhub.model.carry_queue.CarryQueueCreationModel
 import net.dungeonhub.model.carry_queue.CarryQueueModel
 import net.dungeonhub.model.carry_queue.CarryQueueUpdateModel
+import net.dungeonhub.model.carry_queue.IngameQueueCreationModel
 import net.dungeonhub.model.score.LoggedCarryModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
 
-@OptIn(ExperimentalStdlibApi::class)
 class QueueConnection(override val client: DungeonHubClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "queue"
 
@@ -27,6 +27,13 @@ class QueueConnection(override val client: DungeonHubClient) : AuthenticatedModu
         method = HttpMethod.Post
         setBody(creationModel)
     }
+
+    suspend fun logIngame(ingameQueueCreationModel: IngameQueueCreationModel): List<CarryQueueModel>? = dhApiRequest("ingame-log") {
+        method = HttpMethod.Post
+        setBody(ingameQueueCreationModel)
+    }
+
+    suspend fun getUnnotifiedQueues(): List<CarryQueueModel>? = dhApiRequest("unnotified") {}
 
     // TODO merge this with the two methods below?
     suspend fun getCarryQueueByRelatedIdAndQueueStep(

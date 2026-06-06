@@ -2,7 +2,7 @@ package net.dungeonhub.providers
 
 import com.hypercubetools.ktor.moshi.moshi
 import io.ktor.client.HttpClient
-import io.ktor.client.engine.okhttp.OkHttp
+import io.ktor.client.engine.java.Java
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -12,7 +12,7 @@ import kotlinx.io.IOException
 import net.dungeonhub.service.MoshiService
 
 object HttpClientProvider {
-    val httpClient = HttpClient(OkHttp) {
+    val httpClient = HttpClient(Java) {
         install(ContentNegotiation) {
             moshi(MoshiService.moshi)
         }

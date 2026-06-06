@@ -1,0 +1,7 @@
+# Publish only the dist folder
+# Everything at root is excluded except what we explicitly allow
+
+/*
+!/dist
+!/README.md
+!/LICENSE

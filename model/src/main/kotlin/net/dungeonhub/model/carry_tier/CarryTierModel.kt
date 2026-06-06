@@ -11,7 +11,6 @@ class CarryTierModel(
     val identifier: String,
     val displayName: String,
     val carryType: CarryTypeModel,
-    val relatedTicketPanel: TicketPanelModel?,
     category: Long?,
     descriptiveName: String?,
     thumbnailUrl: String?,
@@ -36,7 +35,7 @@ class CarryTierModel(
         get() = if (!field.isNullOrBlank()) field else null
 
     override fun getUpdateModel(): CarryTierUpdateModel {
-        return CarryTierUpdateModel(null, null, null, null, null, null, null)
+        return CarryTierUpdateModel(null, null, null, null, null, null)
     }
 
     override fun equals(other: Any?): Boolean {

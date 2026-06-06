@@ -9,11 +9,11 @@ import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.client.DungeonHubClient
 import net.dungeonhub.model.discord_user.DiscordUserModel
 import net.dungeonhub.model.discord_user.DiscordUserUpdateModel
+import net.dungeonhub.model.ticket.TicketModel
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
 import java.util.*
 
-@OptIn(ExperimentalStdlibApi::class)
 class DiscordUserConnection(override val client: DungeonHubClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "discord-users"
 
@@ -41,6 +41,8 @@ class DiscordUserConnection(override val client: DungeonHubClient) : Authenticat
     suspend fun findUserByUuid(uuid: UUID): DiscordUserModel? = dhApiRequest("find") {
         parameter("uuid", uuid)
     }
+
+    suspend fun getMyClaimedTickets(): List<TicketModel>? = dhApiRequest("me/claimed-tickets") {}
 
     companion object : ClientlessConnection<DiscordUserConnection> {
         override fun authenticated(authenticationProvider: AuthenticationProvider): DiscordUserConnection {

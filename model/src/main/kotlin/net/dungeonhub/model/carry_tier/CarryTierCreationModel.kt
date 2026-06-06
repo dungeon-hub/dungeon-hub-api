@@ -6,7 +6,6 @@ import net.dungeonhub.structure.model.CreationModel
 class CarryTierCreationModel(
     var identifier: String,
     var displayName: String,
-    val relatedTicketPanel: Long?,
     var category: Long? = null,
     var descriptiveName: String? = null,
     var thumbnailUrl: String? = null,
