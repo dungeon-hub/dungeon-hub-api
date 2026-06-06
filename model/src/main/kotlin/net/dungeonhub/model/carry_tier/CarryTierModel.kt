@@ -1,6 +1,7 @@
 package net.dungeonhub.model.carry_tier
 
 import net.dungeonhub.model.carry_type.CarryTypeModel
+import net.dungeonhub.model.ticket_panel.TicketPanelModel
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.UpdateableModel
 import org.jetbrains.annotations.NotNull
@@ -11,7 +12,6 @@ class CarryTierModel(
     val displayName: String,
     val carryType: CarryTypeModel,
     category: Long?,
-    priceChannel: Long?,
     descriptiveName: String?,
     thumbnailUrl: String?,
     priceTitle: String?,
@@ -34,11 +34,8 @@ class CarryTierModel(
     val priceDescription = priceDescription
         get() = if (!field.isNullOrBlank()) field else null
 
-    val priceChannel = priceChannel
-        get() = if (field != null && field > 0L) field else null
-
     override fun getUpdateModel(): CarryTierUpdateModel {
-        return CarryTierUpdateModel(null, null, null, null, null, null, null)
+        return CarryTierUpdateModel(null, null, null, null, null, null)
     }
 
     override fun equals(other: Any?): Boolean {

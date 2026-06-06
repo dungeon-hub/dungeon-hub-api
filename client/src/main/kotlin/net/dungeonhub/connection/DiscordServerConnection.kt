@@ -1,153 +1,122 @@
 package net.dungeonhub.connection
 
-import com.squareup.moshi.adapter
+import io.ktor.client.request.parameter
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
+import net.dungeonhub.client.DungeonHubClient
 import net.dungeonhub.enums.ScoreType
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
 import net.dungeonhub.model.carry_tier.CarryTierModel
 import net.dungeonhub.model.discord_server.DiscordServerModel
-import net.dungeonhub.model.score.LeaderboardModel
+import net.dungeonhub.model.reputation.ReputationLeaderboardModel
+import net.dungeonhub.model.reputation.ReputationModel
+import net.dungeonhub.model.score.ScoreLeaderboardModel
 import net.dungeonhub.model.score.ScoreModel
-import net.dungeonhub.service.MoshiService.moshi
-import net.dungeonhub.structure.ModuleConnection
-import okhttp3.HttpUrl
-import okhttp3.Request
+import net.dungeonhub.model.static_message.StaticMessageModel
+import net.dungeonhub.model.ticket.TicketModel
+import net.dungeonhub.structure.AuthenticatedModuleConnection
+import net.dungeonhub.structure.ClientlessConnection
 import org.jetbrains.annotations.Range
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import java.time.Instant
 
 @OptIn(ExperimentalStdlibApi::class)
-object DiscordServerConnection : ModuleConnection {
-    private val logger: Logger = LoggerFactory.getLogger(DiscordServerConnection::class.java)
-
+class DiscordServerConnection(override val client: DungeonHubClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server"
 
-    fun findServerById(id: Long): DiscordServerModel? {
-        val url: HttpUrl = getApiUrl(id).build()
+    suspend fun findServerById(id: Long): DiscordServerModel? = dhApiRequest(id) {}
 
-        val request: Request = getApiRequest(url)
-            .get()
-            .build()
+    suspend fun getAllCarryTiers(serverId: Long): List<CarryTierModel>? = dhApiRequest("$serverId/carry-tiers") {}
 
-        return executeRequest(request) { json: String -> DiscordServerModel.Companion.fromJson(json) }
+    suspend fun findCarryTierByString(serverId: Long, input: String): CarryTierModel? {
+        val allCarryTiers = getAllCarryTiers(serverId) ?: return null
+
+        return allCarryTiers.singleOrNull { it.displayName.equals(input, true) }
+            ?: allCarryTiers.singleOrNull { it.identifier.equals(input, true) }
+            ?: allCarryTiers.singleOrNull { it.displayName.startsWith(input, true) }
+            ?: allCarryTiers.singleOrNull { it.identifier.startsWith(input, true) }
     }
 
-    fun getAllCarryTiers(serverId: Long): List<CarryTierModel>? {
-        val url: HttpUrl = getApiUrl("$serverId/carry-tiers").build()
+    suspend fun getAllCarryDifficulties(serverId: Long): List<CarryDifficultyModel>? = dhApiRequest("$serverId/carry-difficulties") {}
 
-        val request: Request = getApiRequest(url)
-            .get()
-            .build()
+    suspend fun loadAllServers(): List<DiscordServerModel>? = dhApiRequest("all") {}
 
-        return executeRequest(request, function = moshi.adapter<List<CarryTierModel>>()::fromJson)
-    }
+    suspend fun getCarryTierFromCategory(serverId: Long, categoryId: Long): CarryTierModel? = dhApiRequest("$serverId/category/$categoryId/carry-tier") {}
 
-    fun getAllCarryDifficulties(serverId: Long): List<CarryDifficultyModel>? {
-        val url: HttpUrl = getApiUrl("$serverId/carry-difficulties").build()
+    suspend fun getReputation(serverId: Long, reputationId: Long): ReputationModel? = dhApiRequest("$serverId/reputation/$reputationId") {}
 
-        val request: Request = getApiRequest(url)
-            .get()
-            .build()
-
-        return executeRequest(request) { s -> moshi.adapter<List<CarryDifficultyModel>>().fromJson(s) }
-    }
-
-    fun loadAllServers(): List<DiscordServerModel>? {
-        val url: HttpUrl = getApiUrl("all").build()
-
-        val request: Request = getApiRequest(url)
-            .get()
-            .build()
-
-        return executeRequest(request, function = moshi.adapter<List<DiscordServerModel>>()::fromJson)
-    }
-
-    fun getCarryTierFromCategory(serverId: Long, categoryId: Long): CarryTierModel? {
-        val url: HttpUrl = getApiUrl("$serverId/category/$categoryId/carry-tier").build()
-
-        val request: Request = getApiRequest(url)
-            .get()
-            .build()
-
-        return executeRequest(request) { json: String -> CarryTierModel.Companion.fromJson(json) }
-    }
-
-    fun getScores(serverModel: DiscordServerModel, id: Long): List<ScoreModel>? {
-        val url: HttpUrl = getApiUrl(serverModel.id.toString() + "/score/" + id).build()
-
-        val request: Request = getApiRequest(url)
-            .get()
-            .build()
-
-        return executeRequest(request, function = moshi.adapter<List<ScoreModel>>()::fromJson)
-    }
+    suspend fun getScores(serverModel: DiscordServerModel, id: Long): List<ScoreModel>? = dhApiRequest("${serverModel.id}/score/$id") {}
 
     @JvmOverloads
-    fun loadTotalLeaderboard(
+    suspend fun loadTotalLeaderboard(
         serverId: Long,
         scoreType: ScoreType = ScoreType.Default,
         page: @Range(from = 0, to = Integer.MAX_VALUE.toLong()) Int = 0,
         userId: Long? = null
-    ): LeaderboardModel? {
-        val urlBuilder = getApiUrl("$serverId/total-leaderboard")
-            .addQueryParameter("score-type", scoreType.name)
-            .addQueryParameter("page", page.toString())
-
+    ): ScoreLeaderboardModel? = dhApiRequest("$serverId/total-leaderboard") {
+        parameter("score-type", scoreType.name)
+        parameter("page", page)
         if (userId != null) {
-            urlBuilder.addQueryParameter("user", userId.toString())
+            parameter("user", userId)
         }
-
-        val request: Request = getApiRequest(urlBuilder.build())
-            .get()
-            .build()
-
-        return executeRequest(request) { json: String -> LeaderboardModel.Companion.fromJson(json) }
     }
 
-    fun getTotalAmountOfMoneySpent(
+    suspend fun loadReputationLeaderboard(
+        serverId: Long,
+        page: @Range(from = 0, to = Integer.MAX_VALUE.toLong()) Int = 0,
+        userId: Long? = null
+    ): ReputationLeaderboardModel? = dhApiRequest("$serverId/reputation-leaderboard") {
+        parameter("page", page)
+        if (userId != null) {
+            parameter("user", userId)
+        }
+    }
+
+    suspend fun getTotalAmountOfMoneySpent(
         serverId: Long,
         userId: Long? = null,
         carrierId: Long? = null,
         carryTypeId: Long? = null,
         carryTierId: Long? = null,
         since: Instant? = null
-    ): Long? {
-        val url = getApiUrl("$serverId/total-money-spent")
-
+    ): Long? = dhApiRequest("$serverId/total-money-spent") {
         if (userId != null) {
-            url.addQueryParameter("user", userId.toString())
+            parameter("user", userId)
         }
 
         if (carrierId != null) {
-            url.addQueryParameter("carrier", carrierId.toString())
+            parameter("carrier", carrierId)
         }
 
         if (carryTypeId != null) {
-            url.addQueryParameter("carry-type", carryTypeId.toString())
+            parameter("carry-type", carryTypeId)
         }
 
         if (carryTierId != null) {
-            url.addQueryParameter("carry-tier", carryTierId.toString())
+            parameter("carry-tier", carryTierId)
         }
 
         if (since != null) {
-            url.addQueryParameter("since", since.toEpochMilli().toString())
+            parameter("since", since.toEpochMilli())
         }
-
-        val request: Request = getApiRequest(url.build()).get().build()
-
-        return executeRequest(request, function = java.lang.Long::parseLong)
     }
 
-    fun getCarryAmount(serverId: Long, since: Instant? = null): Long? {
-        val url = getApiUrl("$serverId/count-carries")
-
+    suspend fun getCarryAmount(serverId: Long, since: Instant? = null): Long? = dhApiRequest("$serverId/count-carries") {
         if (since != null) {
-            url.addQueryParameter("since", since.toEpochMilli().toString())
+            parameter("since", since.toEpochMilli())
         }
+    }
 
-        val request: Request = getApiRequest(url.build()).get().build()
+    suspend fun findGlobalStaticMessages(): List<StaticMessageModel>? = dhApiRequest("static-messages") {}
 
-        return executeRequest(request, function = java.lang.Long::parseLong)
+    suspend fun findTickets(serverId: Long, channelId: Long? = null): List<TicketModel>? = dhApiRequest("$serverId/ticket/find") {
+        if (channelId != null) {
+            parameter("channel", channelId)
+        }
+    }
+
+    companion object : ClientlessConnection<DiscordServerConnection> {
+        override fun authenticated(authenticationProvider: AuthenticationProvider): DiscordServerConnection {
+            return DiscordServerConnection(AuthenticatedClient(authenticationProvider))
+        }
     }
 }

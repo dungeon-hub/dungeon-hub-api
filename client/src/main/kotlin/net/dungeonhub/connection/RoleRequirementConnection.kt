@@ -1,83 +1,62 @@
 package net.dungeonhub.connection
 
-import com.squareup.moshi.adapter
+import io.ktor.client.request.setBody
+import io.ktor.http.HttpMethod
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.model.role_requirement.RoleRequirementCreationModel
 import net.dungeonhub.model.role_requirement.RoleRequirementModel
 import net.dungeonhub.model.role_requirement.RoleRequirementUpdateModel
-import net.dungeonhub.service.MoshiService.moshi
-import net.dungeonhub.structure.ModuleConnection
-import okhttp3.HttpUrl
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
+import net.dungeonhub.structure.AuthenticatedModuleConnection
+import net.dungeonhub.structure.ClientlessConnection
+import java.util.concurrent.ConcurrentHashMap
 
-@OptIn(ExperimentalStdlibApi::class)
-class RoleRequirementConnection(server: Long) : ModuleConnection {
+class RoleRequirementConnection(server: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/$server/role-requirement"
 
-    fun getById(id: Long): RoleRequirementModel? {
-        val url = getApiUrl(id).build()
+    suspend fun getById(id: Long): RoleRequirementModel? = dhApiRequest(id) {}
 
-        val request = getApiRequest(url)
-            .get()
-            .build()
-
-        return executeRequest(request) { json: String -> RoleRequirementModel.Companion.fromJson(json) }
-    }
-
-    val allRoleRequirements: List<RoleRequirementModel>?
-        get() {
-            val url: HttpUrl = getApiUrl("all").build()
-
-            val request: Request = getApiRequest(url).get().build()
-
-            return executeRequest(request, function = moshi.adapter<List<RoleRequirementModel>>()::fromJson)
-        }
+    suspend fun getAllRoleRequirements(): List<RoleRequirementModel>? = dhApiRequest("all") {}
 
     //TODO dedicated endpoint?
-    fun getByRoleId(id: Long): RoleRequirementModel? {
-        return allRoleRequirements?.firstOrNull { roleRequirement: RoleRequirementModel ->
+    suspend fun getByRoleId(id: Long): RoleRequirementModel? {
+        return getAllRoleRequirements()?.firstOrNull { roleRequirement: RoleRequirementModel ->
             roleRequirement.discordRole.id == id
         }
     }
 
-    fun addNewRoleRequirement(creationModel: RoleRequirementCreationModel): RoleRequirementModel? {
-        val url = getApiUrl().build()
-
-        val requestBody = creationModel.toJson().toRequestBody(jsonMediaType)
-
-        val request = getApiRequest(url).post(requestBody).build()
-
-        return executeRequest(request) { json: String -> RoleRequirementModel.Companion.fromJson(json) }
+    suspend fun addNewRoleRequirement(creationModel: RoleRequirementCreationModel): RoleRequirementModel? = dhApiRequest {
+        method = HttpMethod.Post
+        setBody(creationModel)
     }
 
-    fun updateRoleRequirement(id: Long, updateModel: RoleRequirementUpdateModel): RoleRequirementModel? {
-        val url = getApiUrl(id).build()
+    suspend fun updateRoleRequirement(id: Long, updateModel: RoleRequirementUpdateModel): RoleRequirementModel? =
+        dhApiRequest(id) {
+            method = HttpMethod.Put
+            setBody(updateModel)
+        }
 
-        val requestBody = updateModel.toJson().toRequestBody(jsonMediaType)
-
-        val request = getApiRequest(url).put(requestBody).build()
-
-        return executeRequest(request) { json: String -> RoleRequirementModel.Companion.fromJson(json) }
-    }
-
-    fun deleteRoleRequirement(roleRequirement: RoleRequirementModel): RoleRequirementModel? {
-        val url = getApiUrl(roleRequirement.id).build()
-
-        val request = getApiRequest(url).delete().build()
-
-        return executeRequest(request) { json: String -> RoleRequirementModel.Companion.fromJson(json) }
+    // TODO add id as parameter instead of the full model
+    suspend fun deleteRoleRequirement(roleRequirement: RoleRequirementModel): RoleRequirementModel? = dhApiRequest(roleRequirement.id) {
+        method = HttpMethod.Delete
     }
 
     companion object {
-        private val instances: MutableMap<Long, RoleRequirementConnection> = HashMap()
+        private val instances: MutableMap<Long, ClientlessRoleRequirementConnection> = ConcurrentHashMap()
 
-        operator fun get(server: Long): RoleRequirementConnection {
-            return instances.computeIfAbsent(server) { RoleRequirementConnection(it) }
+        operator fun get(server: Long): ClientlessRoleRequirementConnection {
+            return instances.computeIfAbsent(server) { ClientlessRoleRequirementConnection(it) }
         }
 
-        operator fun get(server: DiscordServerModel): RoleRequirementConnection {
+        operator fun get(server: DiscordServerModel): ClientlessRoleRequirementConnection {
             return get(server.id)
+        }
+
+        class ClientlessRoleRequirementConnection(val server: Long) : ClientlessConnection<RoleRequirementConnection> {
+            override fun authenticated(authenticationProvider: AuthenticationProvider): RoleRequirementConnection {
+                return RoleRequirementConnection(server, AuthenticatedClient(authenticationProvider))
+            }
         }
     }
 }

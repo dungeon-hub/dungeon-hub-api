@@ -1,25 +1,13 @@
 package net.dungeonhub.structure
 
-import net.dungeonhub.connection.DungeonHubConnection
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.Request
+import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.statement.HttpResponse
+import net.dungeonhub.client.DungeonHubClient
 
 interface Connection {
-    val jsonMediaType: MediaType
-        get() = "application/json; charset=utf-8".toMediaType()
+    val client: DungeonHubClient
 
-    fun <T> executeRequest(request: Request, notFoundFallback: T? = null, function: MappingFunction<String, T>): T? {
-        val result = DungeonHubConnection.executeRawRequest(request)?.stringResult
-
-        if(result?.code == 404) {
-            return notFoundFallback
-        }
-
-        return result?.successResult?.let { function.apply(it) }
-    }
-
-    fun executeRequest(request: Request): String? {
-        return DungeonHubConnection.executeRequest(request)
+    suspend fun executeRequest(request: HttpRequestBuilder.() -> Unit): HttpResponse? {
+        return client.executeRawRequest(request)
     }
 }

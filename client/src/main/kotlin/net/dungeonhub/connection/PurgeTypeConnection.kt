@@ -1,46 +1,40 @@
 package net.dungeonhub.connection
 
-import com.squareup.moshi.adapter
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.model.purge_type.PurgeTypeModel
-import net.dungeonhub.service.MoshiService.moshi
-import net.dungeonhub.structure.ModuleConnection
-import okhttp3.HttpUrl
-import okhttp3.Request
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import net.dungeonhub.structure.AuthenticatedModuleConnection
+import net.dungeonhub.structure.ClientlessConnection
+import java.util.concurrent.ConcurrentHashMap
 
-@OptIn(ExperimentalStdlibApi::class)
-class PurgeTypeConnection(carryTypeModel: CarryTypeModel) : ModuleConnection {
+class PurgeTypeConnection(carryTypeModel: CarryTypeModel, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/${carryTypeModel.server.id}/carry-type/${carryTypeModel.id}/purge-type"
 
     //TODO own endpoint
-    fun getByIdentifier(identifier: String?): PurgeTypeModel? {
-        return allPurgeTypes?.firstOrNull { carryTypeModel: PurgeTypeModel ->
-            carryTypeModel.identifier.equals(
+    suspend fun getByIdentifier(identifier: String?): PurgeTypeModel? {
+        return getAllPurgeTypes()?.firstOrNull { purgeTypeModel: PurgeTypeModel ->
+            purgeTypeModel.identifier.equals(
                 identifier,
                 ignoreCase = true
             )
         }
     }
 
-    val allPurgeTypes: List<PurgeTypeModel>?
-        get() {
-            val url: HttpUrl = getApiUrl("all").build()
-
-            val request: Request = getApiRequest(url)
-                .get()
-                .build()
-
-            return executeRequest(request, function = moshi.adapter<List<PurgeTypeModel>>()::fromJson)
-        }
+    suspend fun getAllPurgeTypes(): List<PurgeTypeModel>? = dhApiRequest("all") {}
 
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(PurgeTypeConnection::class.java)
-        private val instances: MutableMap<CarryTypeModel, PurgeTypeConnection> = HashMap()
+        private val instances: MutableMap<CarryTypeModel, ClientlessPurgeTypeConnection> = ConcurrentHashMap()
 
-        operator fun get(carryTypeModel: CarryTypeModel): PurgeTypeConnection {
-            return instances.computeIfAbsent(carryTypeModel) { PurgeTypeConnection(it) }
+        operator fun get(carryTypeModel: CarryTypeModel): ClientlessPurgeTypeConnection {
+            return instances.computeIfAbsent(carryTypeModel) { ClientlessPurgeTypeConnection(it) }
+        }
+
+        class ClientlessPurgeTypeConnection(val carryTypeModel: CarryTypeModel) :
+            ClientlessConnection<PurgeTypeConnection> {
+            override fun authenticated(authenticationProvider: AuthenticationProvider): PurgeTypeConnection {
+                return PurgeTypeConnection(carryTypeModel, AuthenticatedClient(authenticationProvider))
+            }
         }
     }
 }

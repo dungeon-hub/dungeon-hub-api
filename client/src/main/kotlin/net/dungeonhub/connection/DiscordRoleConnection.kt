@@ -1,72 +1,51 @@
 package net.dungeonhub.connection
 
-import com.squareup.moshi.adapter
+import io.ktor.client.request.setBody
+import io.ktor.http.HttpMethod
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.discord_role.DiscordRoleCreationModel
 import net.dungeonhub.model.discord_role.DiscordRoleModel
 import net.dungeonhub.model.discord_role.DiscordRoleUpdateModel
-import net.dungeonhub.service.MoshiService.moshi
-import net.dungeonhub.structure.ModuleConnection
-import okhttp3.HttpUrl
-import okhttp3.Request
-import okhttp3.RequestBody
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
-import java.util.*
+import net.dungeonhub.structure.AuthenticatedModuleConnection
+import net.dungeonhub.structure.ClientlessConnection
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalStdlibApi::class)
-class DiscordRoleConnection(private val server: Long) : ModuleConnection {
+class DiscordRoleConnection(private val server: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/$server/roles"
 
-    fun getById(id: Long): DiscordRoleModel? {
-        val url: HttpUrl = getApiUrl(id).build()
-
-        val request: Request = getApiRequest(url)
-            .get()
-            .build()
-
-        return executeRequest(request) { json: String -> DiscordRoleModel.Companion.fromJson(json) }
+    suspend fun getById(id: Long): DiscordRoleModel? {
+        return dhApiRequest(id) {}
     }
 
-    fun addNewRole(creationModel: DiscordRoleCreationModel): DiscordRoleModel? {
-        val url: HttpUrl = getApiUrl().build()
-
-        val requestBody: RequestBody = creationModel.toJson().toRequestBody(jsonMediaType)
-
-        val request: Request = getApiRequest(url)
-            .post(requestBody)
-            .build()
-
-        return executeRequest(request) { json: String -> DiscordRoleModel.Companion.fromJson(json) }
-    }
-
-    fun updateRole(id: Long, updateModel: DiscordRoleUpdateModel): DiscordRoleModel? {
-        val url: HttpUrl = getApiUrl(id).build()
-
-        val requestBody = updateModel.toJson().toRequestBody(jsonMediaType)
-
-        val request: Request = getApiRequest(url)
-            .put(requestBody)
-            .build()
-
-        return executeRequest(request) { json: String -> DiscordRoleModel.Companion.fromJson(json) }
-    }
-
-    val allRoles: List<DiscordRoleModel>?
-        get() {
-            val url: HttpUrl = getApiUrl("all").build()
-
-            val request: Request = getApiRequest(url).get().build()
-
-            return executeRequest(request, function = moshi.adapter<List<DiscordRoleModel>>()::fromJson)
+    suspend fun addNewRole(creationModel: DiscordRoleCreationModel): DiscordRoleModel? {
+        return dhApiRequest {
+            method = HttpMethod.Post
+            setBody(creationModel)
         }
+    }
+
+    suspend fun updateRole(id: Long, updateModel: DiscordRoleUpdateModel): DiscordRoleModel? {
+        return dhApiRequest(id) {
+            method = HttpMethod.Put
+            setBody(updateModel)
+        }
+    }
+
+    suspend fun getAllRoles(): List<DiscordRoleModel>? = dhApiRequest("all") {}
 
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(DiscordRoleConnection::class.java)
-        private val instances: MutableMap<Long, DiscordRoleConnection> = HashMap()
+        private val instances: MutableMap<Long, ClientlessDiscordRoleConnection> = ConcurrentHashMap()
 
-        operator fun get(server: Long): DiscordRoleConnection {
-            return instances.computeIfAbsent(server) { DiscordRoleConnection(it) }
+        operator fun get(server: Long): ClientlessDiscordRoleConnection {
+            return instances.computeIfAbsent(server) { ClientlessDiscordRoleConnection(it) }
+        }
+
+        class ClientlessDiscordRoleConnection(val server: Long) : ClientlessConnection<DiscordRoleConnection> {
+            override fun authenticated(authenticationProvider: AuthenticationProvider): DiscordRoleConnection {
+                return DiscordRoleConnection(server, AuthenticatedClient(authenticationProvider))
+            }
         }
     }
 }

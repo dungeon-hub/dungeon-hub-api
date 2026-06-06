@@ -1,12 +1,11 @@
 package net.dungeonhub.structure.entity
 
-import net.dungeonhub.expections.EntityUnknownException
+import net.dungeonhub.exceptions.EntityUnknownException
+import net.dungeonhub.exceptions.InvalidUpdateException
 import net.dungeonhub.structure.model.CreationModel
 import net.dungeonhub.structure.model.InitializeModel
 import net.dungeonhub.structure.model.Model
 import net.dungeonhub.structure.model.UpdateModel
-import org.springframework.http.HttpStatus
-import org.springframework.web.server.ResponseStatusException
 import java.util.*
 import java.util.function.Function
 import java.util.stream.Collectors
@@ -46,9 +45,9 @@ interface EntityService<E : Entity<M>, M : Model, C : CreationModel, I : Initial
         try {
             return saveEntity(updateEntity(entity, updateModel))
         } catch (exception: NumberFormatException) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+            throw InvalidUpdateException("Invalid numeric value in update model", exception)
         } catch (exception: UnsupportedOperationException) {
-            throw ResponseStatusException(HttpStatus.BAD_REQUEST)
+            throw InvalidUpdateException("Unsupported operation in update model", exception)
         }
     }
 

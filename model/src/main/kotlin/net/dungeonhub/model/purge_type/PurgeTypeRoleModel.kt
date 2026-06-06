@@ -4,6 +4,6 @@ import net.dungeonhub.structure.model.Model
 import net.dungeonhub.model.discord_role.DiscordRoleModel
 
 class PurgeTypeRoleModel(
-    val purgeTypeModel: PurgeTypeModel,
+    val purgeTypeModel: SimplePurgeTypeModel,
     val discordRoleModel: DiscordRoleModel
 ) : Model

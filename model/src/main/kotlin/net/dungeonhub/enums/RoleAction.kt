@@ -1,10 +1,9 @@
 package net.dungeonhub.enums
 
-import dev.kordex.core.commands.application.slash.converters.ChoiceEnum
-import dev.kordex.core.i18n.types.Key
+import dev.kordex.i18n.Key
 import net.dungeonhub.api.model.i18n.Translations
 
-enum class RoleAction(override val readableName: Key) : ChoiceEnum {
+enum class RoleAction(val readableName: Key) {
     None(Translations.RoleActions.None.readableName),
     ApplyAndRemoveWhenVerified(Translations.RoleActions.ApplyAndRemoveWhenVerified.readableName),
     ApplyAndRemoveWhenUnverified(Translations.RoleActions.ApplyAndRemoveWhenUnverified.readableName),

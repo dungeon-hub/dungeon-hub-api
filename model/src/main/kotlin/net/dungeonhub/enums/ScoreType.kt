@@ -1,15 +1,11 @@
 package net.dungeonhub.enums
 
-import dev.kordex.core.commands.application.slash.converters.ChoiceEnum
-import dev.kordex.core.i18n.types.Key
+import dev.kordex.i18n.Key
 import net.dungeonhub.api.model.i18n.Translations
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import java.util.Locale
 
-enum class ScoreType(
-    override val readableName: Key,
-    val leaderboardSuffix: Key?
-) : ChoiceEnum {
+enum class ScoreType(val readableName: Key, val leaderboardSuffix: Key?) {
     Default(Translations.ScoreType.Default.readableName),
     Alltime(Translations.ScoreType.Alltime.readableName, Translations.ScoreType.Alltime.suffix),
     Event(Translations.ScoreType.Event.readableName, Translations.ScoreType.Event.suffix);

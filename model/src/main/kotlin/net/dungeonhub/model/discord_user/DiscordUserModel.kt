@@ -6,7 +6,8 @@ import java.util.*
 
 class DiscordUserModel(
     val id: Long,
-    val minecraftId: UUID?
+    val minecraftId: UUID?,
+    val primarySkyblockProfile: UUID?
 ) : UpdateableModel<DiscordUserUpdateModel, DiscordUserModel> {
     companion object {
         fun fromJson(json: String): DiscordUserModel {
@@ -15,6 +16,6 @@ class DiscordUserModel(
     }
 
     override fun getUpdateModel(): DiscordUserUpdateModel {
-        return DiscordUserUpdateModel(null)
+        return DiscordUserUpdateModel(null, null)
     }
 }

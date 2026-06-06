@@ -1,43 +1,24 @@
 package net.dungeonhub.structure
 
-import net.dungeonhub.connection.AuthorizationConnection
-import net.dungeonhub.connection.DungeonHubConnection.apiUrl
-import okhttp3.HttpUrl
-import okhttp3.HttpUrl.Companion.toHttpUrl
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.Request
+import io.ktor.http.Url
+import net.dungeonhub.client.DungeonHubClient.Companion.apiUrl
 
 interface ModuleConnection : Connection {
     val moduleApiPrefix: String?
 
-    fun getApiRequest(uri: String?): Request.Builder {
-        return getApiRequest(getApiUrl(uri).build())
-    }
+    fun getApiUrl(): Url = getApiUrl("")
 
-    fun getApiRequest(httpUrl: HttpUrl): Request.Builder {
-        val mediaType: MediaType = "multipart/form-data; boundary=---011000010111000001101001".toMediaType()
-
-        return Request.Builder()
-            .url(httpUrl)
-            .addHeader("Content-Type", mediaType.toString())
-            .addHeader("Authorization", "Bearer " + AuthorizationConnection.apiToken)
-    }
-
-    fun getApiUrl(): HttpUrl.Builder = getApiUrl("")
-
-    fun getApiUrl(id: Long): HttpUrl.Builder {
+    fun getApiUrl(id: Long): Url {
         return getApiUrl(id.toString())
     }
 
-    fun getApiUrl(uri: String?): HttpUrl.Builder {
+    fun getApiUrl(uri: String?): Url {
         val prefix = if ((moduleApiPrefix == null || moduleApiPrefix!!.isBlank()))
             ""
         else
             moduleApiPrefix + (if (uri.isNullOrBlank()) "" else "/")
 
-        return (apiUrl + apiPrefix + prefix + uri).toHttpUrl()
-            .newBuilder()
+        return Url(apiUrl + apiPrefix + prefix + uri)
     }
 
     val apiPrefix: String

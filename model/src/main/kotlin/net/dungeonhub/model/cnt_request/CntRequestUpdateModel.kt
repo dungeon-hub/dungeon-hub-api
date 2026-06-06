@@ -1,10 +1,12 @@
 package net.dungeonhub.model.cnt_request
 
+import net.dungeonhub.enums.CntRequestType
 import net.dungeonhub.model.discord_user.DiscordUserModel
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.UpdateModel
 
 class CntRequestUpdateModel(
+    var requestType: CntRequestType?,
     claimer: DiscordUserModel?,
     var coinValue: String?,
     var description: String?,

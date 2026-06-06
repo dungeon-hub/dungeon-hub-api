@@ -1,9 +1,8 @@
 package net.dungeonhub.enums
 
-import dev.kordex.core.commands.application.slash.converters.ChoiceEnum
-import dev.kordex.core.i18n.toKey
+import dev.kordex.i18n.Key
 
-enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.None) : ChoiceEnum {
+enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.None) {
     SkyblockLevel,
     CatacombsLevel,
     FarmingLevel,
@@ -23,14 +22,36 @@ enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.
     GuildRank(ExtraDataType.GuildName),
     MagicalPower,
     ClassAverage,
-    HighestCritDamage;
+    HighestCritDamage,
+    BingoRank,
+    TotalBingoPoints,
+    Reputation,
+    ScoreLeaderboardRank(ExtraDataType.ScoreLeaderboardRank),
+    ReputationLeaderboardRank;
 
-    override val readableName = name.replace(Regex("([A-Z])"), " $1").trim().toKey()
+    val readableName = Key(name.replace(Regex("([A-Z])"), " $1").trim())
 
     enum class ExtraDataType(val checkExtraData: (String?) -> Boolean) {
         None({ true }),
         GuildName({ !it.isNullOrBlank() }),
         Duration({ !it.isNullOrBlank() && kotlin.time.Duration.parseOrNull(it) != null }),
-        CarryType({ it == null || it.isNotBlank() });
+        CarryType({ it == null || it.isNotBlank() }),
+        ScoreLeaderboardRank(checkExtraData@{
+            if(it.isNullOrBlank()) return@checkExtraData false
+
+            val extraData = it.split(";")
+
+            try {
+                ScoreType.valueOf(extraData[0])
+            } catch (_: IllegalArgumentException) {
+                return@checkExtraData false
+            }
+
+            if(extraData.size >= 2) {
+                return@checkExtraData CarryType.checkExtraData(extraData[1])
+            }
+
+            true
+        });
     }
 }

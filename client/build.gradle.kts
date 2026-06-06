@@ -2,31 +2,21 @@ import net.thebugmc.gradle.sonatypepublisher.PublishingType
 
 plugins {
     id("java-library")
-    id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.3")
+    id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.4")
     kotlin("jvm")
-    id("com.google.devtools.ksp").version("2.1.0-1.0.29")
+    id("com.google.devtools.ksp").version("2.2.20-2.0.4")
+    id("dev.kordex.gradle.kordex") version "1.9.0"
 }
 
 group = "net.dungeon-hub.api"
 val artifactId = "client"
-version = "0.5.4"
+version = "0.7.0"
 description = "A client library written in Kotlin to simplify the integration of the Dungeon Hub API."
 
-repositories {
-    mavenCentral()
-
-    maven {
-        url = uri("https://repo.kordex.dev/releases")
-        name = "KordEx (Releases)"
-    }
-    maven {
-        url = uri("https://repo.kordex.dev/snapshots")
-        name = "KordEx (Snapshots)"
-    }
-    maven {
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots")
-        name = "Sonatype Snapshots (Legacy)"
-    }
+kordEx {
+    kordExVersion = libs.kord.extensions.get().version
+    jvmTarget = 21
+    configurations = listOf("compileOnly", "testImplementation")
 }
 
 dependencies {
@@ -37,10 +27,8 @@ dependencies {
     api(libs.slf4j2.api)
 
     //HTTP Client
-    api(libs.okhttp)
-
-    //Used frameworks for compatible classes
-    implementation(libs.kord.extensions)
+    api(libs.ktor.client.java)
+    api(libs.ktor.moshi)
 
     //Tests
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -92,7 +80,7 @@ tasks.test {
 }
 
 kotlin {
-    jvmToolchain(17)
+    jvmToolchain(21)
     compilerOptions {
         freeCompilerArgs.add("-Xjvm-default=all")
     }

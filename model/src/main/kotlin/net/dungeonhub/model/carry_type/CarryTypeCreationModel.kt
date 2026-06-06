@@ -7,7 +7,6 @@ class CarryTypeCreationModel(
     var identifier: String,
     var displayName: String,
     var logChannel: Long? = null,
-    var leaderboardChannel: Long? = null,
     var eventActive: Boolean? = null
 ) : CreationModel {
     fun toJson(): String {

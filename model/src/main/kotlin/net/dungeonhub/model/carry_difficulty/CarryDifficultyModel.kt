@@ -1,5 +1,6 @@
 package net.dungeonhub.model.carry_difficulty
 
+import net.dungeonhub.enums.IngameCarryType
 import net.dungeonhub.model.carry_tier.CarryTierModel
 import net.dungeonhub.model.carry_type.CarryTypeModel
 import net.dungeonhub.service.MoshiService
@@ -16,7 +17,8 @@ class CarryDifficultyModel(
     bulkAmount: Int?,
     score: Int,
     thumbnailUrl: String?,
-    priceName: String?
+    priceName: String?,
+    val ingameCarryType: IngameCarryType?
 ) : UpdateableModel<CarryDifficultyUpdateModel, CarryDifficultyModel> {
     val bulkPrice = bulkPrice
         get() = if (field != null && field > 0) field else null
@@ -36,12 +38,16 @@ class CarryDifficultyModel(
     val carryType: CarryTypeModel
         get() = carryTier.carryType
 
+    fun calculatePricePerCarry(amount: Int): Long = calculatePricePerCarry(amount, bulkPrice, bulkAmount, price)
+
+    fun calculateTotalPrice(amount: Int): Long = calculateTotalPrice(amount, bulkPrice, bulkAmount, price)
+
     fun toJson(): String {
         return MoshiService.moshi.adapter(CarryDifficultyModel::class.java).toJson(this)
     }
 
     override fun getUpdateModel(): CarryDifficultyUpdateModel {
-        return CarryDifficultyUpdateModel(null, null, null, null, null, null, null)
+        return CarryDifficultyUpdateModel(null, null, null, null, null, null, null, null)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -60,6 +66,21 @@ class CarryDifficultyModel(
     companion object {
         fun fromJson(json: String): CarryDifficultyModel {
             return MoshiService.moshi.adapter(CarryDifficultyModel::class.java).fromJson(json)!!
+        }
+
+        fun calculatePricePerCarry(amount: Int, bulkPrice: Int?, bulkAmount: Int?, price: Int): Long {
+            val bulkPrice = bulkPrice
+            val bulkAmount = bulkAmount
+
+            if (bulkPrice != null && bulkAmount != null && bulkAmount <= amount) {
+                return bulkPrice.toLong()
+            }
+
+            return price.toLong()
+        }
+
+        fun calculateTotalPrice(amount: Int, bulkPrice: Int?, bulkAmount: Int?, price: Int): Long {
+            return calculatePricePerCarry(amount, bulkPrice, bulkAmount, price) * amount
         }
     }
 }

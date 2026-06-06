@@ -1,5 +1,6 @@
 package net.dungeonhub.model.cnt_request
 
+import net.dungeonhub.enums.CntRequestType
 import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.model.discord_user.DiscordUserModel
 import net.dungeonhub.service.MoshiService
@@ -9,6 +10,7 @@ import java.time.Instant
 class CntRequestModel(
     val id: Long,
     val messageId: Long,
+    val requestType: CntRequestType,
     val discordServer: DiscordServerModel,
     val user: DiscordUserModel,
     val claimer: DiscordUserModel?,
@@ -25,6 +27,6 @@ class CntRequestModel(
     }
 
     override fun getUpdateModel(): CntRequestUpdateModel {
-        return CntRequestUpdateModel(null, null, null, null, null)
+        return CntRequestUpdateModel(null, null, null, null, null, null)
     }
 }

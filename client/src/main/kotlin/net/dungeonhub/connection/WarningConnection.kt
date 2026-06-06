@@ -1,79 +1,68 @@
 package net.dungeonhub.connection
 
-import com.squareup.moshi.adapter
+import io.ktor.client.request.parameter
+import io.ktor.client.request.setBody
+import io.ktor.http.HttpMethod
+import net.dungeonhub.auth.AuthenticationProvider
+import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.model.warning.AddedWarningModel
 import net.dungeonhub.model.warning.DetailedWarningModel
 import net.dungeonhub.model.warning.WarningCreationModel
 import net.dungeonhub.model.warning.WarningEvidenceCreationModel
-import net.dungeonhub.service.MoshiService.moshi
-import net.dungeonhub.structure.ModuleConnection
-import okhttp3.HttpUrl
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import net.dungeonhub.structure.AuthenticatedModuleConnection
+import net.dungeonhub.structure.ClientlessConnection
+import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(ExperimentalStdlibApi::class)
-class WarningConnection(private val serverId: Long) : ModuleConnection {
+class WarningConnection(private val serverId: Long, override val client: AuthenticatedClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "server/$serverId/warns"
 
-    fun getAllWarns(userId: Long): List<DetailedWarningModel>? {
-        val url: HttpUrl = getApiUrl("all")
-            .addQueryParameter("user", userId.toString())
-            .build()
-
-        val request: Request = getApiRequest(url).get().build()
-
-        return executeRequest(request, function = moshi.adapter<List<DetailedWarningModel>>()::fromJson)
+    suspend fun getAllWarns(userId: Long): List<DetailedWarningModel>? {
+        return dhApiRequest("all") {
+            parameter("user", userId)
+        }
     }
 
-    fun getActiveWarns(userId: Long): List<DetailedWarningModel>? {
-        val url: HttpUrl = getApiUrl("active")
-            .addQueryParameter("user", userId.toString())
-            .build()
-
-        val request: Request = getApiRequest(url).get().build()
-
-        return executeRequest(request, function = moshi.adapter<List<DetailedWarningModel>>()::fromJson)
+    suspend fun getActiveWarns(userId: Long): List<DetailedWarningModel>? {
+        return dhApiRequest("active") {
+            parameter("user", userId)
+        }
     }
 
-    fun addWarning(creationModel: WarningCreationModel): AddedWarningModel? {
-        val url: HttpUrl = getApiUrl().build()
-
-        val requestBody = creationModel.toJson().toRequestBody(jsonMediaType)
-
-        val request: Request = getApiRequest(url).post(requestBody).build()
-
-        return executeRequest(request) { json: String -> AddedWarningModel.Companion.fromJson(json) }
+    suspend fun addWarning(creationModel: WarningCreationModel): AddedWarningModel? {
+        return dhApiRequest {
+            method = HttpMethod.Post
+            setBody(creationModel)
+        }
     }
 
-    fun deactivateWarning(id: Long): DetailedWarningModel? {
-        val url: HttpUrl = getApiUrl(id).build()
-
-        val request: Request = getApiRequest(url).delete().build()
-
-        return executeRequest(request) { json: String -> DetailedWarningModel.Companion.fromJson(json) }
+    suspend fun deactivateWarning(id: Long): DetailedWarningModel? {
+        return dhApiRequest(id) {
+            method = HttpMethod.Delete
+        }
     }
 
-    fun addEvidence(
+    suspend fun addEvidence(
         warningId: Long,
         evidenceCreationModel: WarningEvidenceCreationModel
     ): DetailedWarningModel? {
-        val url: HttpUrl = getApiUrl("$warningId/evidence").build()
-
-        val requestBody = evidenceCreationModel.toJson().toRequestBody(jsonMediaType)
-
-        val request: Request = getApiRequest(url).put(requestBody).build()
-
-        return executeRequest(request) { json: String -> DetailedWarningModel.Companion.fromJson(json) }
+        return dhApiRequest("$warningId/evidence") {
+            method = HttpMethod.Put
+            setBody(evidenceCreationModel)
+        }
     }
 
     companion object {
-        private val logger: Logger = LoggerFactory.getLogger(WarningConnection::class.java)
-        private val instances: MutableMap<Long, WarningConnection> = HashMap()
+        private val instances: MutableMap<Long, ClientlessWarningConnection> = ConcurrentHashMap()
 
-        operator fun get(serverId: Long): WarningConnection {
-            return instances.computeIfAbsent(serverId) { WarningConnection(it) }
+        operator fun get(serverId: Long): ClientlessWarningConnection {
+            return instances.computeIfAbsent(serverId) { ClientlessWarningConnection(it) }
+        }
+
+        class ClientlessWarningConnection(val serverId: Long) : ClientlessConnection<WarningConnection> {
+            override fun authenticated(authenticationProvider: AuthenticationProvider): WarningConnection {
+                return WarningConnection(serverId, AuthenticatedClient(authenticationProvider))
+            }
         }
     }
 }
