@@ -10,6 +10,7 @@ import io.ktor.client.statement.request
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.Url
+import io.ktor.http.content.TextContent
 import io.ktor.http.contentLength
 import io.ktor.http.contentType
 import io.ktor.http.isSuccess
@@ -35,7 +36,8 @@ open class DungeonHubClient {
                     logger.debug("Executed request to '{}' returned a 404.", response.request.url)
                 } else {
                     val body = response.request.content
-                    val bodyText = if(response.contentLength() == 0L || response.contentLength() == null) {
+                    val bodyText = if(body is TextContent) body.text else null
+                    val responseBody = if(response.contentLength() == 0L || response.contentLength() == null) {
                         null
                     } else {
                         response.bodyAsText()
@@ -44,10 +46,10 @@ open class DungeonHubClient {
                     logger.error(
                         "Request to '{}' wasn't successful. Body:\n{}\nResponse: {} ({})\n{}",
                         response.request.url,
-                        body,
+                        bodyText ?: body,
                         response.status.value,
                         response.status.description,
-                        bodyText
+                        responseBody
                     )
                 }
 
