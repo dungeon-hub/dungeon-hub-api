@@ -1,6 +1,5 @@
 package net.dungeonhub.connection
 
-import dev.kord.core.behavior.UserBehavior
 import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpMethod
@@ -47,11 +46,6 @@ class DiscordUserConnection(override val client: DungeonHubClient) : Authenticat
     companion object : ClientlessConnection<DiscordUserConnection> {
         override fun authenticated(authenticationProvider: AuthenticationProvider): DiscordUserConnection {
             return DiscordUserConnection(AuthenticatedClient(authenticationProvider))
-        }
-
-        //TODO move to connection?
-        suspend fun UserBehavior.getUUIDOrNull(): UUID? {
-            return authenticated().getById(id.value.toLong())?.minecraftId
         }
     }
 }

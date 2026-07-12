@@ -7,5 +7,6 @@ kord-extensions = "2.4.1-SNAPSHOT"
 [libraries]
 slf4j2-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j2-api" }
 ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktor" }
+ktor-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-moshi = { module = "com.hypercubetools:ktor-moshi", version.ref = "ktor-moshi" }
 kord-extensions = { module = "dev.kordex:kord-extensions", version.ref = "kord-extensions" }

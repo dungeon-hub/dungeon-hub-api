@@ -16,7 +16,7 @@ description = "A client library written in Kotlin to simplify the integration of
 kordEx {
     kordExVersion = libs.kord.extensions.get().version
     jvmTarget = 21
-    configurations = listOf("compileOnly", "testImplementation")
+    configurations = listOf("testImplementation")
 }
 
 dependencies {
@@ -29,6 +29,7 @@ dependencies {
     //HTTP Client
     api(libs.ktor.client.java)
     api(libs.ktor.moshi)
+    api(libs.ktor.content.negotiation)
 
     //Tests
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

@@ -1,7 +1,6 @@
 package net.dungeonhub.connection
 
-import dev.kord.core.behavior.MemberBehavior
-import io.ktor.client.request.setBody
+ import io.ktor.client.request.setBody
 import io.ktor.http.HttpMethod
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
@@ -43,10 +42,6 @@ class ReputationConnection(server: Long, discordUser: Long, override val client:
 
         operator fun get(server: DiscordServerModel, discordUser: DiscordUserModel): ClientlessReputationConnection {
             return get(server.id, discordUser.id)
-        }
-
-        operator fun get(member: MemberBehavior): ClientlessReputationConnection {
-            return get(member.guild.id.value.toLong(), member.id.value.toLong())
         }
 
         class ClientlessReputationConnection(val server: Long, val discordUser: Long) :
