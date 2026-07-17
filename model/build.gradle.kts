@@ -11,7 +11,7 @@ plugins {
 
 group = "net.dungeon-hub.api"
 val artifactId = "model"
-version = "0.7.0"
+version = "0.7.1"
 description = "The model classes that are used in the Dungeon Hub API."
 
 kordEx {
@@ -33,7 +33,7 @@ dependencies {
     api("com.google.code.gson:gson:2.13.2")
 
     //Used frameworks for compatible classes
-    implementation("io.swagger.core.v3:swagger-core-jakarta:2.2.28")
+    implementation("io.swagger.core.v3:swagger-core-jakarta:2.2.52")
 
     //Tests
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")

@@ -7,7 +7,8 @@ class StaticMessageUpdateModel(
     var channelId: Long?,
     var messageId: Long?,
     var objectIds: List<Long>?,
-    embedOverride: String?
+    embedOverride: String?,
+    var active: Boolean?
 ) : UpdateModel<StaticMessageModel> {
     var embedOverride: String? = embedOverride
         set(value) {
