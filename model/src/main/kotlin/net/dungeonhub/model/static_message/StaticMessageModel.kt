@@ -12,10 +12,11 @@ class StaticMessageModel(
     val messageId: Long?,
     val staticMessageType: StaticMessageType,
     val objectIds: List<Long>,
-    val embedOverride: String?
+    val embedOverride: String?,
+    val active: Boolean
 ) : UpdateableModel<StaticMessageUpdateModel, StaticMessageModel> {
     override fun getUpdateModel(): StaticMessageUpdateModel {
-        return StaticMessageUpdateModel(null, null, null, null)
+        return StaticMessageUpdateModel(null, null, null, null, null)
     }
 
     companion object {
