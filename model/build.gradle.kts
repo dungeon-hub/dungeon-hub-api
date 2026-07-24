@@ -30,7 +30,7 @@ dependencies {
     ksp("com.squareup.moshi:moshi-kotlin-codegen:1.15.2")
 
     //Gson, used for compatibility purposes
-    api("com.google.code.gson:gson:2.13.2")
+    api("com.google.code.gson:gson:2.14.0")
 
     //Used frameworks for compatible classes
     implementation("io.swagger.core.v3:swagger-core-jakarta:2.2.52")
