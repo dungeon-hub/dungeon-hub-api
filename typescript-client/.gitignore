@@ -11,11 +11,9 @@ api/
 !README.md
 !.openapi-generator-ignore
 
-# OpenAPI spec (downloaded during generation)
-openapi.json
-
 # OpenAPI Generator metadata
 .openapi-generator/
+git_push.sh
 
 # Node modules
 node_modules/

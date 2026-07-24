@@ -1,0 +1,48 @@
+name: TypeScript Client Build
+
+on:
+  push:
+    paths:
+      - "typescript-client/**"
+      - ".github/workflows/typescript-client.yml"
+  pull_request:
+    paths:
+      - "typescript-client/**"
+      - ".github/workflows/typescript-client.yml"
+
+env:
+  API_URL: "https://raw.githubusercontent.com/dungeon-hub/dungeon-hub-server/refs/heads/api-spec/openapi.json"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    defaults:
+      run:
+        working-directory: typescript-client
+
+    strategy:
+      matrix:
+        node-version: [20, 22]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: typescript-client/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Regenerate client
+        run: npm run generate
+        
+      - name: Build package
+        run: npm run build
