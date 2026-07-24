@@ -1,4 +1,4 @@
-name: TypeScript Client CI
+name: TypeScript Client Build
 
 on:
   push:
@@ -10,9 +10,14 @@ on:
       - "typescript-client/**"
       - ".github/workflows/typescript-client.yml"
 
+env:
+  API_URL: "https://api.dungeon-hub.net/api-src"
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     defaults:
       run:
