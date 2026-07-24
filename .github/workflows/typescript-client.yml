@@ -41,6 +41,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Test the connection
+        run: curl -v https://api.dungeon-hub.net/api-src
+
       - name: Regenerate client
         run: npm run generate
         
