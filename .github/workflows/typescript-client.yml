@@ -11,7 +11,7 @@ on:
       - ".github/workflows/typescript-client.yml"
 
 env:
-  API_URL: "https://api.dungeon-hub.net/api-src"
+  API_URL: "https://raw.githubusercontent.com/dungeon-hub/dungeon-hub-server/refs/heads/api-spec/openapi.json"
 
 jobs:
   build:
