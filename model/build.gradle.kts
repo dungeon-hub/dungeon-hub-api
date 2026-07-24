@@ -5,7 +5,7 @@ plugins {
     id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.4")
     kotlin("jvm")
     id("com.google.devtools.ksp").version("2.2.20-2.0.4")
-    id("dev.kordex.gradle.kordex") version "1.9.0"
+    id("dev.kordex.gradle.kordex") version "1.9.2"
     id("dev.kordex.gradle.i18n") version "1.1.1"
 }
 
