@@ -8,6 +8,8 @@ class DiscordServerStatsModel(
     val totalTickets: Long,
     val totalCarriers: Long,
     val totalScore: Long,
+    val activeWarns: Long,
+    val totalWarns: Long,
     val yourMoneySpent: Long?,
     val yourMoneyEarned: Long?,
     val yourCompletedCarries: Long?,
