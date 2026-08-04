@@ -10,6 +10,8 @@ import dev.kord.common.entity.Permissions
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.long
+import net.dungeonhub.model.static_message.StaticMessageObject
+import net.dungeonhub.model.static_message.StaticMessageObjectJsonAdapter
 import java.awt.Color
 import java.time.Instant
 import java.util.*
@@ -17,6 +19,7 @@ import java.util.*
 object MoshiService {
     //TODO add type adapter for kord embeds ?
     val moshi: Moshi = Moshi.Builder()
+        .add(StaticMessageObject::class.java, StaticMessageObjectJsonAdapter())
         .add(Instant::class.java, InstantAdapter())
         .add(Color::class.java, ColorAdapter())
         .add(UUID::class.java, UUIDAdapter())

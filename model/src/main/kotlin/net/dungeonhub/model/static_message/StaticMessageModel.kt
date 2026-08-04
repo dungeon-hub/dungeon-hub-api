@@ -11,7 +11,7 @@ class StaticMessageModel(
     val channelId: Long,
     val messageId: Long?,
     val staticMessageType: StaticMessageType,
-    val objectIds: List<Long>,
+    val objects: List<StaticMessageObject>,
     val embedOverride: String?,
     val active: Boolean
 ) : UpdateableModel<StaticMessageUpdateModel, StaticMessageModel> {
