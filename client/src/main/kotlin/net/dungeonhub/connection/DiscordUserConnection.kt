@@ -16,8 +16,6 @@ import java.util.*
 class DiscordUserConnection(override val client: DungeonHubClient) : AuthenticatedModuleConnection(client) {
     override val moduleApiPrefix = "discord-users"
 
-    suspend fun countLinkedUsers(): Long? = dhApiRequest("count-linked") {}
-
     suspend fun getById(id: Long): DiscordUserModel? = dhApiRequest(id) {}
 
     suspend fun getByIdOrCreate(id: Long) : DiscordUserModel? {
