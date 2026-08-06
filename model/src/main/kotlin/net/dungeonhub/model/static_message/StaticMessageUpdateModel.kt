@@ -1,12 +1,13 @@
 package net.dungeonhub.model.static_message
 
+import net.dungeonhub.enums.StaticMessageType
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.UpdateModel
 
 class StaticMessageUpdateModel(
     var channelId: Long?,
     var messageId: Long?,
-    var objectIds: List<Long>?,
+    var objects: List<StaticMessageObject>?,
     embedOverride: String?,
     var active: Boolean?
 ) : UpdateModel<StaticMessageModel> {
@@ -20,5 +21,11 @@ class StaticMessageUpdateModel(
 
     fun toJson(): String {
         return MoshiService.moshi.adapter(StaticMessageUpdateModel::class.java).toJson(this)
+    }
+
+    /** Validates object changes once the target static message type is known. */
+    fun validateFor(staticMessageType: StaticMessageType): StaticMessageUpdateModel {
+        objects?.let(staticMessageType::validateObjects)
+        return this
     }
 }
