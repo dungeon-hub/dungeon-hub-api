@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertContentEquals
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
+import kotlin.test.assertFalse
 import kotlin.test.assertIs
 
 class StaticMessageObjectTest {
@@ -127,34 +128,44 @@ class StaticMessageObjectTest {
 
     @Test
     fun testCreationSupportsPreviousIdListUseCases() {
-        val scoreObjects = listOf(3L, 1L, 3L).map { StaticMessageObject.carryType(it) }
-        val priceObjects = listOf(6L, 4L, 6L).map { StaticMessageObject.carryTier(it) }
+        val adapter = MoshiService.moshi.adapter(StaticMessageCreationModel::class.java)
+        val scoreMessage = adapter.fromJson(
+            """{"channelId":1,"staticMessageType":"ScoreLeaderboard","objectIds":[3,1,3]}"""
+        )!!
 
-        val scoreMessage = StaticMessageCreationModel(
-            1,
-            null,
-            StaticMessageType.ScoreLeaderboard,
-            scoreObjects,
-            null
-        )
-        val priceMessage = StaticMessageCreationModel(
-            1,
-            null,
-            StaticMessageType.PriceMessage,
-            priceObjects,
-            null
-        )
-        val totalMessage = StaticMessageCreationModel(
-            1,
-            null,
-            StaticMessageType.TotalLeaderboard,
-            emptyList(),
-            null
-        )
+        assertEquals(listOf(3L, 1L, 3L), linkedObjectValues(scoreMessage.objects))
+        assertEquals(StaticMessageObjectType.CarryType, linkedObject(scoreMessage.objects.first()).type)
 
-        assertEquals(listOf(3L, 1L, 3L), scoreMessage.objects.map { (it as StaticMessageObject.LinkedObject).value })
-        assertEquals(listOf(6L, 4L, 6L), priceMessage.objects.map { (it as StaticMessageObject.LinkedObject).value })
-        assertEquals(emptyList(), totalMessage.objects)
+        val currentJson = adapter.toJson(scoreMessage)
+        assertFalse(currentJson.contains("objectIds"))
+        assertEquals(scoreMessage.objects, adapter.fromJson(currentJson)!!.objects)
+    }
+
+    @Test
+    fun testCurrentObjectsTakePrecedenceOverLegacyObjectIds() {
+        val adapter = MoshiService.moshi.adapter(StaticMessageCreationModel::class.java)
+        val model = adapter.fromJson(
+            """
+                {
+                    "channelId": 1,
+                    "staticMessageType": "PriceMessage",
+                    "objects": [{"type": "CarryTier", "value": 4}],
+                    "objectIds": [9]
+                }
+            """.trimIndent()
+        )!!
+
+        assertEquals(listOf(4L), linkedObjectValues(model.objects))
+    }
+
+    @Test
+    fun testLegacyEmptyObjectIdsRemainValidForObjectlessMessageTypes() {
+        val adapter = MoshiService.moshi.adapter(StaticMessageCreationModel::class.java)
+        val model = adapter.fromJson(
+            """{"channelId":1,"staticMessageType":"TotalLeaderboard","objectIds":[]}"""
+        )!!
+
+        assertEquals(emptyList(), model.objects)
     }
 
     @Test
@@ -176,6 +187,27 @@ class StaticMessageObjectTest {
         )
 
         assertEquals(serverData, model.objects)
+    }
+
+    @Test
+    fun testResponseModelReadsLegacyObjectIdsAndWritesCurrentObjects() {
+        val json = """
+            {
+                "id": 1,
+                "server": {"id": 2},
+                "channelId": 3,
+                "messageId": 4,
+                "staticMessageType": "TicketPanel",
+                "objectIds": [8, 9],
+                "active": true
+            }
+        """.trimIndent()
+        val model = StaticMessageModel.fromJson(json)
+
+        assertEquals(listOf(8L, 9L), linkedObjectValues(model.objects))
+        val currentJson = MoshiService.moshi.adapter(StaticMessageModel::class.java).toJson(model)
+        assertFalse(currentJson.contains("objectIds"))
+        assertEquals(model.objects, StaticMessageModel.fromJson(currentJson).objects)
     }
 
     @Test
@@ -215,11 +247,31 @@ class StaticMessageObjectTest {
     }
 
     @Test
+    fun testUpdateReadsLegacyObjectIdsAfterTargetTypeIsKnown() {
+        val adapter = MoshiService.moshi.adapter(StaticMessageUpdateModel::class.java)
+        val update = adapter.fromJson("""{"objectIds":[9,7,9]}""")!!
+
+        update.validateFor(StaticMessageType.PriceMessage)
+
+        assertEquals(listOf(9L, 7L, 9L), linkedObjectValues(update.objects!!))
+        assertEquals(StaticMessageObjectType.CarryTier, linkedObject(update.objects!!.first()).type)
+        assertFalse(adapter.toJson(update).contains("objectIds"))
+    }
+
+    @Test
     fun testLinkedObjectRequiresValue() {
         val adapter = MoshiService.moshi.adapter(StaticMessageObject::class.java)
 
         assertFailsWith<JsonDataException> {
             adapter.fromJson("""{"type":"TicketPanel"}""")
         }
+    }
+
+    private fun linkedObject(entry: StaticMessageObject): StaticMessageObject.LinkedObject {
+        return assertIs<StaticMessageObject.LinkedObject>(entry)
+    }
+
+    private fun linkedObjectValues(objects: List<StaticMessageObject>): List<Long> {
+        return objects.map { linkedObject(it).value }
     }
 }
