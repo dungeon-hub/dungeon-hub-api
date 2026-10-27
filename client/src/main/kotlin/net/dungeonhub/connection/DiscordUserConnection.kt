@@ -35,6 +35,12 @@ class DiscordUserConnection(override val client: DungeonHubClient) : Authenticat
 
     suspend fun getCarryCount(id: Long, guildId: Long): Int? = dhApiRequest("$id/carries/$guildId") {}
 
+    /**
+     * Returns the sum of carry amounts per carry type id for the given user on the given server.
+     * Carry types without any carries are not included.
+     */
+    suspend fun getCarryCountsByType(id: Long, guildId: Long): Map<Long, Long>? = dhApiRequest("$id/carries/$guildId/by-type") {}
+
     suspend fun findUserByUuid(uuid: UUID): DiscordUserModel? = dhApiRequest("find") {
         parameter("uuid", uuid)
     }
