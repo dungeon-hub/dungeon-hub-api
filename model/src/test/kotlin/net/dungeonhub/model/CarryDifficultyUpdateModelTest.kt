@@ -1,5 +1,6 @@
 package net.dungeonhub.model
 
+import net.dungeonhub.model.carry_difficulty.BulkPriceModel
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyUpdateModel
 import net.dungeonhub.model.carry_tier.CarryTierModel
@@ -14,8 +15,7 @@ class CarryDifficultyUpdateModelTest {
         val carryDifficultyUpdateModel = CarryDifficultyUpdateModel(
             "displayName",
             "thumbnailUrl",
-            1,
-            1,
+            listOf(BulkPriceModel(5, 1)),
             "priceName",
             1,
             1,
@@ -36,6 +36,7 @@ class CarryDifficultyUpdateModelTest {
 
         assertEquals(null, newObject.thumbnailUrl)
         assertEquals(true, newObject.resetThumbnailUrl)
+        assertEquals(listOf(BulkPriceModel(5, 1)), newObject.bulkPrices)
     }
 
     @Test
@@ -63,8 +64,7 @@ class CarryDifficultyUpdateModelTest {
                 "priceDescription"
             ),
             0,
-            0,
-            0,
+            listOf(BulkPriceModel(5, 1)),
             0,
             "thumbnailUrl",
             "priceName",
@@ -75,8 +75,7 @@ class CarryDifficultyUpdateModelTest {
 
         assertEquals(null, updateModel.displayName)
         assertEquals(null, updateModel.thumbnailUrl)
-        assertEquals(null, updateModel.bulkPrice)
-        assertEquals(null, updateModel.bulkAmount)
+        assertEquals(null, updateModel.bulkPrices)
         assertEquals(null, updateModel.priceName)
         assertEquals(null, updateModel.price)
         assertEquals(null, updateModel.score)

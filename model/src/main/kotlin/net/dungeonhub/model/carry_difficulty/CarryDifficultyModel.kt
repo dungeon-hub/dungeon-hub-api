@@ -13,18 +13,16 @@ class CarryDifficultyModel(
     val displayName: String,
     val carryTier: CarryTierModel,
     val price: Int,
-    bulkPrice: Int?,
-    bulkAmount: Int?,
+    bulkPrices: List<BulkPriceModel>?,
     score: Int,
     thumbnailUrl: String?,
     priceName: String?,
     val ingameCarryType: IngameCarryType?
 ) : UpdateableModel<CarryDifficultyUpdateModel, CarryDifficultyModel> {
-    val bulkPrice = bulkPrice
-        get() = if (field != null && field > 0) field else null
-
-    val bulkAmount = bulkAmount
-        get() = if (field != null && field > 0) field else null
+    val bulkPrices: List<BulkPriceModel> = bulkPrices.orEmpty()
+        get() = field
+            .filter { it.amount > 0 && it.price > 0 }
+            .sortedBy { it.amount }
 
     val score = score
         get() = max(field, 0)
@@ -38,16 +36,16 @@ class CarryDifficultyModel(
     val carryType: CarryTypeModel
         get() = carryTier.carryType
 
-    fun calculatePricePerCarry(amount: Int): Long = calculatePricePerCarry(amount, bulkPrice, bulkAmount, price)
+    fun calculatePricePerCarry(amount: Int): Long = calculatePricePerCarry(amount, bulkPrices, price)
 
-    fun calculateTotalPrice(amount: Int): Long = calculateTotalPrice(amount, bulkPrice, bulkAmount, price)
+    fun calculateTotalPrice(amount: Int): Long = calculateTotalPrice(amount, bulkPrices, price)
 
     fun toJson(): String {
         return MoshiService.moshi.adapter(CarryDifficultyModel::class.java).toJson(this)
     }
 
     override fun getUpdateModel(): CarryDifficultyUpdateModel {
-        return CarryDifficultyUpdateModel(null, null, null, null, null, null, null, null)
+        return CarryDifficultyUpdateModel(null, null, null, null, null, null, null)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -68,19 +66,23 @@ class CarryDifficultyModel(
             return MoshiService.moshi.adapter(CarryDifficultyModel::class.java).fromJson(json)!!
         }
 
-        fun calculatePricePerCarry(amount: Int, bulkPrice: Int?, bulkAmount: Int?, price: Int): Long {
-            val bulkPrice = bulkPrice
-            val bulkAmount = bulkAmount
+        /**
+         * Uses the bulk price with the highest amount that is reached by [amount], or [price] if none applies.
+         */
+        fun calculatePricePerCarry(amount: Long, bulkPrices: List<BulkPriceModel>, price: Int): Long {
+            val bulkPrice = bulkPrices
+                .filter { it.amount > 0 && it.price > 0 && it.amount <= amount }
+                .maxByOrNull { it.amount }
 
-            if (bulkPrice != null && bulkAmount != null && bulkAmount <= amount) {
-                return bulkPrice.toLong()
-            }
-
-            return price.toLong()
+            return (bulkPrice?.price ?: price).toLong()
         }
 
-        fun calculateTotalPrice(amount: Int, bulkPrice: Int?, bulkAmount: Int?, price: Int): Long {
-            return calculatePricePerCarry(amount, bulkPrice, bulkAmount, price) * amount
+        fun calculatePricePerCarry(amount: Int, bulkPrices: List<BulkPriceModel>, price: Int): Long {
+            return calculatePricePerCarry(amount.toLong(), bulkPrices, price)
+        }
+
+        fun calculateTotalPrice(amount: Int, bulkPrices: List<BulkPriceModel>, price: Int): Long {
+            return calculatePricePerCarry(amount, bulkPrices, price) * amount
         }
     }
 }

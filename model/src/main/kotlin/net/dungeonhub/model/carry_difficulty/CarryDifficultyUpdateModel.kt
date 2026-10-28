@@ -7,8 +7,10 @@ import net.dungeonhub.structure.model.UpdateModel
 class CarryDifficultyUpdateModel(
     var displayName: String?,
     thumbnailUrl: String?,
-    bulkPrice: Int?,
-    bulkAmount: Int?,
+    /**
+     * Replaces all bulk prices if set, an empty list removes them.
+     */
+    var bulkPrices: List<BulkPriceModel>?,
     priceName: String?,
     var price: Int?,
     var score: Int?,
@@ -18,18 +20,6 @@ class CarryDifficultyUpdateModel(
         set(value) {
             field = value
             resetThumbnailUrl = value == null
-        }
-
-    var bulkPrice = bulkPrice
-        set(value) {
-            field = value
-            resetBulkPrice = value == null
-        }
-
-    var bulkAmount = bulkAmount
-        set(value) {
-            field = value
-            resetBulkAmount = value == null
         }
 
     var priceName = priceName
@@ -45,10 +35,6 @@ class CarryDifficultyUpdateModel(
         }
 
     var resetThumbnailUrl = false
-        private set
-    var resetBulkPrice = false
-        private set
-    var resetBulkAmount = false
         private set
     var resetPriceName = false
         private set
