@@ -5,24 +5,12 @@ plugins {
     id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.4")
     kotlin("jvm")
     id("com.google.devtools.ksp").version("2.2.20-2.0.4")
-    id("dev.kordex.gradle.kordex") version "1.9.2"
-    id("dev.kordex.gradle.i18n") version "1.1.1"
 }
 
 group = "net.dungeon-hub.api"
 val artifactId = "model"
 version = "0.7.2"
 description = "The model classes that are used in the Dungeon Hub API."
-
-kordEx {
-    kordExVersion = libs.kord.extensions.get().version
-    jvmTarget = 21
-    configurations = listOf("compileOnly", "testImplementation")
-}
-
-i18n {
-    bundle("dh-api.strings", "net.dungeonhub.api.model.i18n")
-}
 
 dependencies {
     //Moshi, the JSON library
