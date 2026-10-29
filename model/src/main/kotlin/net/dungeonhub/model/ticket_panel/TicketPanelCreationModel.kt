@@ -26,6 +26,8 @@ class TicketPanelCreationModel(
     val deleteTranscriptTarget: TranscriptTarget?,
     val userTranscriptDm: String?,
     val formQuestions: List<TicketPanelFormModel>?,
+    val openTicketLimit: Int?,
+    val closedTicketLimit: Int?,
 
     val relatedCarryTier: Long?,
     val relatedCarryDifficulty: Long?,
