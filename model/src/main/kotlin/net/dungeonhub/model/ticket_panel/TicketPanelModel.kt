@@ -1,8 +1,5 @@
 package net.dungeonhub.model.ticket_panel
 
-import dev.kord.common.entity.Permissions
-import net.dungeonhub.enums.TicketPermissionCandidate
-import net.dungeonhub.enums.TicketPermissionType
 import net.dungeonhub.enums.TranscriptTarget
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
 import net.dungeonhub.model.carry_tier.CarryTierModel
@@ -43,7 +40,7 @@ class TicketPanelModel(
     val additionalRoles: List<DiscordRoleModel>,
     val openCategories: List<Long>,
     val closedCategories: List<Long>,
-    val permissions: Map<TicketPermissionCandidate, Map<TicketPermissionType, Permissions>>
+    val permissions: TicketPanelPermissionsModel
 ): UpdateableModel<TicketPanelUpdateModel, TicketPanelModel> {
     companion object {
         fun fromJson(json: String): TicketPanelModel {
