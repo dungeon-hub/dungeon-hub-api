@@ -3,6 +3,7 @@ package net.dungeonhub.enums
 /**
  * The Discord channel permissions that can be overwritten for ticket channels.
  * [bit] is the matching Discord permission flag.
+ * The server stores this by ordinal, so new entries have to be added at the end.
  */
 enum class DiscordChannelPermission(val bit: Long) {
     ViewChannel(1L shl 10),
