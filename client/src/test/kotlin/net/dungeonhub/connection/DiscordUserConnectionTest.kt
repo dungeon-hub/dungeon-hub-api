@@ -8,6 +8,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class DiscordUserConnectionTest {
     private lateinit var server: HttpServer
@@ -16,8 +17,8 @@ class DiscordUserConnectionTest {
     @BeforeTest
     fun setUp() {
         server = HttpServer.create(InetSocketAddress("127.0.0.1", 0), 0)
-        server.createContext("/api/v1/discord-users/1/carries/2/by-type") { exchange ->
-            val body = """{"10":33,"11":5,"9007199254740993":4294967296}""".toByteArray()
+        server.createContext("/api/v1/discord-users/1/carries/2/summary") { exchange ->
+            val body = """{"logCount":4,"carryCount":4294967334,"byType":{"10":33,"11":5,"9007199254740993":4294967296}}""".toByteArray()
             exchange.responseHeaders.add("Content-Type", "application/json")
             exchange.sendResponseHeaders(200, body.size.toLong())
             exchange.responseBody.use { it.write(body) }
@@ -35,12 +36,14 @@ class DiscordUserConnectionTest {
     }
 
     @Test
-    fun testGetCarryCountsByType() = runBlocking {
+    fun testGetCarryCounts() = runBlocking {
         val connection = DiscordUserConnection(DungeonHubClient())
 
-        assertEquals(
-            mapOf(10L to 33L, 11L to 5L, 9007199254740993L to 4294967296L),
-            connection.getCarryCountsByType(1, 2)
-        )
+        val carryCounts = connection.getCarryCounts(1, 2)
+
+        assertNotNull(carryCounts)
+        assertEquals(4, carryCounts.logCount)
+        assertEquals(4294967334, carryCounts.carryCount)
+        assertEquals(mapOf(10L to 33L, 11L to 5L, 9007199254740993L to 4294967296L), carryCounts.byType)
     }
 }
