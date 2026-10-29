@@ -3,7 +3,7 @@ package net.dungeonhub.enums
 /**
  * Custom ticket actions that a [TicketPermissionCandidate] can be allowed to perform.
  * An action can only be performed in the [phases] it applies to.
- * The server stores this by ordinal, so new entries have to be added at the end.
+ * The server stores the ordinal, so existing entries must not be reordered or removed and new entries go at the end.
  */
 enum class TicketAction(val phases: Set<TicketPhase>) {
     Reopen(setOf(TicketPhase.Closed)),

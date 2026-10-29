@@ -1,6 +1,6 @@
 package net.dungeonhub.enums
 
-// the server stores this by ordinal, so new entries have to be added at the end
+// the server stores the ordinal, so existing entries must not be reordered or removed and new entries go at the end
 enum class TicketPhase {
     Open,
     Closed;
