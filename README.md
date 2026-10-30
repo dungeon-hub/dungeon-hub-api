@@ -25,6 +25,21 @@ dependencies {
 }
 ```
 
+**Listening to changes:**
+
+The API pushes changes of entities (e.g. tickets or static messages) to every client that is allowed to see them.
+The stream reconnects automatically and emits `Connected` on every (re)connect.
+Changes that happened while the client was disconnected aren't replayed, so reload the state you need on `Connected`.
+
+```kotlin
+ChangeStreamConnection.authenticated().changes(setOf(ChangeEventType.Ticket)).collect { event ->
+    when (event) {
+        ChangeStreamEvent.Connected -> reloadClaimedTickets()
+        is ChangeStreamEvent.Change -> (event.change.data as? TicketModel)?.let { updateTicket(event.change.action, it) }
+    }
+}
+```
+
 #### TypeScript Client (Angular)
 
 Under `/typescript-client` you can find the TypeScript/Angular client auto-generated from the OpenAPI specification. \

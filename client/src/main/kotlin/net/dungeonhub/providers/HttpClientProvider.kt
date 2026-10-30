@@ -6,6 +6,7 @@ import io.ktor.client.engine.java.Java
 import io.ktor.client.plugins.HttpRequestRetry
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.sse.SSE
 import io.ktor.http.HttpMethod
 import io.ktor.utils.io.CancellationException
 import kotlinx.io.IOException
@@ -32,5 +33,7 @@ object HttpClientProvider {
             }
             exponentialDelay()
         }
+
+        install(SSE)
     }
 }
