@@ -21,6 +21,8 @@ class TicketPanelUpdateModel(
     var deleteTranscriptTarget: TranscriptTarget?,
     userTranscriptDm: String?,
     var formQuestions: List<TicketPanelFormModel>?,
+    openTicketLimit: Int?,
+    closedTicketLimit: Int?,
 
     relatedCarryTier: Long?,
     relatedCarryDifficulty: Long?,
@@ -93,6 +95,22 @@ class TicketPanelUpdateModel(
             field = value
         }
     var resetUserTranscriptDm = false
+        private set
+
+    var openTicketLimit = openTicketLimit
+        set(value) {
+            resetOpenTicketLimit = value == null
+            field = value
+        }
+    var resetOpenTicketLimit = false
+        private set
+
+    var closedTicketLimit = closedTicketLimit
+        set(value) {
+            resetClosedTicketLimit = value == null
+            field = value
+        }
+    var resetClosedTicketLimit = false
         private set
 
     var relatedCarryTier = relatedCarryTier

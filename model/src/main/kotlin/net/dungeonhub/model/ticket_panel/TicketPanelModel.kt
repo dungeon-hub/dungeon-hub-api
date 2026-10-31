@@ -30,6 +30,8 @@ class TicketPanelModel(
     val deleteTranscriptTarget: TranscriptTarget,
     val userTranscriptDm: String?,
     val formQuestions: List<TicketPanelFormModel>,
+    val openTicketLimit: Int?,
+    val closedTicketLimit: Int?,
 
     // connection with other features
     val relatedCarryTier: CarryTierModel?,
@@ -49,6 +51,6 @@ class TicketPanelModel(
     }
 
     override fun getUpdateModel(): TicketPanelUpdateModel {
-        return TicketPanelUpdateModel(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
+        return TicketPanelUpdateModel(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null)
     }
 }
