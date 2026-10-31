@@ -1,17 +1,14 @@
 package net.dungeonhub.enums
 
-import dev.kordex.i18n.Key
-import net.dungeonhub.api.model.i18n.Translations
-
-enum class RoleAction(val readableName: Key) {
-    None(Translations.RoleActions.None.readableName),
-    ApplyAndRemoveWhenVerified(Translations.RoleActions.ApplyAndRemoveWhenVerified.readableName),
-    ApplyAndRemoveWhenUnverified(Translations.RoleActions.ApplyAndRemoveWhenUnverified.readableName),
-    ApplyWhenVerified(Translations.RoleActions.ApplyWhenVerified.readableName),
-    ApplyWhenUnverified(Translations.RoleActions.ApplyWhenUnverified.readableName),
-    RemoveWhenVerified(Translations.RoleActions.RemoveWhenVerified.readableName),
-    RemoveWhenUnverified(Translations.RoleActions.RemoveWhenUnverified.readableName),
-    ApplyAlways(Translations.RoleActions.ApplyAlways.readableName);
+enum class RoleAction {
+    None,
+    ApplyAndRemoveWhenVerified,
+    ApplyAndRemoveWhenUnverified,
+    ApplyWhenVerified,
+    ApplyWhenUnverified,
+    RemoveWhenVerified,
+    RemoveWhenUnverified,
+    ApplyAlways;
 
     companion object {
         val applyWhenVerified = setOf(ApplyWhenVerified, ApplyAndRemoveWhenVerified, ApplyAlways)

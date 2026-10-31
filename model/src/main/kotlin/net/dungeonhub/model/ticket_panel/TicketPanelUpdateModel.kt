@@ -1,8 +1,5 @@
 package net.dungeonhub.model.ticket_panel
 
-import dev.kord.common.entity.Permissions
-import net.dungeonhub.enums.TicketPermissionCandidate
-import net.dungeonhub.enums.TicketPermissionType
 import net.dungeonhub.enums.TranscriptTarget
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.UpdateModel
@@ -24,6 +21,8 @@ class TicketPanelUpdateModel(
     var deleteTranscriptTarget: TranscriptTarget?,
     userTranscriptDm: String?,
     var formQuestions: List<TicketPanelFormModel>?,
+    openTicketLimit: Int?,
+    closedTicketLimit: Int?,
 
     relatedCarryTier: Long?,
     relatedCarryDifficulty: Long?,
@@ -32,7 +31,7 @@ class TicketPanelUpdateModel(
     var additionalRoles: List<Long>?,
     var openCategories: List<Long>?,
     var closedCategories: List<Long>?,
-    var permissions: Map<TicketPermissionCandidate, Map<TicketPermissionType, Permissions?>>?
+    var permissions: TicketPanelPermissionsModel?
 ): UpdateModel<TicketPanelModel> {
     var displayName = displayName
         set(value) {
@@ -96,6 +95,22 @@ class TicketPanelUpdateModel(
             field = value
         }
     var resetUserTranscriptDm = false
+        private set
+
+    var openTicketLimit = openTicketLimit
+        set(value) {
+            resetOpenTicketLimit = value == null
+            field = value
+        }
+    var resetOpenTicketLimit = false
+        private set
+
+    var closedTicketLimit = closedTicketLimit
+        set(value) {
+            resetClosedTicketLimit = value == null
+            field = value
+        }
+    var resetClosedTicketLimit = false
         private set
 
     var relatedCarryTier = relatedCarryTier

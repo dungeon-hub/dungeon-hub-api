@@ -1,15 +1,11 @@
 package net.dungeonhub.enums
 
-import dev.kordex.i18n.Key
-
-enum class RoleRequirementComparison(val readableName: Key) {
-    Equal("="),
-    GreaterOrEqual(">="),
-    Greater(">"),
-    LessOrEqual("<="),
-    Less("<");
-
-    constructor(readableName: String) : this(Key(readableName))
+enum class RoleRequirementComparison {
+    Equal,
+    GreaterOrEqual,
+    Greater,
+    LessOrEqual,
+    Less;
 
     fun compare(value: Int, expected: Int): Boolean {
         return when (this) {
