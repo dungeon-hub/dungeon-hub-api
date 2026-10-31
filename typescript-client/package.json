@@ -36,10 +36,10 @@
     "rxjs": "^7.0.0"
   },
   "devDependencies": {
-    "@angular/compiler-cli": "^21.2.14",
+    "@angular/compiler-cli": "^22.1.0",
     "@openapitools/openapi-generator-cli": "^2.34.0",
-    "ng-packagr": "^21.2.3",
-    "typescript": "~5.9.0"
+    "ng-packagr": "^22.1.1",
+    "typescript": "~6.0.0"
   },
   "publishConfig": {
     "access": "public"
