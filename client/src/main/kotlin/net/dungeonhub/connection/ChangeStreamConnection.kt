@@ -19,7 +19,7 @@ import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.enums.ChangeEventType
 import net.dungeonhub.model.change.ChangeEventModel
 import net.dungeonhub.model.change.ChangeStreamConnectedModel
-import net.dungeonhub.providers.HttpClientProvider.httpClient
+import net.dungeonhub.providers.HttpClientProvider.streamingHttpClient
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.model.Model
@@ -43,6 +43,9 @@ class ChangeStreamConnection(override val client: AuthenticatedClient) : Authent
      * When reconnecting, the API sends the changes that were missed in the meantime again, as long as they happened
      * recently. If it couldn't do that (or on the first connect), [ChangeStreamEvent.Connected.resumed] is false and
      * clients should (re)load the state they need.
+     *
+     * The returned flow is cold: every collection opens its own connection, and cancelling the collecting coroutine
+     * (or completing the collection, e.g. with `take`) closes it.
      *
      * @param types the types of changes to listen to, all types if empty
      */
@@ -78,7 +81,7 @@ class ChangeStreamConnection(override val client: AuthenticatedClient) : Authent
         request.url(getApiUrl())
         client.setupRequest(request)
 
-        httpClient.sse({
+        streamingHttpClient.sse({
             takeFrom(request)
 
             if (types.isNotEmpty()) {

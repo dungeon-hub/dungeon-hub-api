@@ -21,6 +21,7 @@ dependencies {
 
     //HTTP Client
     api(libs.ktor.client.java)
+    implementation(libs.ktor.client.cio) // only used for the change stream, see HttpClientProvider
     api(libs.ktor.moshi)
     api(libs.ktor.content.negotiation)
 

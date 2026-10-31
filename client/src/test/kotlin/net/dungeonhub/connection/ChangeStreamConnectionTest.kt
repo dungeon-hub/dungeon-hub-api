@@ -1,7 +1,11 @@
 package net.dungeonhub.connection
 
 import com.sun.net.httpserver.HttpServer
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
@@ -14,6 +18,7 @@ import net.dungeonhub.model.score.ScoreModel
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.io.IOException
 import java.net.InetSocketAddress
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.atomic.AtomicInteger
@@ -80,6 +85,49 @@ class ChangeStreamConnectionTest {
         assertEquals(Request("Bearer test-token", "types=Score,Ticket", null), requests[0])
         // the id of the last event is sent on reconnect, also if the event had an unknown type
         assertEquals("stream:2", requests[1].lastEventId)
+    }
+
+    @Test
+    fun testCancellingTheCollectionClosesTheConnection() = runBlocking {
+        val disconnected = CompletableDeferred<Unit>()
+
+        server.removeContext("/api/v1/changes")
+        server.createContext("/api/v1/changes") { exchange ->
+            exchange.responseHeaders.add("Content-Type", "text/event-stream")
+            exchange.sendResponseHeaders(200, 0)
+
+            try {
+                exchange.responseBody.use { body ->
+                    body.write("event: Connected\ndata: {\"resumed\":false}\n\n".toByteArray())
+                    body.flush()
+
+                    // like the API, heartbeats are sent until writing fails because the client disconnected
+                    while (true) {
+                        Thread.sleep(50)
+                        body.write(": heartbeat\n\n".toByteArray())
+                        body.flush()
+                    }
+                }
+            } catch (_: IOException) {
+                disconnected.complete(Unit)
+            }
+        }
+
+        val connection = ChangeStreamConnection.authenticated(object : AuthenticationProvider {
+            override suspend fun getApiToken() = "test-token"
+        })
+
+        val connected = CompletableDeferred<Unit>()
+        val listener = launch(Dispatchers.IO) {
+            connection.changes().collect { event ->
+                if (event is ChangeStreamEvent.Connected) connected.complete(Unit)
+            }
+        }
+
+        withTimeout(20.seconds) { connected.await() }
+        listener.cancelAndJoin()
+
+        withTimeout(20.seconds) { disconnected.await() }
     }
 
     private fun scoreChange(scoreAmount: Int): String {

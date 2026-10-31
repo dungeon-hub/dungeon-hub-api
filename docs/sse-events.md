@@ -146,6 +146,18 @@ ChangeStreamConnection.authenticated().changes(setOf(ChangeEventType.Ticket)).co
 
 The events are emitted one after another, in the order the API sent them.
 
+The flow is cold: every collection opens its own connection. To end the stream, e.g. when the application shuts down,
+cancel the coroutine (or scope) that collects it, which closes the connection right away:
+
+```kotlin
+val listener = scope.launch {
+    ChangeStreamConnection.authenticated().changes(types).collect { /* ... */ }
+}
+
+// on shutdown
+listener.cancel()
+```
+
 ### Browser
 
 The browser's `EventSource` can't send the `Authorization` header, so the stream has to be read with `fetch`. The
