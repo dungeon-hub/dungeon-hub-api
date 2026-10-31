@@ -42,6 +42,11 @@ class CarryDifficultyPriceTest {
     }
 
     @Test
+    fun testNonPositiveBulkAmountsAreIgnored() {
+        assertEquals(100, CarryDifficultyModel.calculatePricePerCarry(4, listOf(BulkPriceModel(0, 90)), 100))
+    }
+
+    @Test
     fun testCarryUsesReachedBulkPrice() {
         val carryDifficulty = CarryDifficultyModel(
             0,
@@ -69,5 +74,25 @@ class CarryDifficultyPriceTest {
 
         assertEquals(100, CarryModel(0, 4, carryDifficulty, user, user, null, null, null).calculatePrice())
         assertEquals(70, CarryModel(0, 12, carryDifficulty, user, user, null, null, null).calculatePrice())
+    }
+
+    @Test
+    fun testCarryDifficultyJsonWithBulkPrices() {
+        val json = """{"id":1,"identifier":"comp","displayName":"Comp","carryTier":{"id":1,"identifier":"f7","displayName":"F7","carryType":{"id":1,"identifier":"d","displayName":"D","server":{"id":1},"isEventActive":false}},"price":100,"bulkPrices":[{"amount":10,"price":70},{"amount":5,"price":80}],"score":1}"""
+
+        val carryDifficulty = CarryDifficultyModel.fromJson(json)
+
+        assertEquals(listOf(BulkPriceModel(5, 80), BulkPriceModel(10, 70)), carryDifficulty.bulkPrices)
+        assertEquals(carryDifficulty.bulkPrices, CarryDifficultyModel.fromJson(carryDifficulty.toJson()).bulkPrices)
+    }
+
+    @Test
+    fun testCarryDifficultyJsonWithoutBulkPrices() {
+        val json = """{"id":1,"identifier":"comp","displayName":"Comp","carryTier":{"id":1,"identifier":"f7","displayName":"F7","carryType":{"id":1,"identifier":"d","displayName":"D","server":{"id":1},"isEventActive":false}},"price":100,"bulkPrice":80,"bulkAmount":5,"score":1}"""
+
+        val carryDifficulty = CarryDifficultyModel.fromJson(json)
+
+        assertEquals(emptyList(), carryDifficulty.bulkPrices)
+        assertEquals(100, carryDifficulty.calculatePricePerCarry(10))
     }
 }

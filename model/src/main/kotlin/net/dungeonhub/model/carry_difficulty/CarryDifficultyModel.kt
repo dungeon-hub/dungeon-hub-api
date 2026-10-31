@@ -13,13 +13,13 @@ class CarryDifficultyModel(
     val displayName: String,
     val carryTier: CarryTierModel,
     val price: Int,
-    bulkPrices: List<BulkPriceModel>?,
+    bulkPrices: List<BulkPriceModel> = emptyList(),
     score: Int,
     thumbnailUrl: String?,
     priceName: String?,
     val ingameCarryType: IngameCarryType?
 ) : UpdateableModel<CarryDifficultyUpdateModel, CarryDifficultyModel> {
-    val bulkPrices: List<BulkPriceModel> = bulkPrices.orEmpty()
+    val bulkPrices: List<BulkPriceModel> = bulkPrices
         get() = field
             .filter { it.amount > 0 && it.price > 0 }
             .sortedBy { it.amount }
