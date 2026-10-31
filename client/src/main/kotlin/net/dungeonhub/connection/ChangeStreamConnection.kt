@@ -25,6 +25,7 @@ import net.dungeonhub.structure.ClientlessConnection
 import net.dungeonhub.structure.model.Model
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import kotlin.random.Random
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -62,10 +63,11 @@ class ChangeStreamConnection(override val client: AuthenticatedClient) : Authent
             } catch (exception: CancellationException) {
                 throw exception
             } catch (exception: Exception) {
-                logger.warn("The change stream failed, reconnecting in {}.", reconnectDelay, exception)
+                logger.warn("The change stream failed, reconnecting in up to {}.", reconnectDelay, exception)
             }
 
-            delay(reconnectDelay)
+            // randomized, so that many clients don't all reconnect at the same time, e.g. after the API restarted
+            delay(reconnectDelay * Random.nextDouble(0.5, 1.0))
             reconnectDelay = (reconnectDelay * 2).coerceAtMost(MAX_RECONNECT_DELAY)
         }
     }
