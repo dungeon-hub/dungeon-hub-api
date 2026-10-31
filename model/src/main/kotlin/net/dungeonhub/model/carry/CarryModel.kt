@@ -22,14 +22,7 @@ data class CarryModel(
     val scoreMultiplier = carryDifficulty.score
 
     fun calculatePrice(): Long {
-        val bulkPrice = carryDifficulty.bulkPrice
-        val bulkAmount = carryDifficulty.bulkAmount
-
-        if (bulkPrice != null && bulkAmount != null && bulkAmount <= amount) {
-            return bulkPrice.toLong()
-        }
-
-        return carryDifficulty.price.toLong()
+        return CarryDifficultyModel.calculatePricePerCarry(amount, carryDifficulty.bulkPrices, carryDifficulty.price)
     }
 
     fun calculateScore(): Long {
