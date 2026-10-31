@@ -5,19 +5,12 @@ plugins {
     id("net.thebugmc.gradle.sonatype-central-portal-publisher").version("1.2.4")
     kotlin("jvm")
     id("com.google.devtools.ksp").version("2.2.20-2.0.4")
-    id("dev.kordex.gradle.kordex") version "1.9.2"
 }
 
 group = "net.dungeon-hub.api"
 val artifactId = "client"
 version = "0.8.0"
 description = "A client library written in Kotlin to simplify the integration of the Dungeon Hub API."
-
-kordEx {
-    kordExVersion = libs.kord.extensions.get().version
-    jvmTarget = 21
-    configurations = listOf("testImplementation")
-}
 
 dependencies {
     //Model classes
