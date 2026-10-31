@@ -6,6 +6,7 @@ import io.ktor.http.HttpMethod
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.client.DungeonHubClient
+import net.dungeonhub.model.carry.CarryCountsModel
 import net.dungeonhub.model.discord_user.DiscordUserModel
 import net.dungeonhub.model.discord_user.DiscordUserUpdateModel
 import net.dungeonhub.model.ticket.TicketModel
@@ -34,6 +35,8 @@ class DiscordUserConnection(override val client: DungeonHubClient) : Authenticat
     }
 
     suspend fun getCarryCount(id: Long, guildId: Long): Int? = dhApiRequest("$id/carries/$guildId") {}
+
+    suspend fun getCarryCounts(id: Long, guildId: Long): CarryCountsModel? = dhApiRequest("$id/carries/$guildId/summary") {}
 
     suspend fun findUserByUuid(uuid: UUID): DiscordUserModel? = dhApiRequest("find") {
         parameter("uuid", uuid)

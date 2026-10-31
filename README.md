@@ -7,8 +7,8 @@ An documentation about this project and more can be found [here](https://docs.du
 ### Model
 This repository contains all relevant model classes which can be used to interact with the API. \
 They can be found under `/model`. \
-![Maven Central Version](https://img.shields.io/maven-central/v/net.dungeon-hub.api/model) \
-![Translation Status](https://weblate.dungeon-hub.net/widget/dungeon-hub/dungeon-hub-api-model/287x66-grey.png)
+How the ticket panel permissions work is described in [docs/ticket-panel-permissions.md](docs/ticket-panel-permissions.md). \
+![Maven Central Version](https://img.shields.io/maven-central/v/net.dungeon-hub.api/model)
 
 ### Clients
 

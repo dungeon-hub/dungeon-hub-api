@@ -1,9 +1,11 @@
 package net.dungeonhub.connection
 
+import io.ktor.client.request.parameter
 import io.ktor.client.request.setBody
 import io.ktor.http.HttpMethod
 import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
+import net.dungeonhub.enums.TicketState
 import net.dungeonhub.model.discord_server.DiscordServerModel
 import net.dungeonhub.model.ticket.TicketCreationModel
 import net.dungeonhub.model.ticket.TicketModel
@@ -30,6 +32,11 @@ class TicketConnection(private val server: Long, private val ticketPanel: Long, 
     }
 
     suspend fun getAllTickets(): List<TicketModel>? = dhApiRequest("all") {  }
+
+    suspend fun countTicketsByUser(user: Long, state: TicketState): Long? = dhApiRequest("count") {
+        parameter("user", user)
+        parameter("state", state.name)
+    }
 
     companion object {
         private val instances: MutableMap<Long, MutableMap<Long, ClientlessTicketConnection>> = ConcurrentHashMap()
