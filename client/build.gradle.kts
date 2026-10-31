@@ -9,7 +9,7 @@ plugins {
 
 group = "net.dungeon-hub.api"
 val artifactId = "client"
-version = "0.8.0"
+version = "0.9.0"
 description = "A client library written in Kotlin to simplify the integration of the Dungeon Hub API."
 
 dependencies {
@@ -21,6 +21,7 @@ dependencies {
 
     //HTTP Client
     api(libs.ktor.client.java)
+    implementation(libs.ktor.client.cio) // only used for the change stream, see HttpClientProvider
     api(libs.ktor.moshi)
     api(libs.ktor.content.negotiation)
 
