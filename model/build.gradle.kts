@@ -11,7 +11,7 @@ plugins {
 
 group = "net.dungeon-hub.api"
 val artifactId = "model"
-version = "0.7.2"
+version = "0.9.0"
 description = "The model classes that are used in the Dungeon Hub API."
 
 kordEx {

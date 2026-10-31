@@ -4,6 +4,7 @@ import io.ktor.client.plugins.HttpTimeoutConfig
 import io.ktor.client.plugins.sse.sse
 import io.ktor.client.plugins.timeout
 import io.ktor.client.request.HttpRequestBuilder
+import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.takeFrom
 import io.ktor.client.request.url
@@ -17,6 +18,7 @@ import net.dungeonhub.auth.AuthenticationProvider
 import net.dungeonhub.client.AuthenticatedClient
 import net.dungeonhub.enums.ChangeEventType
 import net.dungeonhub.model.change.ChangeEventModel
+import net.dungeonhub.model.change.ChangeStreamConnectedModel
 import net.dungeonhub.providers.HttpClientProvider.httpClient
 import net.dungeonhub.structure.AuthenticatedModuleConnection
 import net.dungeonhub.structure.ClientlessConnection
@@ -38,18 +40,20 @@ class ChangeStreamConnection(override val client: AuthenticatedClient) : Authent
      *
      * The stream is re-established automatically whenever it is closed, e.g. due to network issues or because the
      * token used for the connection expired. Each (re)connect is signaled with [ChangeStreamEvent.Connected].
-     * Changes that happened while the stream was disconnected are not replayed, so clients should (re)load the state
-     * they need whenever they receive [ChangeStreamEvent.Connected].
+     * When reconnecting, the API sends the changes that were missed in the meantime again, as long as they happened
+     * recently. If it couldn't do that (or on the first connect), [ChangeStreamEvent.Connected.resumed] is false and
+     * clients should (re)load the state they need.
      *
      * @param types the types of changes to listen to, all types if empty
      */
     fun changes(types: Set<ChangeEventType> = emptySet()): Flow<ChangeStreamEvent> = channelFlow {
         var reconnectDelay = MIN_RECONNECT_DELAY
+        var lastEventId: String? = null
 
         while (true) {
             try {
-                listen(types, this) {
-                    reconnectDelay = MIN_RECONNECT_DELAY
+                listen(types, lastEventId, this, onConnected = { reconnectDelay = MIN_RECONNECT_DELAY }) {
+                    lastEventId = it
                 }
                 logger.debug("The change stream was closed, reconnecting...")
             } catch (exception: CancellationException) {
@@ -63,7 +67,13 @@ class ChangeStreamConnection(override val client: AuthenticatedClient) : Authent
         }
     }
 
-    private suspend fun listen(types: Set<ChangeEventType>, channel: SendChannel<ChangeStreamEvent>, onConnected: () -> Unit) {
+    private suspend fun listen(
+        types: Set<ChangeEventType>,
+        lastEventId: String?,
+        channel: SendChannel<ChangeStreamEvent>,
+        onConnected: () -> Unit,
+        onEventId: (String) -> Unit
+    ) {
         val request = HttpRequestBuilder()
         request.url(getApiUrl())
         client.setupRequest(request)
@@ -75,22 +85,40 @@ class ChangeStreamConnection(override val client: AuthenticatedClient) : Authent
                 parameter("types", types.joinToString(",") { it.name })
             }
 
+            // lets the API send the changes that were missed while reconnecting
+            lastEventId?.let { header(LAST_EVENT_ID_HEADER, it) }
+
             timeout {
                 requestTimeoutMillis = HttpTimeoutConfig.INFINITE_TIMEOUT_MS
                 // the server sends a heartbeat regularly, so a silent connection is considered dead
                 socketTimeoutMillis = SOCKET_TIMEOUT.inWholeMilliseconds
             }
         }) {
-            onConnected()
-            channel.send(ChangeStreamEvent.Connected)
-
             incoming.collect { event ->
-                parseEvent(event)?.let { channel.send(ChangeStreamEvent.Change(it)) }
+                if (event.event == ChangeStreamConnectedModel.EVENT_NAME) {
+                    onConnected()
+                    channel.send(ChangeStreamEvent.Connected(parseConnectedEvent(event)?.resumed ?: false))
+                    return@collect
+                }
+
+                parseChangeEvent(event)?.let { channel.send(ChangeStreamEvent.Change(it)) }
+
+                // also changes of unknown types have an id, which marks how far the stream was received
+                event.id?.let(onEventId)
             }
         }
     }
 
-    private fun parseEvent(event: ServerSentEvent): ChangeEventModel<out Model>? {
+    private fun parseConnectedEvent(event: ServerSentEvent): ChangeStreamConnectedModel? {
+        return try {
+            event.data?.let { ChangeStreamConnectedModel.fromJson(it) }
+        } catch (exception: Exception) {
+            logger.error("Couldn't parse the connected event: {}", event.data, exception)
+            null
+        }
+    }
+
+    private fun parseChangeEvent(event: ServerSentEvent): ChangeEventModel<out Model>? {
         val type = ChangeEventType.fromEventName(event.event)
         val data = event.data
 
@@ -109,9 +137,12 @@ class ChangeStreamConnection(override val client: AuthenticatedClient) : Authent
 
     sealed interface ChangeStreamEvent {
         /**
-         * The stream was (re)connected, changes that happened before this event were possibly missed.
+         * The stream was (re)connected.
+         *
+         * @param resumed true if all changes that happened while the stream was disconnected were sent again,
+         * false if changes might have been missed, e.g. on the first connect
          */
-        data object Connected : ChangeStreamEvent
+        data class Connected(val resumed: Boolean) : ChangeStreamEvent
 
         class Change(val change: ChangeEventModel<out Model>) : ChangeStreamEvent
     }
@@ -122,6 +153,7 @@ class ChangeStreamConnection(override val client: AuthenticatedClient) : Authent
         private val MIN_RECONNECT_DELAY: Duration = 1.seconds
         private val MAX_RECONNECT_DELAY: Duration = 1.minutes
         private val SOCKET_TIMEOUT: Duration = 1.minutes
+        private const val LAST_EVENT_ID_HEADER = "Last-Event-ID"
 
         override fun authenticated(authenticationProvider: AuthenticationProvider): ChangeStreamConnection {
             return ChangeStreamConnection(AuthenticatedClient(authenticationProvider))

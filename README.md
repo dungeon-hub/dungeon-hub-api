@@ -28,13 +28,14 @@ dependencies {
 **Listening to changes:**
 
 The API pushes changes of entities (e.g. tickets or static messages) to every client that is allowed to see them.
-The stream reconnects automatically and emits `Connected` on every (re)connect.
-Changes that happened while the client was disconnected aren't replayed, so reload the state you need on `Connected`.
+The stream reconnects automatically and resumes where it left off.
+If it couldn't resume (e.g. on the first connect), `Connected.resumed` is false and you should reload the state you need.
+See [docs/sse-events.md](docs/sse-events.md) for all events and the details of the stream.
 
 ```kotlin
 ChangeStreamConnection.authenticated().changes(setOf(ChangeEventType.Ticket)).collect { event ->
     when (event) {
-        ChangeStreamEvent.Connected -> reloadClaimedTickets()
+        is ChangeStreamEvent.Connected -> if (!event.resumed) reloadClaimedTickets()
         is ChangeStreamEvent.Change -> (event.change.data as? TicketModel)?.let { updateTicket(event.change.action, it) }
     }
 }
