@@ -1,7 +1,12 @@
 package net.dungeonhub.model
 
+import net.dungeonhub.model.carry.CarryModel
 import net.dungeonhub.model.carry_difficulty.BulkPriceModel
 import net.dungeonhub.model.carry_difficulty.CarryDifficultyModel
+import net.dungeonhub.model.carry_tier.CarryTierModel
+import net.dungeonhub.model.carry_type.CarryTypeModel
+import net.dungeonhub.model.discord_server.DiscordServerModel
+import net.dungeonhub.model.discord_user.DiscordUserModel
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -34,5 +39,35 @@ class CarryDifficultyPriceTest {
     @Test
     fun testInvalidBulkPricesAreIgnored() {
         assertEquals(70, CarryDifficultyModel.calculatePricePerCarry(25, bulkPrices, 100))
+    }
+
+    @Test
+    fun testCarryUsesReachedBulkPrice() {
+        val carryDifficulty = CarryDifficultyModel(
+            0,
+            "identifier",
+            "displayName",
+            CarryTierModel(
+                0,
+                "identifier",
+                "displayName",
+                CarryTypeModel(0, "identifier", "displayName", DiscordServerModel(0), 0, false),
+                0,
+                null,
+                null,
+                null,
+                null
+            ),
+            100,
+            bulkPrices,
+            1,
+            null,
+            null,
+            null
+        )
+        val user = DiscordUserModel(0, null, null)
+
+        assertEquals(100, CarryModel(0, 4, carryDifficulty, user, user, null, null, null).calculatePrice())
+        assertEquals(70, CarryModel(0, 12, carryDifficulty, user, user, null, null, null).calculatePrice())
     }
 }

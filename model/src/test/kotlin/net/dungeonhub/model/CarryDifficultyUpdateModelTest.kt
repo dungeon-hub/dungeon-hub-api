@@ -40,6 +40,15 @@ class CarryDifficultyUpdateModelTest {
     }
 
     @Test
+    fun testEmptyBulkPricesArePreservedDuringSerialization() {
+        val emptyListUpdate = CarryDifficultyUpdateModel(null, null, emptyList(), null, null, null, null)
+        val nullUpdate = CarryDifficultyUpdateModel(null, null, null, null, null, null, null)
+
+        assertEquals(emptyList(), CarryDifficultyUpdateModel.fromJson(emptyListUpdate.toJson()).bulkPrices)
+        assertEquals(null, CarryDifficultyUpdateModel.fromJson(nullUpdate.toJson()).bulkPrices)
+    }
+
+    @Test
     fun testCorrectCreationOfUpdateModel() {
         val carryDifficultyModel = CarryDifficultyModel(
             0,
