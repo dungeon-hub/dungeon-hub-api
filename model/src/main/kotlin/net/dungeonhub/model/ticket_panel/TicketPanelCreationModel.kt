@@ -1,8 +1,5 @@
 package net.dungeonhub.model.ticket_panel
 
-import dev.kord.common.entity.Permissions
-import net.dungeonhub.enums.TicketPermissionCandidate
-import net.dungeonhub.enums.TicketPermissionType
 import net.dungeonhub.enums.TranscriptTarget
 import net.dungeonhub.service.MoshiService
 import net.dungeonhub.structure.model.CreationModel
@@ -35,7 +32,7 @@ class TicketPanelCreationModel(
     val additionalRoles: List<Long>?,
     val openCategories: List<Long>?,
     val closedCategories: List<Long>?,
-    val permissions: Map<TicketPermissionCandidate, Map<TicketPermissionType, Permissions>>?
+    val permissions: TicketPanelPermissionsModel?
 ) : CreationModel {
     fun toJson(): String {
         return MoshiService.moshi.adapter(TicketPanelCreationModel::class.java).toJson(this)

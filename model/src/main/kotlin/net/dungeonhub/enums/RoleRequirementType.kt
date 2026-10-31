@@ -1,7 +1,5 @@
 package net.dungeonhub.enums
 
-import dev.kordex.i18n.Key
-
 enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.None) {
     SkyblockLevel,
     CatacombsLevel,
@@ -28,8 +26,6 @@ enum class RoleRequirementType(val extraDataType: ExtraDataType = ExtraDataType.
     Reputation,
     ScoreLeaderboardRank(ExtraDataType.ScoreLeaderboardRank),
     ReputationLeaderboardRank;
-
-    val readableName = Key(name.replace(Regex("([A-Z])"), " $1").trim())
 
     enum class ExtraDataType(val checkExtraData: (String?) -> Boolean) {
         None({ true }),
